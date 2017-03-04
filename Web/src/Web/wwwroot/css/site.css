@@ -36,3 +36,5 @@ textarea {
     display: none
   }
 }
+
+.form-control { width: 100%; }

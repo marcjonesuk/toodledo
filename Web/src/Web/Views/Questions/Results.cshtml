@@ -1,0 +1,54 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Web.Controllers.QuestionList
+<br />
+
+<form class="form-horizontal">
+    <div class="form-group">
+        <div class="col-sm-1"></div>
+        <div class="col-xs-3">
+            <input id="search" class="form-control" placeholder="search for" asp-for="@Model.SearchText">
+        </div>
+
+        <div class="col-xs-1">
+            <button id="search_btn" type="submit" class="btn btn-primary" onclick="window.location.href = 'search?text=' + getElementById('search').value; return false"><span class="glyphicon glyphicon-search"></span></button>
+        </div>
+    </div>
+</form>
+<hr />
+
+@if (Model.Questions == null || Model.Questions.Count == 0)
+{
+    <span>Sorry, no results found</span>
+}
+
+@foreach (var q in Model.Questions)
+{
+
+    <div class="media">
+        <div class="media-left text-center">
+            <h1 style="margin-bottom:-6px">@q.Answers.Count</h1><small>
+                <span>answers</span>
+            </small>
+        </div>
+        <div class="media-body" style="padding-left:16px">
+            <a href="/questions/show/@q.Id"><h4>@q.Title</h4></a>
+
+            <p>@Html.Raw(q.Body)</p>
+
+            <div class="text-right">
+                <small>Asked 14th Jan 2017 at 17:05</small>
+            </div>
+            <hr />
+        </div>
+    </div>
+}
+
+@*<ul class="pagination">
+        <li><a href="#">1</a></li>
+        <li class="active"><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="#">5</a></li>
+    </ul>*@

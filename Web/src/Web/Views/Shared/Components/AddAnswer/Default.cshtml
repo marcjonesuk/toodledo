@@ -1,0 +1,19 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Data.Answer
+
+<script type="text/javascript">
+
+</script>
+
+<form asp-action="Answer" asp-controller="Questions" method="post">
+    <div class="form-group">
+        <h4>Your answer</h4>
+        @Html.HiddenFor(t => t.Id)
+        <blockquote>
+            <textarea style="max-width:initial" class="form-control" rows="5" asp-for="Body"></textarea>
+        </blockquote>
+        <button type="submit" class="btn btn-primary">Post Your Answer</button>
+    </div>
+</form>

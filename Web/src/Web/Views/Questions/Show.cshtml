@@ -1,15 +1,15 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model Data.Question
+@model Web.Controllers.ShowQuestionPage
 
 <script type="text/javascript">
 
-    var questionId = @Model.Id;
+    var questionId = @Model.Question.Id;
 
     var del = function (answerId) {
         var data = { answerId: answerId };
-        
+
         $.ajax({
             url: '/questions/deleteanswer',
             type: 'POST',
@@ -56,22 +56,29 @@
 
 <br />
 
-<a href="/questions/show/@Model.Id"><h4>@Model.Title</h4></a>
+@if (Model.Response != null)
+{
+    <div class="alert alert-info">
+        <strong>Success! </strong>@Model.Response
+    </div>
+}
+
+<a href="/questions/show/@Model.Question.Id"><h4>@Model.Question.Title</h4></a>
 <hr />
 
-<p>@Html.Raw(Model.Body)</p>
+<p>@Html.Raw(Model.Question.Body)</p>
 <div class="text-right">
-    <small>Asked 14th Jan 2017 at 17:05</small>
+    <small>Asked @Model.Question.Created</small>
     <br />
 
     <button class="btn btn-default btn-sm">edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
     <button class="btn btn-default btn-sm">delete&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></button>
 </div>
 
-<h4>@Model.Answers.Count Answers</h4>
+<h4>@Model.Question.Answers.Count Answers</h4>
 <hr />
 
-@foreach (var a in Model.Answers)
+@foreach (var a in Model.Question.Answers)
 {
     <div class="row">
         <div class="col-sm-1" style="text-align:center">
@@ -85,9 +92,9 @@
                 <small>14th Jan 2017 at 17:05</small>
                 <br />
 
-                <button class="btn btn-default btn-sm">edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
-                <button class="btn btn-default btn-sm" onclick="del(@a.Id)">
-                    delete&nbsp;<span class="glyphicon glyphicon-remove-sign"></span>
+                <button class="btn btn-link btn-sm">edit<span class="glyphicon glyphicon-pencil" style="margin-left:8px"></span></button>
+                <button class="btn btn-link btn-sm" onclick="del(@a.Id)">
+                    delete<span class="glyphicon glyphicon-remove-sign" style="margin-left:8px"></span>
                 </button>
             </div>
             <hr />

@@ -30,12 +30,18 @@ namespace Web.Controllers
         public string Answer { get; set; }
     }
 
+    public class ShowQuestionPage
+    {
+        public Question Question { get; set; }
+        public string Response { get; set; }
+    }
+
     public class QuestionsController : Controller
     {
-        public IActionResult Show(int id)
+        public IActionResult Show(int id, string response = null)
         {
             var question = (new Api()).Get(id);
-            return View(question);
+            return View(new ShowQuestionPage() { Question = question, Response = response });
         }
 
         public IActionResult Edit(int id)
@@ -96,7 +102,7 @@ namespace Web.Controllers
                 Title = question.Title,
                 Body = question.Body
             });
-            return RedirectToAction("Show", new { Id = id });
+            return RedirectToAction("Show", new { Id = id, Response = "Your question was added" });
         }
 
         [HttpPost]

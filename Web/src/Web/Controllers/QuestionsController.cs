@@ -15,7 +15,6 @@ namespace Web.Controllers
 
     public class DeleteRequest
     {
-        public int QuestionId { get; set; }
         public int AnswerId { get; set; }
     }
 
@@ -49,15 +48,14 @@ namespace Web.Controllers
         public void DeleteAnswer([FromBody]DeleteRequest req)
         {
             var api = new Api();
-            var q = api.DeleteAnswer(req.QuestionId, req.AnswerId);
+            api.DeleteAnswer(req.AnswerId);
         }
 
         [HttpPost]
-        public IActionResult Vote([FromBody]DeleteRequest req)
+        public void Vote([FromBody]VoteRequest req)
         {
             var api = new Api();
-            var q = api.DeleteAnswer(req.QuestionId, req.AnswerId);
-            return View("show", q);
+            api.Vote(req.AnswerId, req.Direction);
         }
 
         [HttpPost]
@@ -85,9 +83,20 @@ namespace Web.Controllers
             return View("Results", result);
         }
 
-        public IActionResult New()
+        public IActionResult Ask()
         {
-            return View(new Question() { Title = "", Username = "maisie", Body = "big boobs" });
+            return View(new Question());
+        }
+
+        [HttpPost]
+        public IActionResult Ask(Question question)
+        {
+            var api = new Api();
+            var id = api.Add(new Question() {
+                Title = question.Title,
+                Body = question.Body
+            });
+            return RedirectToAction("Show", new { Id = id });
         }
 
         [HttpPost]

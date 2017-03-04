@@ -15,7 +15,6 @@ namespace Web.Controllers
 
     public class DeleteRequest
     {
-        public int QuestionId { get; set; }
         public int AnswerId { get; set; }
     }
 
@@ -49,7 +48,7 @@ namespace Web.Controllers
         public void DeleteAnswer([FromBody]DeleteRequest req)
         {
             var api = new Api();
-            var q = api.DeleteAnswer(req.QuestionId, req.AnswerId);
+            api.DeleteAnswer(req.AnswerId);
         }
 
         [HttpPost]

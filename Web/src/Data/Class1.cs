@@ -7,6 +7,7 @@ namespace Data
 {
     public class Question
     {
+        public DateTime Created { get; set; }
         public int Id { get; set; }
         public string Username { get; set; }
         public string Title { get; set; }
@@ -17,6 +18,7 @@ namespace Data
 
         public Question()
         {
+            Created = DateTime.UtcNow;
             Answers = new List<Answer>();
             Tags = new List<string>();
         }
@@ -56,10 +58,25 @@ namespace Data
             return q;
         }
 
-        public Question DeleteAnswer(int questionId, int answerId)
-        { 
-            _questions[questionId].Answers.RemoveAt(answerId);
-            return _questions[questionId];
+        public void DeleteAnswer(int answerId)
+        {
+            Question question = null;
+            Answer answer = null;
+            foreach (var q in _questions)
+            {
+                foreach (var a in q.Answers)
+                {
+                    if (a.Id == answerId)
+                    {
+                        question = q;
+                        answer = a;
+                        break;
+                    }
+                }
+            }
+
+            if (question != null)
+                question.Answers.Remove(answer);
         }
 
         public void Vote(int answerId, int direction)
@@ -76,7 +93,7 @@ namespace Data
 
         public List<Question> GetAll()
         {
-            return _questions;
+            return _questions.OrderBy(q => q.Created).Reverse().ToList();
         }
 
         public void AddAnswer(int questionId, string answer)

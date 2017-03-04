@@ -23,8 +23,6 @@
     };
 
     var answer = function () {
-        alert(document.getElementById('add_answer').value);
-        
         var data = { questionId: questionId, answer: document.getElementById('add_answer').value };
 
         $.ajax({
@@ -39,10 +37,24 @@
         });
     };
 
+    var vote = function(answer, direction) {
+        var data = { answerId: answer, direction: direction };
+
+        $.ajax({
+            url: '/questions/vote',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                location.reload();
+            }
+        });
+    }
+
 </script>
 
 <br />
-sdfsdf
 
 <a href="/questions/show/@Model.Id"><h4>@Model.Title</h4></a>
 <hr />
@@ -58,14 +70,14 @@ sdfsdf
 
 <h4>@Model.Answers.Count Answers</h4>
 <hr />
-@{int i = 0;}
+
 @foreach (var a in Model.Answers)
 {
     <div class="row">
         <div class="col-sm-1" style="text-align:center">
-            <span class="glyphicon glyphicon-triangle-top" style="font-size: 20px"></span>
-            <h4 style="margin:0">0</h4>
-            <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 20px;"></span>
+            <span class="glyphicon glyphicon-triangle-top" style="font-size: 20px" onclick="vote(@a.Id, 1)"></span>
+            <h4 style="margin:0">@a.Score</h4>
+            <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 20px;" onclick="vote(@a.Id, -1)"></span>
         </div>
         <div class="col-sm-11">
             <p>@a.Body</p>
@@ -74,13 +86,11 @@ sdfsdf
                 <br />
 
                 <button class="btn btn-default btn-sm">edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
-                <button class="btn btn-default btn-sm" onclick="del(@Model.Id, @i)">
+                <button class="btn btn-default btn-sm" onclick="del(@Model.Id, @a.Id)">
                     delete&nbsp;<span class="glyphicon glyphicon-remove-sign"></span>
                 </button>
             </div>
             <hr />
-
-            @{ i++; }
         </div>
     </div>
 }

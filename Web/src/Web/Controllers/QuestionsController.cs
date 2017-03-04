@@ -53,11 +53,10 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Vote([FromBody]DeleteRequest req)
+        public void Vote([FromBody]VoteRequest req)
         {
             var api = new Api();
-            var q = api.DeleteAnswer(req.QuestionId, req.AnswerId);
-            return View("show", q);
+            api.Vote(req.AnswerId, req.Direction);
         }
 
         [HttpPost]

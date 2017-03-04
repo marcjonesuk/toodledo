@@ -35,6 +35,7 @@ namespace Data
         public int Id { get; set; }
         public string Username { get; set; }
         public string Body { get; set; }
+        public int Score { get; set; }
     }
 
     public class Api
@@ -50,13 +51,27 @@ namespace Data
 
         public Question Get(int id)
         {
-            return _questions[id];
+            var q = _questions[id];
+            q.Answers = q.Answers.OrderBy(a => a.Score).Reverse().ToList();
+            return q;
         }
 
         public Question DeleteAnswer(int questionId, int answerId)
         { 
             _questions[questionId].Answers.RemoveAt(answerId);
             return _questions[questionId];
+        }
+
+        public void Vote(int answerId, int direction)
+        {
+            foreach(var q in _questions)
+            {
+                foreach(var a in q.Answers)
+                {
+                    if (a.Id == answerId)
+                        a.Score += direction;
+                }
+            }
         }
 
         public List<Question> GetAll()

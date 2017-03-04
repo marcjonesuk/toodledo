@@ -1,0 +1,18 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Data.Question
+
+<br />
+<form method="post">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" placeholder="Enter a title for your question" asp-for="@Model.Title">
+        </div>
+    <div class="form-group">
+        <label for="body">Question</label>
+        <textarea id="body" class="form-control" style="max-width:initial" rows="12" asp-for="@Model.Body"></textarea>
+    </div>
+
+    <button type="submit" class="btn">Post Question</button>
+</form>

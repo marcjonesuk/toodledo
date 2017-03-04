@@ -84,9 +84,20 @@ namespace Web.Controllers
             return View("Results", result);
         }
 
-        public IActionResult New()
+        public IActionResult Ask()
         {
-            return View(new Question() { Title = "", Username = "maisie", Body = "big boobs" });
+            return View(new Question());
+        }
+
+        [HttpPost]
+        public IActionResult Ask(Question question)
+        {
+            var api = new Api();
+            var id = api.Add(new Question() {
+                Title = question.Title,
+                Body = question.Body
+            });
+            return RedirectToAction("Show", new { Id = id });
         }
 
         [HttpPost]

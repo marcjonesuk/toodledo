@@ -33,6 +33,34 @@
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
+    <style>
+        .navbar-nav input#search {
+            display: inline-block;
+            width: 80%;
+            background: transparent;
+            border: 0;
+            color: #fff;
+            padding-left: 3px;
+        }
+
+        .navbar-nav input#search:hover {
+            cursor: pointer;
+        }
+
+        .navbar li{
+            line-height: 50px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.navbar-nav input#search').keypress(function (e) {
+                if (e.which === 13) {
+                    var val = $('.navbar-nav input#search').val();
+                    window.location.href = '/questions/search?q=' + val;
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -48,13 +76,11 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    @*<li>
-                        <a asp-area="" asp-controller="Home" asp-action="Questions">
-                            <span class="glyphicon glyphicon-search"></span>&nbsp;Search
-                        </a>
-                        
-                    </li>*@
                     <li><a asp-area="" asp-controller="Questions" asp-action="Ask">Ask</a></li>
+                    <li>
+                        <span class="glyphicon glyphicon-search"></span>
+                        <input id="search" class="form-control" placeholder="Search">
+                    </li>
                 </ul>
             </div>
         </div>

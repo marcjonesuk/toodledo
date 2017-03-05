@@ -11,11 +11,11 @@
 }
 
 /* Set widths on the form inputs since otherwise they're 100% wide */
-input,
+/*input,
 select,
 textarea {
     max-width: 280px;
-}
+}*/
 
 /* Carousel */
 .carousel-caption p {
@@ -40,8 +40,19 @@ textarea {
 .form-control { width: 100%; }
 
 pre.prettyprint {
-    border-radius:0 !important;
     padding: 8px 20px !important;
+}
+
+input, pre, .btn, .alert {
+    border-radius:0 !important;
+}
+
+textarea {
+    background-color:white !important;
+}
+
+body {
+     background-color:#fcfcfc;
 }
 
 /* desert scheme ported from vim to google prettify */

@@ -20,6 +20,7 @@ namespace Data
 
         public Question()
         {
+            Id = -1;
             Created = DateTime.UtcNow;
             Answers = new List<Answer>();
             Tags = new List<string>();
@@ -47,11 +48,26 @@ namespace Data
     {
         private static Dictionary<int,Question> _questions = new Dictionary<int, Question>();
 
+        public int Update(int id, string title, string body)
+        {
+            var question = _questions[id];
+            var md = new MarkdownSharp.Markdown();
+            question.Title = title;
+            question.Body = body;
+            question.HtmlBody = md.Transform(body);
+            //todo this will break any comments with code tags!!
+            question.HtmlBody = question.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
+            question.HtmlBody = question.HtmlBody.Replace("</code>", "</pre>");
+            _questions[question.Id] = question;
+            return question.Id;
+        }
+
         public int Add(Question question)
         {
             question.Id = GetAvailableQuestionId();
             var md = new MarkdownSharp.Markdown();
             question.HtmlBody = md.Transform(question.Body);
+            question.User = new User() { DisplayName = "TestyMcTestFace" };
             //todo this will break any comments with code tags!!
             question.HtmlBody = question.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
             question.HtmlBody = question.HtmlBody.Replace("</code>", "</pre>");
@@ -98,21 +114,45 @@ namespace Data
                 question.Answers.Remove(answer);
         }
 
-        public void Vote(int answerId, int direction)
+        public int Vote(int answerId, int direction)
         {
             foreach(var q in _questions)
             {
                 foreach(var a in q.Value.Answers)
                 {
                     if (a.Id == answerId)
+                    {
                         a.Score += direction;
+                        return a.Score;
+                    }
                 }
             }
+            throw new Exception("Invalid answer");
         }
 
         public List<Question> GetAll()
         {
             return _questions.Select(d => d.Value).OrderBy(q => q.Created).Reverse().ToList();
+        }
+
+        public Answer EditAnswer(int answerId, string body)
+        {
+            foreach (var q in _questions)
+            {
+                foreach (var a in q.Value.Answers)
+                {
+                    if (a.Id == answerId)
+                    {
+                        a.Body = body;
+                        var md = new MarkdownSharp.Markdown();
+                        a.HtmlBody = md.Transform(a.Body);
+                        a.HtmlBody = a.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
+                        a.HtmlBody = a.HtmlBody.Replace("</code>", "</pre>");
+                        return a;
+                    }
+                }
+            }
+            throw new Exception("Invalid answer");
         }
 
         public void AddAnswer(int questionId, string answer)

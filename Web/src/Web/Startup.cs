@@ -53,7 +53,7 @@ namespace Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Questions}/{action=Latest}");
+                    template: "{controller=Answers}/{action=Index}");
             });
         }
     }

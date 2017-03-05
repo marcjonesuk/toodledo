@@ -30,6 +30,7 @@ namespace Web.Controllers
 
     public class AnswerRequest
     {
+        public int AnswerId { get; set; }
         public int QuestionId { get; set; }
         public string Answer { get; set; }
     }
@@ -62,17 +63,26 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public void Vote([FromBody]VoteRequest req)
+        public int Vote([FromBody]VoteRequest req)
         {
             var api = new Api();
-            api.Vote(req.AnswerId, req.Direction);
+            return api.Vote(req.AnswerId, req.Direction);
         }
 
         [HttpPost]
-        public void Answer([FromBody]AnswerRequest req)
+        public string Answer([FromBody]AnswerRequest req)
         {
             var api = new Api();
-            api.AddAnswer(req.QuestionId, req.Answer);
+
+            if (req.AnswerId == 0)
+            {
+                api.AddAnswer(req.QuestionId, req.Answer);
+                return null;
+            }
+            else
+            {
+                return api.EditAnswer(req.AnswerId, req.Answer).HtmlBody;
+            }
         }
 
         public IActionResult Search(string text)
@@ -94,19 +104,35 @@ namespace Web.Controllers
             return View("Results", result);
         }
 
-        public IActionResult Ask()
+        public IActionResult Ask(int? id)
         {
-            return View(new Question());
+            if (id == null)
+                return View(new Question());
+
+            var api = new Api();
+            var q = api.Get(id.Value);
+            return View(q);
         }
 
         [HttpPost]
         public IActionResult Ask(Question question)
         {
             var api = new Api();
-            var id = api.Add(new Question() {
-                Title = question.Title,
-                Body = question.Body
-            });
+            int id;
+
+            if (question.Id == -1)
+            {
+                id = api.Add(new Question()
+                {
+                    Title = question.Title,
+                    Body = question.Body
+                });
+            }
+            else
+            {
+                id = api.Update(question.Id, question.Title, question.Body);
+            }
+
             return RedirectToAction("Show", new { Id = id, Response = "Your question was added" });
         }
 

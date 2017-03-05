@@ -8,8 +8,18 @@
 <link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-604a3be/css/bootstrap-markdown.min.css" />
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
+<style>
+    .edit-answer {
+        display:none;
+    }
+</style>
+
 <script type="text/javascript">
     var questionId = @Model.Question.Id;
+
+    var editQuestion = function(questionId) {
+        document.location.href = "/questions/ask?id=" + questionId;
+    }
 
     var del = function (answerId) {
         var data = { answerId: answerId };
@@ -51,15 +61,61 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             success: function (data) {
-                location.reload();
+                $("#answer-score-" + answer).html(data);
             }
         });
     }
 
+    var saveAnswerEdit = function(answer) {
+        var data = { answerId: answer, answer: $("#edit-" + answer + " textarea")[0].value };
+
+        $.ajax({
+            url: '/questions/answer',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                $("#answer-" + answer).html(data);
+            }
+        });
+
+        endEdit();
+    }
+
+    var endEdit = function() {
+        $(".your-answer").fadeIn(200);
+        $(".edit-answer").hide();
+        $(".answer-text").show();
+        $(".edit-controls").show();
+    }
+
+    var edit = function(answer) {
+        $(".your-answer").fadeOut(200);
+        $("#edit-" + answer + " textarea").markdown({autofocus:false,savable:false})
+        $("#edit-" + answer).show();
+        $("#answer-" + answer).hide();
+        $("#edit-controls-" + answer).hide();
+    }
+
+    var answerExpanded = false;
     $(document).ready(function() {
-        $("#add_answer").markdown({autofocus:false,savable:false});
         $("code").addClass("prettyprint");
         PR.prettyPrint();
+        
+        $("#content").show();
+        $("#add_answer").markdown({autofocus:false, savable:false});
+
+        $("textarea").focus(function(a) {
+            $('html, body').animate({'scrollTop': $(a.target).offset().top}, 1000);
+        });
+
+        $("#add_answer").focus(function(a) {
+            if (!answerExpanded) {
+                $(a.target).animate({'height':"+=300px"}, 0);
+                answerExpanded = true;
+            }
+        });
     });
 
 </script>
@@ -73,51 +129,67 @@
     </div>
 }
 
-<a href="/questions/show/@Model.Question.Id"><h4>@Model.Question.Title</h4></a>
+<a href="/questions/show?id=@Model.Question.Id"><h4>@Model.Question.Title</h4></a>
 <hr />
 
-<p>@Html.Raw(Model.Question.HtmlBody)</p>
-<div class="text-right">
-    <small>Asked @Model.Question.Created</small>
-    <br />
-
-    <button class="btn btn-default btn-sm">edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
-    <button class="btn btn-default btn-sm">delete&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></button>
-</div>
-
-<h4>@Model.Question.Answers.Count Answers</h4>
-<hr />
-
-@foreach (var a in Model.Question.Answers)
-{
-    <div class="row">
-        <div class="col-sm-1" style="text-align:center">
-            <span class="glyphicon glyphicon-triangle-top" style="font-size: 20px" onclick="vote(@a.Id, 1)"></span>
-            <h4 style="margin:0">@a.Score</h4>
-            <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 20px;" onclick="vote(@a.Id, -1)"></span>
-        </div>
-        <div class="col-sm-11">
-            <p>@Html.Raw(a.HtmlBody)</p>
-            <div class="text-right">
-                <small>14th Jan 2017 at 17:05</small>
-                <br />
-
-                <button class="btn btn-link btn-sm">edit<span class="glyphicon glyphicon-pencil" style="margin-left:8px"></span></button>
-                <button class="btn btn-link btn-sm" onclick="del(@a.Id)">
-                    delete<span class="glyphicon glyphicon-remove-sign" style="margin-left:8px"></span>
-                </button>
-            </div>
-            <hr />
+<div id="content" style="display:none;">
+    <p>@Html.Raw(Model.Question.HtmlBody)</p>
+    
+    <div class="text-right">
+        <small>Asked @Model.Question.Created</small>
+        <br />
+        <div style="margin-top:4px;">
+            <button onclick="editQuestion(@Model.Question.Id)" class="btn">Edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
+            <button class="btn">Delete&nbsp;<span class="glyphicon glyphicon-remove"></span></button>
         </div>
     </div>
-}
 
-<div class="form-group">
-    <h4>Your answer</h4>
-    <blockquote>
-        <textarea id="add_answer" style="max-width:initial" class="form-control" rows="10"></textarea>
-    </blockquote>
-    <button class="btn" onclick="answer()">Post Your Answer</button>
+    <h4>@Model.Question.Answers.Count Answers</h4>
+    <hr />
+
+    @foreach (var a in Model.Question.Answers)
+    {
+        <div class="row">
+            <div class="col-sm-1" style="text-align:center">
+                <span class="glyphicon glyphicon-triangle-top" style="font-size: 20px" onclick="vote(@a.Id, 1)"></span>
+                <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>
+                <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 20px;" onclick="vote(@a.Id, -1)"></span>
+            </div>
+            <div class="col-sm-11">
+                <div id="answer-@a.Id" class="answer-text">@Html.Raw(a.HtmlBody)</div>
+                
+                <div id="edit-@a.Id" class="edit-answer">
+                    <textarea rows="16">@a.Body</textarea>
+                    <div style="margin-top:12px;">
+                        <button class="btn" onclick="saveAnswerEdit(@a.Id)"><span>Save Changes</span></button>
+                        <button class="btn" onclick="endEdit()"><span>Cancel</span></button>
+                    </div>
+                </div>
+
+                <div id="edit-controls-@a.Id" class="edit-controls text-right">
+                    <small >14th Jan 2017 at 17:05</small>
+                    <br>
+                    <div style="margin-top:4px">
+                        <button class="btn btn-sm" onclick="edit(@a.Id)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                        <button class="btn btn-sm" onclick="del(@a.Id)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </div>
+                </div>
+                <hr />
+            </div>
+        </div>
+    }
+
+    <div class="your-answer form-group">
+        <h4>Your answer</h4>
+        <blockquote>
+            <textarea id="add_answer" style="max-width:initial" class="form-control" rows="4"></textarea>
+        </blockquote>
+        <button class="btn" onclick="answer()">Post Your Answer</button>
+    </div>
 </div>
 
 @*@await Component.InvokeAsync("AddAnswer", new { questionId = Model.Id })*@

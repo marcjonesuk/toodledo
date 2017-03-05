@@ -14,11 +14,6 @@ namespace Data
     {
         public StackOverflowModel.Posts.posts GetPosts()
         {
-            return GetObjectFromXml<StackOverflowModel.Posts.posts>("Posts");
-        }
-
-        public StackOverflowModel.PostLink.postlinks GetPostLinks()
-        {
             var posts = GetObjectFromXml<Data.StackOverflowModel.Posts.posts>("Posts");
             foreach (var item in posts.rows)
             {
@@ -28,6 +23,11 @@ namespace Data
                 item.Body = item.Body.Replace("</h2>", "");
             }
             return posts;
+        }
+
+        public StackOverflowModel.PostLink.postlinks GetPostLinks()
+        {
+            return GetObjectFromXml<Data.StackOverflowModel.PostLink.postlinks>("PostLinks");
         }
 
         public Dictionary<int, User> GetUsers()

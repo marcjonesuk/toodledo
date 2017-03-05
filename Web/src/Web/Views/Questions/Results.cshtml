@@ -48,7 +48,8 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
                     <img src="@q.User.ProfileImageUrl" height="20" width="20" />
                 }
                 <small>@q.User.DisplayName</small>
-                <small>Asked @q.Created.ToString("dd MMM yyyy") at @q.Created.ToString("HH:mm")</small>
+                <br />
+                <small>Asked @Web.DateTimeFormatter.Format(@q.Created)</small>
             </div>
             <hr />
         </div>

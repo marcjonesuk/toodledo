@@ -73,6 +73,8 @@ namespace Web.Controllers
 
         public IActionResult Search(string text)
         {
+            if (string.IsNullOrWhiteSpace(text))
+                return null;
             var api = new Api();
             var result = new QuestionList();
             result.SearchText = text;

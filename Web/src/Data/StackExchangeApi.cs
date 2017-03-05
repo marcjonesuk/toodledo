@@ -24,12 +24,14 @@ namespace Data
         {
             foreach (var post in posts)
             {
+                int length = Math.Min(50, post.Body.Length);
+                var title = string.IsNullOrWhiteSpace(post.Title) ? post.Body.Substring(0, length) : post.Title;
                 yield return new Question()
                 {
                     Created = DateTime.ParseExact(post.CreationDate, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
                     Id = int.Parse(post.Id),
                     Username = post.OwnerUserId,
-                    Title = post.Title,
+                    Title = title,
                     Body = post.Body
                 };
             }

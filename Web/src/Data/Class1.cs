@@ -45,18 +45,29 @@ namespace Data
 
     public class Api
     {
-        private static List<Question> _questions = new List<Question>();
+        private static Dictionary<int,Question> _questions = new Dictionary<int, Question>();
 
         public int Add(Question question)
         {
-            question.Id = _questions.Count;
+            question.Id = GetAvailableQuestionId();
             var md = new MarkdownSharp.Markdown();
             question.HtmlBody = md.Transform(question.Body);
             //todo this will break any comments with code tags!!
             question.HtmlBody = question.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
             question.HtmlBody = question.HtmlBody.Replace("</code>", "</pre>");
-            _questions.Add(question);
+            _questions.Add(question.Id, question);
             return question.Id;
+        }
+
+        public int GetAvailableQuestionId()
+        {
+            int i = 0;
+            while (_questions.ContainsKey(i))
+            {
+                i++;
+            }
+
+            return i;
         }
 
         public Question Get(int id)
@@ -72,11 +83,11 @@ namespace Data
             Answer answer = null;
             foreach (var q in _questions)
             {
-                foreach (var a in q.Answers)
+                foreach (var a in q.Value.Answers)
                 {
                     if (a.Id == answerId)
                     {
-                        question = q;
+                        question = q.Value;
                         answer = a;
                         break;
                     }
@@ -91,7 +102,7 @@ namespace Data
         {
             foreach(var q in _questions)
             {
-                foreach(var a in q.Answers)
+                foreach(var a in q.Value.Answers)
                 {
                     if (a.Id == answerId)
                         a.Score += direction;
@@ -101,7 +112,7 @@ namespace Data
 
         public List<Question> GetAll()
         {
-            return _questions.OrderBy(q => q.Created).Reverse().ToList();
+            return _questions.Select(d => d.Value).OrderBy(q => q.Created).Reverse().ToList();
         }
 
         public void AddAnswer(int questionId, string answer)
@@ -116,34 +127,41 @@ namespace Data
 
         static Api()
         {
-            var questions = new List<Question>();
-            questions.Add(new Question() { Id = 0, Body = @"<pre>
-var i = 0;
-</pre>
+            var sod = new StackOverflowData();
+            var posts = sod.GetPosts();
+            var questions = sod.PostToQuestion(posts.rows).ToList();
 
-<p>How the hell do i do this????</p>", Title = "How do i get this working?!?", Username = "fred" });
-            questions.Add(new Question() { Id = 1, Body = @"I made following code for Gender field in a form and i can't find my error. Any help is appreciated
 
-    <pre>Gender =
- if (male.isSelected()) Gender = 'Male';
-            else if (female.isSelected()) Gender = 'Female';</pre>
-            I am new to NetBeans and this Site.So Please Help Me
+            //            var questions = new List<Question>();
+            //            questions.Add(new Question() { Id = 0, Body = @"<pre>
+            //var i = 0;
+            //</pre>
 
-I get the error in if statement', Title = 'argh2', Username = 'fred' });", Title = "Error in code", Username = "sillyidiot" });
+            //<p>How the hell do i do this????</p>", Title = "How do i get this working?!?", Username = "fred" });
+            //            questions.Add(new Question() { Id = 1, Body = @"I made following code for Gender field in a form and i can't find my error. Any help is appreciated
 
-            questions.Add(new Question() { Id = 2, Body = "help", Title = "argh3", Username = "fred" });
-            _questions = questions;
+            //    <pre>Gender =
+            // if (male.isSelected()) Gender = 'Male';
+            //            else if (female.isSelected()) Gender = 'Female';</pre>
+            //            I am new to NetBeans and this Site.So Please Help Me
 
-            foreach(var q in _questions)
+            //I get the error in if statement', Title = 'argh2', Username = 'fred' });", Title = "Error in code", Username = "sillyidiot" });
+
+            //            questions.Add(new Question() { Id = 2, Body = "help", Title = "argh3", Username = "fred" });
+            // _questions = questions;
+
+            foreach (var q in questions)
             {
-                q.Tags.Add("Stuff");
+               // q.Tags.Add("Stuff");
 
                 var md = new MarkdownSharp.Markdown();
                 q.HtmlBody = md.Transform(q.Body);
                 foreach (var a in q.Answers)
                     a.HtmlBody = md.Transform(a.Body);
+
+                _questions.Add(q.Id, q);
             }
-            _questions[0].Tags.Add("Things");
+            //_questions[0].Tags.Add("Things");
         }
     }
 }

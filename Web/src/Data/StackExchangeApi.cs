@@ -12,7 +12,12 @@ namespace Data
 {
     public class StackOverflowData
     {
-        public Data.StackOverflowModel.Posts.posts GetPosts()
+        public StackOverflowModel.Posts.posts GetPosts()
+        {
+            return GetObjectFromXml<StackOverflowModel.Posts.posts>("Posts");
+        }
+
+        public StackOverflowModel.PostLink.postlinks GetPostLinks()
         {
             var posts = GetObjectFromXml<Data.StackOverflowModel.Posts.posts>("Posts");
             foreach (var item in posts.rows)
@@ -27,7 +32,7 @@ namespace Data
 
         public Dictionary<int, User> GetUsers()
         {
-            var usersFromXml = GetObjectFromXml<Data.StackOverflowModel.Users.users>("Users");
+            var usersFromXml = GetObjectFromXml<StackOverflowModel.Users.users>("Users");
 
             Dictionary<int, User> users = new Dictionary<int, User>();
             foreach (var user in usersFromXml.rows)
@@ -44,7 +49,7 @@ namespace Data
             return users;
         }
 
-        public IEnumerable<Question> PostToQuestion(List<Data.StackOverflowModel.Posts.row> posts, Dictionary<int, User> users)
+        public IEnumerable<Question> PostToQuestion(List<StackOverflowModel.Posts.row> posts, Dictionary<int, User> users)
         {
             foreach (var post in posts)
             {

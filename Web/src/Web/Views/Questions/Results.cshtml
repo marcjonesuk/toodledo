@@ -47,7 +47,7 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
 
 @foreach (var q in Model.Questions)
 {
-    <div class="media" style="margin-top:0">
+    <div class="media">
         <div class="media-left text-center">
             <h2 style="margin-bottom:-6px">@q.Answers.Count</h2><small>
                 <span>answers</span>
@@ -58,7 +58,7 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
 
             <div style="position:relative">
                 <div class="question-preview">
-                    <p>@Html.Raw(q.HtmlBody)</p>
+                    @Html.Raw(q.HtmlBody)
                 </div>
 
                 <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
@@ -73,7 +73,6 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
                 <br />
                 <small> asked @Web.DateTimeFormatter.Format(@q.Created)</small>
             </div>
-            <hr style="margin-top:10px;margin-bottom:0" />
         </div>
     </div>
 }

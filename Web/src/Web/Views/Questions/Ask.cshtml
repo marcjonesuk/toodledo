@@ -6,17 +6,18 @@
 <script src="~/lib/toopay-bootstrap-markdown-604a3be/js/bootstrap-markdown.js"></script>
 <script src="http://www.codingdrama.com/bootstrap-markdown/js/markdown.js"></script>
 <link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-604a3be/css/bootstrap-markdown.min.css" />
+<script src="~/lib/validator/validator.min.js"></script>
 
 <br />
-<form method="post">
+<form method="post" data-toggle="validator">
     @Html.HiddenFor(i => i.Id)
     <div class="form-group">
         <label for="title">Title</label>
-        <input type="text" class="form-control" id="title" placeholder="Enter a title for your question" asp-for="@Model.Title">
+        <input type="text" class="form-control" id="title" placeholder="Enter a title for your question" asp-for="@Model.Title" maxlength="100" required>
     </div>
     <div class="form-group">
         <label for="body">Question</label>
-        <textarea data-provide="markdown" id="body" class="form-control" style="max-width:initial" rows="20" asp-for="@Model.Body"></textarea>
+        <textarea data-provide="markdown" id="body" class="form-control" style="max-width:initial" rows="20" asp-for="@Model.Body" data-minlength="6" required></textarea>
     </div>
 
     <button type="submit" class="btn">

@@ -14,7 +14,13 @@ namespace Data
     {
         public Data.StackOverflowModel.Posts.posts GetPosts()
         {
-            return GetObjectFromXml<Data.StackOverflowModel.Posts.posts>("Posts");
+            var posts = GetObjectFromXml<Data.StackOverflowModel.Posts.posts>("Posts");
+            foreach (var item in posts.rows)
+            {
+                item.Body = item.Body.Replace("<p>", "");
+                item.Body = item.Body.Replace("</p>", "");
+            }
+            return posts;
         }
 
         public Dictionary<int, User> GetUsers()

@@ -17,6 +17,10 @@
 <script type="text/javascript">
     var questionId = @Model.Question.Id;
 
+    var editQuestion = function(questionId) {
+        document.location.href = "/questions/ask?id=" + questionId;
+    }
+
     var del = function (answerId) {
         var data = { answerId: answerId };
 
@@ -94,6 +98,7 @@
         $("#edit-controls-" + answer).hide();
     }
 
+    var answerExpanded = false;
     $(document).ready(function() {
         $("code").addClass("prettyprint");
         PR.prettyPrint();
@@ -101,14 +106,15 @@
         $("#content").show();
         $("#add_answer").markdown({autofocus:false, savable:false});
 
-        //scroll textareas into view on click
-        //todo get this working!
         $("textarea").focus(function(a) {
-            //$('html, body').scrollTop($(a.target).offset().top);
+            $('html, body').animate({'scrollTop': $(a.target).offset().top}, 1000);
         });
 
         $("#add_answer").focus(function(a) {
-            $(a.target).animate({'height':"+=300px"}, 0);
+            if (!answerExpanded) {
+                $(a.target).animate({'height':"+=300px"}, 0);
+                answerExpanded = true;
+            }
         });
     });
 
@@ -123,17 +129,19 @@
     </div>
 }
 
-<a href="/questions/show/@Model.Question.Id"><h4>@Model.Question.Title</h4></a>
+<a href="/questions/show?id=@Model.Question.Id"><h4>@Model.Question.Title</h4></a>
 <hr />
 
 <div id="content" style="display:none;">
     <p>@Html.Raw(Model.Question.HtmlBody)</p>
+    
     <div class="text-right">
         <small>Asked @Model.Question.Created</small>
         <br />
-
-        <button href="/questions/ask?id=@Model.Question.Id" class="btn btn-sm">edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
-        <button class="btn btn-sm">delete&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></button>
+        <div style="margin-top:4px;">
+            <button onclick="editQuestion(@Model.Question.Id)" class="btn">Edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
+            <button class="btn">Delete&nbsp;<span class="glyphicon glyphicon-remove"></span></button>
+        </div>
     </div>
 
     <h4>@Model.Question.Answers.Count Answers</h4>
@@ -163,10 +171,10 @@
                     <br>
                     <div style="margin-top:4px">
                         <button class="btn btn-sm" onclick="edit(@a.Id)">
-                            Edit
+                            <span class="glyphicon glyphicon-pencil"></span>
                         </button>
                         <button class="btn btn-sm" onclick="del(@a.Id)">
-                            Delete
+                            <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </div>
                 </div>

@@ -13,7 +13,7 @@ namespace Data
     {
         public posts GetPosts()
         {
-            var filePath = @"C:\Users\Maisie\Source\Repos\toodledo\Web\src\Data\beer.stackexchange.com\Posts.xml";
+            var filePath = @"..\Data\beer.stackexchange.com\Posts.xml";
             var fs = new FileStream(filePath, FileMode.Open);
             var reader = XmlReader.Create(fs);
             var xml = new XmlSerializer(typeof(posts)).Deserialize(reader);

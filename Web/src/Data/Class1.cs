@@ -138,7 +138,7 @@ namespace Data
         {
             foreach (var q in _questions)
             {
-                foreach (var a in q.Answers)
+                foreach (var a in q.Value.Answers)
                 {
                     if (a.Id == answerId)
                     {

@@ -121,7 +121,8 @@ namespace Web.Controllers
                 result.ResultsCount = data.Count;
                 result.Questions = data.Skip((p - 1) * pagesize).Take(pagesize).ToList();
             }
-            else {
+            else
+            {
                 var data = api.GetAll().Where(question => question.Body.ToLower().Contains(q) || question.Title.ToLower().Contains(q));
                 result.ResultsCount = data.Count();
                 result.Questions = data.Skip((p - 1) * pagesize).Take(pagesize).ToList();
@@ -175,7 +176,7 @@ namespace Web.Controllers
         public IActionResult New(Question question)
         {
             var id = (new Api()).Add(question);
-            return RedirectToAction("Get", new{ id });
+            return RedirectToAction("Get", new { id });
         }
     }
 }

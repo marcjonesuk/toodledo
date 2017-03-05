@@ -46,6 +46,7 @@ namespace Web.Controllers
         public IActionResult Show(int id, string response = null)
         {
             var question = (new Api()).Get(id);
+            ViewData["Title"] = question.Title;
             return View(new ShowQuestionPage() { Question = question, Response = response });
         }
 
@@ -97,6 +98,8 @@ namespace Web.Controllers
 
         public IActionResult Latest()
         {
+            ViewData["Title"] = "Latest questions";
+
             var api = new Api();
             var result = new QuestionList();
             result.SearchText = "";
@@ -111,6 +114,8 @@ namespace Web.Controllers
 
             var api = new Api();
             var q = api.Get(id.Value);
+
+            ViewData["Title"] = q.Title;
             return View(q);
         }
 

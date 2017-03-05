@@ -25,11 +25,6 @@ namespace Data
             return posts;
         }
 
-        public StackOverflowModel.PostLink.postlinks GetPostLinks()
-        {
-            return GetObjectFromXml<Data.StackOverflowModel.PostLink.postlinks>("PostLinks");
-        }
-
         public Dictionary<int, User> GetUsers()
         {
             var usersFromXml = GetObjectFromXml<StackOverflowModel.Users.users>("Users");
@@ -51,25 +46,65 @@ namespace Data
 
         public IEnumerable<Question> PostToQuestion(List<StackOverflowModel.Posts.row> posts, Dictionary<int, User> users)
         {
+            var questions = new List<StackOverflowModel.Posts.row>();
+            var answers = new List<StackOverflowModel.Posts.row>();
+
             foreach (var post in posts)
+            {
+                if (post.PostTypeId == "1")
+                {
+                    questions.Add(post);
+                }
+                else
+                {
+                    answers.Add(post);
+                }
+            }
+
+            foreach (var question in questions)
             {
                 int userid;
                 User user = null;
-                if (int.TryParse(post.OwnerUserId, out userid))
+                if (int.TryParse(question.OwnerUserId, out userid))
                 {
                     users.TryGetValue(userid, out user);
                 }
 
-                int length = Math.Min(50, post.Body.Length);
-                var title = string.IsNullOrWhiteSpace(post.Title) ? post.Body.Substring(0, length) : post.Title;
+                var qans = answers.Where(a => a.ParentId == question.Id);
+
+                int acceptedAnswer;
+                int.TryParse(question.AcceptedAnswerId, out acceptedAnswer);
 
                 yield return new Question()
                 {
-                    Created = DateTime.ParseExact(post.CreationDate, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
-                    Id = int.Parse(post.Id),
+                    Created = DateTime.ParseExact(question.CreationDate, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
+                    Id = int.Parse(question.Id),
                     User = user,
-                    Title = title,
-                    Body = post.Body
+                    Title = question.Title,
+                    Body = question.Body,
+                    Answers = PostToAnswer(qans, users).ToList(),
+                    AcceptedAnswerId = acceptedAnswer
+                };
+            }
+        }
+        public IEnumerable<Answer> PostToAnswer(IEnumerable<StackOverflowModel.Posts.row> answers, Dictionary<int, User> users)
+        {
+            foreach (var answer in answers)
+            {
+                int userid;
+                User user = null;
+                if (int.TryParse(answer.OwnerUserId, out userid))
+                {
+                    users.TryGetValue(userid, out user);
+                }
+
+                yield return new Answer()
+                {
+                    Created = DateTime.ParseExact(answer.CreationDate, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
+                    Id = int.Parse(answer.Id),
+                    User = user,
+                    Body = answer.Body,
+                    Score = int.Parse(answer.Score)
                 };
             }
         }

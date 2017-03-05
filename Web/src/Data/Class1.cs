@@ -9,7 +9,7 @@ namespace Data
     {
         public DateTime Created { get; set; }
         public int Id { get; set; }
-        public string Username { get; set; }
+        public User User { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
         public string HtmlBody { get; set; }
@@ -129,7 +129,8 @@ namespace Data
         {
             var sod = new StackOverflowData();
             var posts = sod.GetPosts();
-            var questions = sod.PostToQuestion(posts.rows).ToList();
+            var users = sod.GetUsers();
+            var questions = sod.PostToQuestion(posts.rows, users).ToList();
 
 
             //            var questions = new List<Question>();

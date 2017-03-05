@@ -7,8 +7,8 @@ namespace Data
 {
     public class User
     {
-        public int ClientId { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public int UserId { get; set; }
+        public string DisplayName { get; set; }
+        public string ProfileImageUrl { get; set; }
     }
 }

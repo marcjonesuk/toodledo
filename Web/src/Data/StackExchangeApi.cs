@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.StackOverflowModel;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,69 +12,63 @@ namespace Data
 {
     public class StackOverflowData
     {
-        public posts GetPosts()
+        public Data.StackOverflowModel.Posts.posts GetPosts()
         {
-            var filePath = @"C:\Users\Maisie\Source\Repos\toodledo\Web\src\Data\beer.stackexchange.com\Posts.xml";
-            var fs = new FileStream(filePath, FileMode.Open);
-            var reader = XmlReader.Create(fs);
-            var xml = new XmlSerializer(typeof(posts)).Deserialize(reader);
-            return (posts)xml;
+            return GetObjectFromXml<Data.StackOverflowModel.Posts.posts>("Posts");
         }
 
-        public IEnumerable<Question> PostToQuestion(List<row> posts)
+        public Dictionary<int, User> GetUsers()
+        {
+            var usersFromXml = GetObjectFromXml<Data.StackOverflowModel.Users.users>("Users");
+
+            Dictionary<int, User> users = new Dictionary<int, User>();
+            foreach (var user in usersFromXml.rows)
+            {
+                var userid = int.Parse(user.Id);
+                users.Add(userid, new User
+                {
+                    UserId = userid,
+                    DisplayName = user.DisplayName,
+                    ProfileImageUrl = user.ProfileImageUrl
+                });
+            }
+
+            return users;
+        }
+
+        public IEnumerable<Question> PostToQuestion(List<Data.StackOverflowModel.Posts.row> posts, Dictionary<int, User> users)
         {
             foreach (var post in posts)
             {
+                int userid;
+                User user = null;
+                if (int.TryParse(post.OwnerUserId, out userid))
+                {
+                    users.TryGetValue(userid, out user);
+                }
+
                 int length = Math.Min(50, post.Body.Length);
                 var title = string.IsNullOrWhiteSpace(post.Title) ? post.Body.Substring(0, length) : post.Title;
+
                 yield return new Question()
                 {
                     Created = DateTime.ParseExact(post.CreationDate, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture),
                     Id = int.Parse(post.Id),
-                    Username = post.OwnerUserId,
+                    User = user,
                     Title = title,
                     Body = post.Body
                 };
             }
         }
-    }
 
-    public class posts
-    {
-        public List<row> rows { get; set; }
-    }
-
-    public class row
-    {
-        [XmlAttribute]
-        public string Id { get; set; }
-        [XmlAttribute]
-        public string PostTypeId { get; set; }
-        [XmlAttribute]
-        public string AcceptedAnswerId { get; set; }
-        [XmlAttribute]
-        public string CreationDate { get; set; }
-        [XmlAttribute]
-        public string Score { get; set; }
-        [XmlAttribute]
-        public string ViewCount { get; set; }
-        [XmlAttribute]
-        public string Body { get; set; }
-        [XmlAttribute]
-        public string OwnerUserId { get; set; }
-        [XmlAttribute]
-        public string LastEditorUserId { get; set; }
-        [XmlAttribute]
-        public string LastEditDate { get; set; }
-        [XmlAttribute]
-        public string LastActivityDate { get; set; }
-        [XmlAttribute]
-        public string Title { get; set; }
-        [XmlAttribute]
-        public string Tags { get; set; }
-        [XmlAttribute]
-        public string AnswerCount { get; set; }
-        [XmlAttribute]
-        public string CommentCount { get; set; }
+        static string filePathTemplate = @"C:\Users\Maisie\Source\Repos\toodledo\Web\src\Data\beer.stackexchange.com\{0}.xml";
+        public T GetObjectFromXml<T>(string fileName)
+        {
+            var filePath = string.Format(filePathTemplate, fileName);
+            var fs = new FileStream(filePath, FileMode.Open);
+            var reader = XmlReader.Create(fs);
+            var xml = new XmlSerializer(typeof(T)).Deserialize(reader);
+            return (T)xml;
+        }
     }
 }

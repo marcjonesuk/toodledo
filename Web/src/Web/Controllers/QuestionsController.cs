@@ -81,7 +81,7 @@ namespace Web.Controllers
             var result = new QuestionList();
             result.SearchText = text;
             if (!string.IsNullOrWhiteSpace(text))
-                result.Questions = api.GetAll().Where(q => q.Body.ToLower().Contains(text) || q.Title.ToLower().Contains(text)).ToList();
+                result.Questions = api.GetAll().Where(q => q.Body.ToLower().Contains(text) || q.Title.ToLower().Contains(text)).Take(25).ToList();
             return View("Results", result);
         }
 

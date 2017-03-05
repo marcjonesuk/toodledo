@@ -10,7 +10,7 @@
 
 <style>
     .edit-answer {
-        display:none;
+        display: none;
     }
 </style>
 
@@ -102,7 +102,7 @@
     $(document).ready(function() {
         $("code").addClass("prettyprint");
         PR.prettyPrint();
-        
+
         $("#content").show();
         $("#add_answer").markdown({autofocus:false, savable:false});
 
@@ -134,7 +134,7 @@
 
 <div id="content" style="display:none;">
     <p>@Html.Raw(Model.Question.HtmlBody)</p>
-    
+
     <div class="text-right">
         <small>Asked @Web.DateTimeFormatter.Format(Model.Question.Created)</small>
         <br />
@@ -154,10 +154,15 @@
                 <span class="glyphicon glyphicon-triangle-top" style="font-size: 20px" onclick="vote(@a.Id, 1)"></span>
                 <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>
                 <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 20px;" onclick="vote(@a.Id, -1)"></span>
+
+                @if (Model.Question.AcceptedAnswerId == a.Id)
+                {
+                    <small>I am the one</small>
+                }
             </div>
             <div class="col-sm-11">
                 <div id="answer-@a.Id" class="answer-text">@Html.Raw(a.HtmlBody)</div>
-                
+
                 <div id="edit-@a.Id" class="edit-answer">
                     <textarea rows="16">@a.Body</textarea>
                     <div style="margin-top:12px;">

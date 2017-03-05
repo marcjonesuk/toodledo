@@ -43,5 +43,7 @@ namespace Data.StackOverflowModel.Posts
         public string AnswerCount { get; set; }
         [XmlAttribute]
         public string CommentCount { get; set; }
+        [XmlAttribute]
+        public string ParentId { get; set; }
     }
 }

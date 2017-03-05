@@ -13,6 +13,7 @@ namespace Data
         public string Title { get; set; }
         public string Body { get; set; }
         public string HtmlBody { get; set; }
+        public int? AcceptedAnswerId { get; set; }
 
         public List<Answer> Answers { get; set; }
 
@@ -40,10 +41,11 @@ namespace Data
 
         public DateTime Created { get; set; }
         public int Id { get; set; }
-        public string Username { get; set; }
         public string Body { get; set; }
         public int Score { get; set; }
         public string HtmlBody { get; set; }
+        public DateTime Created { get; set; }
+        public User User { get; set; }
     }
 
     public class Api

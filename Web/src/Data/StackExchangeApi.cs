@@ -12,6 +12,8 @@ namespace Data
 {
     public class StackOverflowData
     {
+        Dictionary<int, User> _users;
+
         public StackOverflowModel.Posts.posts GetPosts()
         {
             var posts = GetObjectFromXml<Data.StackOverflowModel.Posts.posts>("Posts");
@@ -40,8 +42,19 @@ namespace Data
                     ProfileImageUrl = user.ProfileImageUrl
                 });
             }
-
+            _users = users;
             return users;
+        }
+        
+        private User GetUser(string userid)
+        {
+            int id;
+            User user = new User();
+            if (int.TryParse(userid, out id))
+            {
+                _users.TryGetValue(id, out user);
+            }
+            return user;
         }
 
         public IEnumerable<Question> PostToQuestion(List<StackOverflowModel.Posts.row> posts, Dictionary<int, User> users)

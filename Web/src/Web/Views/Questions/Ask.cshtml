@@ -3,6 +3,10 @@
 *@
 @model Data.Question
 
+<script src="~/lib/toopay-bootstrap-markdown-604a3be/js/bootstrap-markdown.js"></script>
+<script src="http://www.codingdrama.com/bootstrap-markdown/js/markdown.js"></script>
+<link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-604a3be/css/bootstrap-markdown.min.css" />
+
 <br />
 <form method="post">
     <div class="form-group">
@@ -11,7 +15,7 @@
         </div>
     <div class="form-group">
         <label for="body">Question</label>
-        <textarea id="body" class="form-control" style="max-width:initial" rows="12" asp-for="@Model.Body"></textarea>
+        <textarea data-provide="markdown" id="body" class="form-control" style="max-width:initial" rows="20" asp-for="@Model.Body"></textarea>
     </div>
 
     <button type="submit" class="btn">Post Question</button>

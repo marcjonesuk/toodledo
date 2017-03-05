@@ -12,6 +12,8 @@ namespace Data
         public string Username { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
+        public string HtmlBody { get; set; }
+
         public List<Answer> Answers { get; set; }
 
         public List<string> Tags { get; set; }
@@ -38,6 +40,7 @@ namespace Data
         public string Username { get; set; }
         public string Body { get; set; }
         public int Score { get; set; }
+        public string HtmlBody { get; set; }
     }
 
     public class Api
@@ -47,6 +50,11 @@ namespace Data
         public int Add(Question question)
         {
             question.Id = _questions.Count;
+            var md = new MarkdownSharp.Markdown();
+            question.HtmlBody = md.Transform(question.Body);
+            //todo this will break any comments with code tags!!
+            question.HtmlBody = question.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
+            question.HtmlBody = question.HtmlBody.Replace("</code>", "</pre>");
             _questions.Add(question);
             return question.Id;
         }
@@ -98,7 +106,12 @@ namespace Data
 
         public void AddAnswer(int questionId, string answer)
         {
-            _questions[questionId].Answers.Add(new Answer() { Body = answer });
+            var a = new Answer() { Body = answer };
+            var md = new MarkdownSharp.Markdown();
+            a.HtmlBody = md.Transform(a.Body);
+            a.HtmlBody = a.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
+            a.HtmlBody = a.HtmlBody.Replace("</code>", "</pre>");
+            _questions[questionId].Answers.Add(a);
         }
 
         static Api()
@@ -124,6 +137,11 @@ I get the error in if statement', Title = 'argh2', Username = 'fred' });", Title
             foreach(var q in _questions)
             {
                 q.Tags.Add("Stuff");
+
+                var md = new MarkdownSharp.Markdown();
+                q.HtmlBody = md.Transform(q.Body);
+                foreach (var a in q.Answers)
+                    a.HtmlBody = md.Transform(a.Body);
             }
             _questions[0].Tags.Add("Things");
         }

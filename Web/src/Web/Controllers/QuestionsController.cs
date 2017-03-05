@@ -9,6 +9,10 @@ namespace Web.Controllers
 {
     public class QuestionList
     {
+        public QuestionList()
+        {
+            Questions = new List<Question>();
+        }
         public List<Question> Questions { get; set; }
         public string SearchText { get; set; }
     }
@@ -73,12 +77,11 @@ namespace Web.Controllers
 
         public IActionResult Search(string text)
         {
-            if (string.IsNullOrWhiteSpace(text))
-                return null;
             var api = new Api();
             var result = new QuestionList();
             result.SearchText = text;
-            result.Questions = api.GetAll().Where(q => q.Body.ToLower().Contains(text) || q.Title.ToLower().Contains(text)).ToList();
+            if (!string.IsNullOrWhiteSpace(text))
+                result.Questions = api.GetAll().Where(q => q.Body.ToLower().Contains(text) || q.Title.ToLower().Contains(text)).ToList();
             return View("Results", result);
         }
 

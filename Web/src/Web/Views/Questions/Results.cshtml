@@ -6,6 +6,22 @@
 
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
+<style>
+    .question-preview {
+        max-height: 100px;
+        overflow: hidden;
+    }
+
+    .fadeout {
+        height: 4em;
+        background: -webkit-linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
+        background-image: -moz-linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
+        background-image: -o-linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
+        background-image: linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
+        background-image: -ms-linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
+    }
+</style>
+
 <form class="form-horizontal">
     <div class="form-group">
         <div class="col-sm-1"></div>
@@ -37,10 +53,16 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
                 <span>answers</span>
             </small>
         </div>
-        <div class="media-body" style="padding-left:16px">
+        <div class="media-body" style="padding-left:16px;">
             <a href="/questions/show?id=@q.Id"><h4>"@q.Title"</h4></a>
 
-            <p>@Html.Raw(q.HtmlBody)</p>
+            <div style="position:relative">
+                <div class="question-preview">
+                    <p>@Html.Raw(q.HtmlBody)</p>
+                </div>
+
+                <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
+            </div>
 
             <div class="text-right">
                 @if (!string.IsNullOrEmpty(q.User.ProfileImageUrl))

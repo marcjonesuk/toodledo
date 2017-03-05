@@ -79,7 +79,7 @@ namespace Web.Controllers
             var api = new Api();
             var result = new QuestionList();
             result.SearchText = "";
-            result.Questions = api.GetAll();
+            result.Questions = api.GetAll().Take(10).ToList();
             return View("Results", result);
         }
 

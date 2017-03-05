@@ -59,8 +59,14 @@
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
+
+    <div class="container body-content ">
+        <div class="col-sm-9">
+            @RenderBody()
+        </div>
+        <div class="col-sm-3">
+            @await Component.InvokeAsync("AddAnswer")
+        </div>
     </div>
 
     @RenderSection("scripts", required: false)

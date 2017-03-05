@@ -38,7 +38,7 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
             </small>
         </div>
         <div class="media-body" style="padding-left:16px">
-            <a href="/questions/show?id=@q.Id"><h4>@q.Title</h4></a>
+            <a href="/questions/show?id=@q.Id"><h4>"@q.Title"</h4></a>
 
             <p>@Html.Raw(q.HtmlBody)</p>
 
@@ -55,16 +55,19 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
     </div>
 }
 
-<ul class="pagination">
-    @for (var p = 1; p <= Model.MaxPages; p++)
-    {
-        var c = Model.Page == p ? "active" : "";
-        var qs = "p=" + p;
-
-        if (!string.IsNullOrEmpty(Model.SearchText))
+@if (Model.MaxPages > 1)
+{
+    <ul class="pagination">
+        @for (var p = 1; p <= Model.MaxPages; p++)
         {
-            qs += "&q=" + Model.SearchText;
+            var c = Model.Page == p ? "active" : "";
+            var qs = "p=" + p;
+
+            if (!string.IsNullOrEmpty(Model.SearchText))
+            {
+                qs += "&q=" + Model.SearchText;
+            }
+            <li class="@c"><a href="/questions?@qs">@p</a></li>
         }
-        <li class="@c"><a href="/questions?@qs">@p</a></li>
-    }
-</ul>
+    </ul>
+}

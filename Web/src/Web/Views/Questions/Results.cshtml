@@ -39,7 +39,7 @@
             <p>@Html.Raw(q.HtmlBody)</p>
 
             <div class="text-right">
-                <small>Asked 14th Jan 2017 at 17:05</small>
+                <small>Asked @q.Created.ToString("dd MMM yyyy") at @q.Created.ToString("HH:mm")</small>
             </div>
             <hr />
         </div>

@@ -39,6 +39,11 @@
             <p>@Html.Raw(q.HtmlBody)</p>
 
             <div class="text-right">
+                @if (!string.IsNullOrEmpty(q.User.ProfileImageUrl))
+                {
+                    <img src="@q.User.ProfileImageUrl" height="20" width="20" />
+                }
+                <small>@q.User.DisplayName</small>
                 <small>Asked @q.Created.ToString("dd MMM yyyy") at @q.Created.ToString("HH:mm")</small>
             </div>
             <hr />

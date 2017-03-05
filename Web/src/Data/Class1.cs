@@ -67,6 +67,7 @@ namespace Data
             question.Id = GetAvailableQuestionId();
             var md = new MarkdownSharp.Markdown();
             question.HtmlBody = md.Transform(question.Body);
+            question.User = new User() { DisplayName = "TestyMcTestFace" };
             //todo this will break any comments with code tags!!
             question.HtmlBody = question.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
             question.HtmlBody = question.HtmlBody.Replace("</code>", "</pre>");

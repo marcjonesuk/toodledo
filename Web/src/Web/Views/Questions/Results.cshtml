@@ -4,6 +4,8 @@
 @model Web.Controllers.QuestionList
 <br />
 
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
 <form class="form-horizontal">
     <div class="form-group">
         <div class="col-sm-1"></div>
@@ -12,7 +14,7 @@
         </div>
 
         <div class="col-xs-1">
-            <button id="search_btn" type="submit" class="btn btn-primary" onclick="window.location.href = 'search?text=' + getElementById('search').value; return false"><span class="glyphicon glyphicon-search"></span></button>
+            <button id="search_btn" type="submit" class="btn btn-primary" onclick="window.location.href = '/questions/search?text=' + getElementById('search').value; return false"><span class="glyphicon glyphicon-search"></span></button>
         </div>
     </div>
 </form>
@@ -25,7 +27,6 @@
 
 @foreach (var q in Model.Questions)
 {
-
     <div class="media">
         <div class="media-left text-center">
             <h1 style="margin-bottom:-6px">@q.Answers.Count</h1><small>
@@ -35,7 +36,7 @@
         <div class="media-body" style="padding-left:16px">
             <a href="/questions/show?id=@q.Id"><h4>@q.Title</h4></a>
 
-            <p>@Html.Raw(q.Body)</p>
+            <p>@Html.Raw(q.HtmlBody)</p>
 
             <div class="text-right">
                 <small>Asked @q.Created.ToString("dd MMM yyy at HH:mm")</small>

@@ -61,7 +61,7 @@ namespace Data
             }
         }
 
-        static string filePathTemplate = @"C:\Users\Maisie\Source\Repos\toodledo\Web\src\Data\beer.stackexchange.com\{0}.xml";
+        static string filePathTemplate = @"..\Data\beer.stackexchange.com\{0}.xml";
         public T GetObjectFromXml<T>(string fileName)
         {
             var filePath = string.Format(filePathTemplate, fileName);

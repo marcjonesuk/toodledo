@@ -33,10 +33,12 @@ namespace Data
 
         public Answer()
         {
+            Created = DateTime.UtcNow;
             Id = _idCounter;
             _idCounter++;
         }
 
+        public DateTime Created { get; set; }
         public int Id { get; set; }
         public string Username { get; set; }
         public string Body { get; set; }

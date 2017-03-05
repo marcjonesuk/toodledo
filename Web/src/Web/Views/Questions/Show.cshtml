@@ -136,7 +136,7 @@
     <p>@Html.Raw(Model.Question.HtmlBody)</p>
     
     <div class="text-right">
-        <small>Asked @Model.Question.Created</small>
+        <small>Asked @Web.DateTimeFormatter.Format(Model.Question.Created)</small>
         <br />
         <div style="margin-top:4px;">
             <button onclick="editQuestion(@Model.Question.Id)" class="btn">Edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
@@ -167,9 +167,7 @@
                 </div>
 
                 <div id="edit-controls-@a.Id" class="edit-controls text-right">
-                    <small >14th Jan 2017 at 17:05</small>
-                    <br>
-                    <div style="margin-top:4px">
+                    <div style="margin-bottom:12px">
                         <button class="btn btn-sm" onclick="edit(@a.Id)">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </button>
@@ -177,6 +175,7 @@
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </div>
+                    <small>Posted @Web.DateTimeFormatter.Format(@a.Created)</small>
                 </div>
                 <hr />
             </div>

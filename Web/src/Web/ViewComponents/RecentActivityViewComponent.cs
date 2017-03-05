@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Web.ViewControllers
 {
-    public class AddAnswerViewComponent : ViewComponent
+    public class RecentActivityViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(int questionId)
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View(new Answer());
+            var api = new Api();
+            return View(api.GetAll().Take(10));
         }
     }
 }

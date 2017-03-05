@@ -64,7 +64,7 @@ namespace Data
             foreach (var question in questions)
             {
                 int userid;
-                User user = null;
+                User user = new User();
                 if (int.TryParse(question.OwnerUserId, out userid))
                 {
                     users.TryGetValue(userid, out user);

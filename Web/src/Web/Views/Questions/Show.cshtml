@@ -136,12 +136,11 @@
     <p>@Html.Raw(Model.Question.HtmlBody)</p>
 
     <div class="text-right">
-        <small>Asked @Web.DateTimeFormatter.Format(Model.Question.Created)</small>
-        <br />
-        <div style="margin-top:4px;">
-            <button onclick="editQuestion(@Model.Question.Id)" class="btn">Edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span></button>
-            <button class="btn">Delete&nbsp;<span class="glyphicon glyphicon-remove"></span></button>
+        <div style="margin-bottom:4px;">
+            <button onclick="editQuestion(@Model.Question.Id)" class="btn btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
+            <button class="btn btn-sm"><span class="glyphicon glyphicon-remove"></span></button>
         </div>
+        <small>Asked @Web.DateTimeFormatter.Format(Model.Question.Created)</small>
     </div>
 
     <h4>@Model.Question.Answers.Count Answers</h4>
@@ -151,18 +150,16 @@
     {
         <div class="row">
             <div class="col-sm-1" style="text-align:center">
-                <span class="glyphicon glyphicon-triangle-top" style="font-size: 20px" onclick="vote(@a.Id, 1)"></span>
+                <span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@a.Id, 1)"></span>
                 <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>
-                <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 20px;" onclick="vote(@a.Id, -1)"></span>
-
+                <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@a.Id, -1)"></span>
+                <br />
                 @if (Model.Question.AcceptedAnswerId == a.Id)
                 {
-                    <small>I am the one</small>
+                   <span style="font-size:28px;" class="glyphicon glyphicon-ok"></span>
                 }
             </div>
             <div class="col-sm-11">
-                <div id="answer-@a.Id" class="answer-text">@Html.Raw(a.HtmlBody)</div>
-
                 <div id="edit-@a.Id" class="edit-answer">
                     <textarea rows="16">@a.Body</textarea>
                     <div style="margin-top:12px;">
@@ -170,9 +167,10 @@
                         <button class="btn" onclick="endEdit()"><span>Cancel</span></button>
                     </div>
                 </div>
+                <div id="answer-@a.Id" class="answer-text">@Html.Raw(a.HtmlBody)</div>
 
                 <div id="edit-controls-@a.Id" class="edit-controls text-right">
-                    <div style="margin-bottom:12px">
+                    <div style="margin-bottom:4px">
                         <button class="btn btn-sm" onclick="edit(@a.Id)">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </button>

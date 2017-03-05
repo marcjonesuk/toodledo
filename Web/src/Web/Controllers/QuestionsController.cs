@@ -15,6 +15,9 @@ namespace Web.Controllers
         }
         public List<Question> Questions { get; set; }
         public string SearchText { get; set; }
+        public int ResultsCount { get; set; }
+        public int Page { get; set; }
+        public int MaxPages { get; set; }
     }
 
     public class DeleteRequest
@@ -86,24 +89,51 @@ namespace Web.Controllers
             }
         }
 
-        public IActionResult Search(string text)
-        {
-            var api = new Api();
-            var result = new QuestionList();
-            result.SearchText = text;
-            if (!string.IsNullOrWhiteSpace(text))
-                result.Questions = api.GetAll().Where(q => q.Body.ToLower().Contains(text) || q.Title.ToLower().Contains(text)).Take(25).ToList();
-            return View("Results", result);
-        }
+        //public IActionResult Search(string text)
+        //{
+        //    var api = new Api();
+        //    var result = new QuestionList() { Page = 1 };
+        //    result.SearchText = text;
+        //    if (!string.IsNullOrWhiteSpace(text))
+        //        result.Questions = api.GetAll().Where(q => q.Body.ToLower().Contains(text) || q.Title.ToLower().Contains(text)).Take(25).ToList();
+        //    return View("Results", result);
+        //}
 
-        public IActionResult Latest()
+        public IActionResult Search(int p, string order, string q, int pagesize)
         {
+            if (order == null)
+                order = "mostrecent";
+
+            if (p == 0)
+                p = 1;
+
+            if (pagesize == 0)
+                pagesize = 10;
+
             ViewData["Title"] = "Latest questions";
 
             var api = new Api();
-            var result = new QuestionList();
-            result.SearchText = "";
-            result.Questions = api.GetAll().Take(10).ToList();
+            var result = new QuestionList() { Page = p };
+
+            if (string.IsNullOrEmpty(q))
+            {
+                var data = api.GetAll();
+                result.ResultsCount = data.Count;
+                result.Questions = data.Skip((p - 1) * pagesize).Take(pagesize).ToList();
+            }
+            else {
+                var data = api.GetAll().Where(question => question.Body.ToLower().Contains(q) || question.Title.ToLower().Contains(q));
+                result.ResultsCount = data.Count();
+                result.Questions = data.Skip((p - 1) * pagesize).Take(pagesize).ToList();
+            }
+
+            result.SearchText = q;
+            result.MaxPages = (int)Math.Floor((double)result.ResultsCount / pagesize);
+
+            if (result.ResultsCount % pagesize != 0)
+                result.MaxPages++;
+
+            result.MaxPages = Math.Min(pagesize, result.MaxPages);
             return View("Results", result);
         }
 

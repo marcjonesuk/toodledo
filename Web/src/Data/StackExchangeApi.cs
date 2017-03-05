@@ -19,6 +19,8 @@ namespace Data
             {
                 item.Body = item.Body.Replace("<p>", "");
                 item.Body = item.Body.Replace("</p>", "");
+                item.Body = item.Body.Replace("<h2>", "");
+                item.Body = item.Body.Replace("</h2>", "");
             }
             return posts;
         }

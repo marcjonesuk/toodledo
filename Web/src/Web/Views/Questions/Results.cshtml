@@ -14,7 +14,7 @@
         </div>
 
         <div class="col-xs-1">
-            <button id="search_btn" type="submit" class="btn btn-primary" onclick="window.location.href = '/questions/search?text=' + getElementById('search').value; return false"><span class="glyphicon glyphicon-search"></span></button>
+            <button id="search_btn" type="submit" class="btn btn-primary" onclick="window.location.href = '/questions?q=' + getElementById('search').value; return false"><span class="glyphicon glyphicon-search"></span></button>
         </div>
     </div>
 </form>
@@ -23,6 +23,10 @@
 @if (Model.Questions == null || Model.Questions.Count == 0)
 {
     <span>Sorry, no results found</span>
+}
+else if (!string.IsNullOrEmpty(Model.SearchText))
+{
+    <span>@Model.ResultsCount results found</span>
 }
 
 @foreach (var q in Model.Questions)
@@ -51,10 +55,16 @@
     </div>
 }
 
-@*<ul class="pagination">
-        <li><a href="#">1</a></li>
-        <li class="active"><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-    </ul>*@
+<ul class="pagination">
+    @for (var p = 1; p <= Model.MaxPages; p++)
+    {
+        var c = Model.Page == p ? "active" : "";
+        var qs = "p=" + p;
+
+        if (!string.IsNullOrEmpty(Model.SearchText))
+        {
+            qs += "&q=" + Model.SearchText;
+        }
+        <li class="@c"><a href="/questions?@qs">@p</a></li>
+    }
+</ul>

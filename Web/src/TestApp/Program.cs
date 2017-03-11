@@ -11,15 +11,60 @@ namespace TestApp
     {
         public static void Main(string[] args)
         {
+            RelationAttacher ra = new RelationAttacher();
             try
             {
-                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
             Console.ReadLine();
+        }
+    }
+
+    public class RowAndIdx
+    {
+        public Data.StackOverflowModel.Posts.row Row { get; set; }
+        public int Index { get; set; }
+    }
+
+    public class RelationAttacher
+    {
+        public RelationAttacher()
+        {
+            var d = new StackOverflowData();
+            var posts = d.GetPosts().rows;
+            var questions = new Dictionary<int, RowAndIdx>();
+            var answers = new List<RowAndIdx>();
+
+            for (int i = 0; i < posts.Count; i++)
+            {
+                var post = posts[i];
+                if (post.PostTypeId == "1")
+                {
+                    questions.Add(int.Parse(post.Id), new RowAndIdx { Row = post, Index = i + 1 });
+                }
+                else
+                {
+                    answers.Add(new RowAndIdx { Row = post, Index = i + 1 });
+                }
+            }
+
+            //for (int i = 0; i < answers.Count; i++)
+            foreach (var answer in answers)
+            {
+                if (answer.Row.ParentId != null)
+                {
+                    var question = questions[int.Parse(answer.Row.ParentId)];
+                    AddRelation(question.Index, answer.Index);
+                }
+            }
+        }
+
+        private void AddRelation(int parentId, int childId)
+        {
+            ContentApi.Relate(parentId, childId);
         }
     }
 }

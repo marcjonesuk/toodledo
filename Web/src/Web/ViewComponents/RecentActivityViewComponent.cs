@@ -9,11 +9,15 @@ namespace Web.ViewControllers
 {
     public class RecentActivityViewComponent : ViewComponent
     {
+        private static List<Content> _cache;
+
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            //var api = new Api();
-            //return View(api.GetAll().Take(10));
-            return View();
+            if (_cache == null)
+            {
+                _cache = ContentApi.Search(25, 1, null, null, null);
+            }
+            return View(_cache);
         }
     }
 }

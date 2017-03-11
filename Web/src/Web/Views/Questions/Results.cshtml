@@ -68,10 +68,9 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
     <span>@Model.ResultsCount results found</span>
 }
 
-<ul class="nav nav-tabs" style="margin-top: 20px">
-
-    <li class='@(Model.OrderBy == "score-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'score-desc' })">Highest Voted</a></li>
-    <li class='@(Model.OrderBy == "created-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'created-desc' })">Most Recent</a></li>
+<ul class="nav nav-tabs" style="margin-top: 20px;">
+    <li style="cursor: pointer" class='@(Model.OrderBy == "score-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'score-desc' })">Highest Voted</a></li>
+    <li style="cursor: pointer" class='@(Model.OrderBy == "created-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'created-desc' })">Most Recent</a></li>
 </ul>
 
 @foreach (var q in Model.Content)
@@ -124,11 +123,18 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
 
 @if (Model.MaxPages > 1)
 {
-    <ul class="pagination">
-        @for (var p = 1; p <= Model.MaxPages; p++)
-        {
-            var c = Model.Page == p ? "active" : "";
-            <li class="@c"><a class="btn" onclick="window.search({ p: @p})">@p</a></li>
-        }
-    </ul>
+    <hr />
+
+    <div class="col-sm-2">
+    </div>
+
+    <div class="col-sm-7 text-center">
+        <ul class="pagination">
+            @for (var p = 1; p <= Model.MaxPages; p++)
+                {
+                    var c = Model.Page == p ? "active" : "";
+                <li class="@c"><a class="btn" onclick="window.search({ p: @p})">@p</a></li>
+            }
+        </ul>
+    </div>
 }

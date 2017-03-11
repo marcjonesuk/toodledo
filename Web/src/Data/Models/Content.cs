@@ -23,6 +23,7 @@ namespace Data
         public string Title { get; set; }
 
         public int Score { get; set; }
+        public int? ParentId { get; set; }
         public int ChildrenCount { get; set; }
         public List<Content> Children { get; set; }
 

@@ -47,6 +47,24 @@ namespace Data
             return results;
         }
 
+        public static List<Content> GetParent(int childId)
+        {
+            var result = GetContent($@"SELECT c.Id, 
+                                             c.Title, 
+                                             c.Body, 
+                                             c.UserId, 
+                                             c.Type,
+                                             c.HtmlBody,
+                                             c.Created
+                                      FROM[toodledo].[dbo].[ContentRelation] r
+                                      INNER JOIN[toodledo].[dbo].[Content] c
+                                      ON r.ParentId = c.Id
+                                      WHERE r.ChildId = {childId}");
+
+            Hydrate(result);
+            return result;
+        }
+
         public static List<Content> SelectByParent(int parentId)
         {
             var result = GetContent($@"SELECT c.Id, 
@@ -94,7 +112,7 @@ namespace Data
             switch (orderBy)
             {
                 case "created-desc":
-                    sql += " ORDER BY Id DESC";
+                    sql += " ORDER BY Created DESC";
                     break;
 
                 case "score-desc":

@@ -15,9 +15,22 @@
     @foreach (var c in Model)
     {
         <p class="item" style="display:none">
-            <a href="/questions/show?id=@c.Id">"@c.Title"</a> -
             @c.User.DisplayName
+            @{
+                string action = "";
+                int questionId = c.ParentId ?? c.Id;
+            }
+            @if (c.Type == "question")
+            {
+                action = " asked ";
+            }
+            else
+            {
+                action = " answered ";
+            }
+            @action
+            <a href="/questions/show?id=@questionId">"@c.Title"</a>
         </p>
         <br />
-    }
+                }
 </dv>

@@ -13,9 +13,19 @@ namespace Web.ViewControllers
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            if (_cache == null)
+            //if (_cache == null)
+            //{
+            _cache = ContentApi.Search(25, 1, null, null, null, null);
+            //}
+
+            foreach (var content in _cache)
             {
-                _cache = ContentApi.Search(25, 1, null, null, null, null);
+                if(content.Type == "answer")
+                {
+                    var parent = ContentApi.GetParent(content.Id).First();
+                    content.Title = parent.Title;
+                    content.ParentId = parent.Id;
+                }
             }
             return View(_cache);
         }

@@ -91,7 +91,8 @@ namespace Web.Controllers
             if (req.AnswerId == 0)
             {
                 var md = Markdown.Encode(req.Answer);
-                ContentApi.InsertAsChild(req.QuestionId, new Content() { Type="answer", Body = req.Answer, UserId = 1 });
+                var htmlBody = Markdown.Encode(req.Answer);
+                ContentApi.InsertAsChild(req.QuestionId, new Content() { Type="answer", Body = req.Answer, UserId = 1, HtmlBody = htmlBody });
                 return md;
             }
             else
@@ -135,7 +136,7 @@ namespace Web.Controllers
         public IActionResult Ask(int? id)
         {
             if (id == null)
-                return View(new Content() { UserId = 60 });
+                return View(new Content() { UserId = 60, Type = "question" });
 
             var c = ContentApi.Select(id.Value);
             ViewData["Title"] = c.Title;
@@ -148,6 +149,7 @@ namespace Web.Controllers
             int id = content.Id;
             if (id == 0)
             {
+                content.HtmlBody = Markdown.Encode(content.Body);
                 id = ContentApi.Insert(content);
             }
             else

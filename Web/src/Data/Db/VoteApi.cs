@@ -30,7 +30,10 @@ namespace Data
                 VALUES
                    ({contentId}, {userId}, {direction})");
             }
-            return Select(contentId);
+
+            var score = Select(contentId);
+            ContentApi.UpdateScore(contentId, score);
+            return score;
         }
 
         public static int Select(int contentId)

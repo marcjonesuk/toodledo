@@ -9,20 +9,27 @@
 <script type="text/javascript">
 
     var params = {
-            p: @Model.Page,
-            t: @Model.Tag,
-            q: "@Model.SearchText"
-        };
+        p: @Model.Page,
+        o: "@Model.OrderBy",
+        q: "@Model.SearchText"
+    };
 
-    function search(next) {
+    window.search = function(next) {
         $.extend( params, next );
         var url = '/questions?';
 
-        if (typeof(next.t) !== "undefined")
+        if (typeof(next) == "undefined") {
             params.p = 1;
+            params.q = $('#page-search').val();
+        }
+        else {
+            if (typeof(next.t) !== "undefined") {
+                params.p = 1;
+            }
+        }
 
         url += 'p=' + params.p;
-        url += '&t=' + params.t;
+        url += '&o=' + params.o;
         url += '&q=' + params.q;
 
         window.location.href = url;
@@ -30,24 +37,8 @@
 
 </script>
 
-<style>
-    .question-preview {
-        max-height: 100px;
-        overflow: hidden;
-    }
-
-    .fadeout {
-        height: 2em;
-        background: -webkit-linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
-        background-image: -moz-linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
-        background-image: -o-linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
-        background-image: linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
-        background-image: -ms-linear-gradient( rgba(252, 252, 252, 0) 0%, rgba(252, 252, 252, 1) 100% );
-    }
-</style>
-
 @*<form class="form-horizontal">*@
-    <div class="form-group">
+@*<div class="form-group">
         <div class="col-sm-1"></div>
         <div class="col-xs-8 col-sm-6 col-lg-4">
             <input id="page-search" class="form-control" placeholder="search for" asp-for="@Model.SearchText">
@@ -56,11 +47,17 @@
         <div class="col-xs-1">
             <button id="search_btn" type="submit" class="btn btn-primary" onclick="search({ q: $('#page-search').val() })"><span class="glyphicon glyphicon-search"></span></button>
         </div>
+    </div>*@
 
-       
+<div class="input-group">
+    <input id="page-search" type="text" class="form-control" placeholder="Search">
+    <div class="input-group-btn">
+        <button class="btn btn-default" type="submit" onclick="search()">
+            <i class="glyphicon glyphicon-search"></i>
+        </button>
     </div>
+</div>
 @*</form>*@
-<hr />
 
 @if (Model.Content == null || Model.Content.Count == 0)
 {
@@ -71,43 +68,48 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
     <span>@Model.ResultsCount results found</span>
 }
 
-@foreach (var t in Model.Tags)
-{
-    @*@if (t.Id == Model.Tag)
-        {
-            <button class="btn btn-sm btn-primary active">@t.Name <span class="badge">@t.Count</span></button>
-        }*@
-    //else
-    //{
-    <button class="btn btn-sm" onclick="search({ t: @t.Id });">@t.Name <span class="badge">@t.Count</span></button>
-    //}
-}
+<ul class="nav nav-tabs" style="margin-top: 20px">
+
+    <li class='@(Model.OrderBy == "score-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'score-desc' })">Highest Voted</a></li>
+    <li class='@(Model.OrderBy == "created-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'created-desc' })">Most Recent</a></li>
+</ul>
 
 @foreach (var q in Model.Content)
 {
-    <div class="media">
-        <div class="media-left text-center">
-            <h2 style="margin-bottom:-6px">@q.ChildrenCount</h2><small>
+    <div class="media" style="padding-left: 20px">
+        <div class="media-left text-center" style="padding-left:16px;">
+            <h2 style="margin-top:12px; margin-bottom:-6px">@q.Score</h2><small>
+                <span>score</span>
+            </small>
+        </div>
+
+        <div class="media-left text-center" style="padding-left:16px;">
+            <h2 style="margin-top:12px; margin-bottom:-6px">@q.ChildrenCount</h2><small>
                 <span>answers</span>
             </small>
         </div>
+
         <div class="media-body" style="padding-left:16px;">
-            <a href="/questions/show?id=@q.Id"><h4>"@q.Title"</h4></a>
+            <div class="col-sm-9">
+                <div>
+                    <a href="/questions/show?id=@q.Id"><h4>"@q.Title"</h4></a>
 
-            @foreach (var t in q.Tags)
-            {
-                <button type="button" class="btn btn-sm">@t.Name</button>
-            }
+                    @foreach (var t in q.Tags)
+                    {
+                        <span class="badge">@t.Name</span>
+                    }
 
-            @*<div style="position:relative">
-                    <div class="question-preview">
-                        @Html.Raw(q.HtmlBody)
-                    </div>
+                    @*<div style="position:relative">
+                            <div class="question-preview">
+                                @Html.Raw(q.HtmlBody)
+                            </div>
 
-                    <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
-                </div>*@
+                            <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
+                        </div>*@
+                </div>
+            </div>
 
-            <div class="text-right">
+            <div class="col-sm-3">
                 @if (!string.IsNullOrEmpty(q.User.ProfileImageUrl))
                 {
                     <img src="@q.User.ProfileImageUrl" height="20" width="20" />
@@ -126,7 +128,7 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
         @for (var p = 1; p <= Model.MaxPages; p++)
         {
             var c = Model.Page == p ? "active" : "";
-            <li class="@c"><button class="btn" onclick="search({ p: @p})">@p</button></li>
+            <li class="@c"><a class="btn" onclick="window.search({ p: @p})">@p</a></li>
         }
     </ul>
 }

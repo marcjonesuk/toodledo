@@ -11,17 +11,34 @@ namespace TestApp
     {
         public static void Main(string[] args)
         {
-            var tags = TagApi.Select();
+            //var tags = TagApi.Select();
 
-            foreach(var t in tags)
+            //foreach(var t in tags)
+            //{
+            //    var content = ContentApi.Search(1000000, 1, "question", t.Name, null, null);
+
+            //    foreach(var c in content)
+            //    {
+            //        TagApi.Tag(c.Id, t.Id);
+            //        Console.Write('.');
+            //    }
+            //}
+
+            Random r = new Random();
+
+            for(var i =0; i < 10000; i++)
             {
-                var content = ContentApi.Search(1000000, 1, "question", t.Name, null, null);
+                var contentId = r.Next(2106) + 1;
+                var userid = r.Next(4500) + 1;
 
-                foreach(var c in content)
-                {
-                    TagApi.Tag(c.Id, t.Id);
-                    Console.Write('.');
-                }
+                var direction = r.Next(10);
+
+                if (direction == 9)
+                    direction = -1;
+                else
+                    direction = 1;
+
+                VoteApi.Vote(contentId, userid, direction);
             }
 
             
@@ -66,8 +83,8 @@ namespace TestApp
 
         private void AddCreatedDate(int contentid, DateTime date)
         {
-            var dateStr = date.ToString("yyyy-MM-dd h:m:s");
-            ContentApi.AddCreatedDate(contentid, dateStr);
+            //var dateStr = date.ToString("yyyy-MM-dd h:m:s");
+            //ContentApi.AddCreatedDate(contentid, dateStr);
         }
     }
 

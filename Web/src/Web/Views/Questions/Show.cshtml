@@ -133,33 +133,40 @@
 <hr />
 
 <div id="content" style="display:none;">
-    <p>@Html.Raw(Model.Content.HtmlBody)</p>
+    <div class="col-sm-1" style="text-align:center">
+        <span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@Model.Content.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
+        <h4 id="answer-score-@Model.Content.Id" style="margin:0">@Model.Content.Score</h4>
+        <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@Model.Content.Id, -1)" data-toggle="tooltip" title="Vote down"></span>
+        <br />
+    </div>
 
-    <div>
-        <div class="media-left ">
-            @foreach (var t in Model.Content.Tags)
+    <div class="col-sm-11">
+        <p>@Html.Raw(Model.Content.HtmlBody)</p>
+
+        <div>
+            <div class="media-left ">
+                @foreach (var t in Model.Content.Tags)
             {
-                <button type="button" class="btn btn-sm btn-primary">@t.Name</button>
-            }
-        </div>
-
-        <div class="media-right" style="padding-left:100px">
-            <div style="margin-bottom:12px;">
-                <button onclick="editQuestion(@Model.Content.Id)" class="btn btn-sm" data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
-                <button class="btn btn-sm" data-toggle="tooltip" title="Delete this question"><span class="glyphicon glyphicon-remove"></span></button>
+                    <span class="badge">@t.Name</span>
+                }
             </div>
 
-            @if (!string.IsNullOrEmpty(Model.Content.User.ProfileImageUrl))
+            <div class="text-right" style="padding-left:100px">
+                <div style="margin-bottom:12px;">
+                    <button onclick="editQuestion(@Model.Content.Id)" class="btn btn-sm" data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
+                    <button class="btn btn-sm" data-toggle="tooltip" title="Delete this question"><span class="glyphicon glyphicon-remove"></span></button>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Content.User.ProfileImageUrl))
             {
-                <img src="@Model.Content.User.ProfileImageUrl" height="20" width="20" />
-            }
-            <small>@Model.Content.User.DisplayName</small>
-            <br />
-            <small>Asked @Web.DateTimeFormatter.Format(Model.Content.Created)</small>
+                    <img src="@Model.Content.User.ProfileImageUrl" height="20" width="20" />
+                }
+                <small>@Model.Content.User.DisplayName</small>
+                <br />
+                <small>Asked @Web.DateTimeFormatter.Format(Model.Content.Created)</small>
+            </div>
 
         </div>
-
-      
 
     </div>
 
@@ -169,7 +176,7 @@
 
     @foreach (var a in Model.Content.Children)
     {
-        <div class="row">
+        <div>
             <div class="col-sm-1" style="text-align:center">
                 <span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@a.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
                 <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>

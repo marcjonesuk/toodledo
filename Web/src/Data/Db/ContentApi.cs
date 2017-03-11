@@ -25,11 +25,12 @@ namespace Data
                         ,[Type]
                         ,[HtmlBody]
                         ,[Created]
+                        ,[Score]
                         FROM[toodledo].[dbo].[Content] WHERE [Id] = '{id}'");
             Hydrate(items);
 
             var item = items[0];
-            var children = SelectByParent(item.Id);
+            var children = SelectByParent(item.Id).OrderByDescending(c => c.Score).ToList();
             item.Children = children;
             return item;
         }
@@ -54,7 +55,8 @@ namespace Data
                                              c.UserId, 
                                              c.Type,
                                              c.HtmlBody,
-                                             c.Created
+                                             c.Created,
+                                             c.Score
                                       FROM[toodledo].[dbo].[ContentRelation] r
                                       INNER JOIN[toodledo].[dbo].[Content] c
                                       ON r.ChildId = c.Id
@@ -73,6 +75,7 @@ namespace Data
                         ,[Type]
                         ,[HtmlBody]
                         ,[Created]
+                        ,[Score]
                         FROM[toodledo].[dbo].[Content] c";
 
             if (tagId != null)
@@ -92,6 +95,10 @@ namespace Data
             {
                 case "created-desc":
                     sql += " ORDER BY Id DESC";
+                    break;
+
+                case "score-desc":
+                    sql += " ORDER BY Score DESC";
                     break;
 
                 default:
@@ -124,7 +131,6 @@ namespace Data
             {
                 i.User = UserApi.Select(i.UserId);
                 i.ChildrenCount = GetChildrenCount(i.Id);
-                i.Score = VoteApi.Select(i.Id);
                 i.Tags = TagApi.SelectByContent(i.Id);
             });
         }
@@ -154,12 +160,6 @@ namespace Data
             Execute($@"UPDATE [dbo].[Content] SET Title = '{title.SqlEncode()}', Body = '{body.SqlEncode()}', HtmlBody = '{htmlBody.SqlEncode()}' WHERE id = {id}");
         }
 
-        //TODO: delete me
-        public static void AddCreatedDate(int id, string createdDate)
-        {
-            Execute($@"UPDATE [dbo].[Content] SET Created = '{createdDate}' WHERE id = {id}");
-        }
-
         public static void UpdateScore(int id, int score)
         {
             Execute($@"UPDATE [dbo].[Content] SET Score = {score} WHERE id = {id}");
@@ -178,7 +178,8 @@ namespace Data
                     UserId = reader.GetInt32(3),
                     Type = reader.GetString(4),
                     HtmlBody = reader.GetString(5),
-                    Created = reader.GetDateTime(6)
+                    Created = reader.GetDateTime(6),
+                    Score = reader.GetInt32(7)
                 };
                 results.Add(item);
             }

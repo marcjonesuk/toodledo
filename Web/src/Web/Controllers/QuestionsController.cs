@@ -29,7 +29,7 @@ namespace Web.Controllers
         public string SearchText { get; set; }
         public int ResultsCount { get; set; }
         public int Page { get; set; }
-        public int Tag { get; set; }
+        public string OrderBy { get; set; }
         public int MaxPages { get; set; }
     }
 
@@ -102,7 +102,7 @@ namespace Web.Controllers
             }
         }
 
-        public IActionResult Search(int p, string order, string q, int t)
+        public IActionResult Search(int p, string o, string q, int t)
         {
             var db = new DbApi();
 
@@ -113,7 +113,10 @@ namespace Web.Controllers
             if (t == 0)
                 tagId = null;
 
-            var content = ContentApi.Search(10, p, "question", q, "created", tagId);
+            if (o == null)
+                o = "created-desc";
+
+            var content = ContentApi.Search(10, p, "question", q, o, tagId);
             
             var result = new ContentListModel();
             result.Content = content;
@@ -126,7 +129,7 @@ namespace Web.Controllers
 
             result.Page = p;
             result.SearchText = q;
-            result.Tag = t;
+            result.OrderBy = o;
             result.Tags = TagApi.Select().OrderByDescending(tag => tag.Count).Take(8).ToList();
 
             return View("Results", result);

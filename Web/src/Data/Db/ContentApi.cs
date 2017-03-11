@@ -55,7 +55,8 @@ namespace Data
                                              c.UserId, 
                                              c.Type,
                                              c.HtmlBody,
-                                             c.Created
+                                             c.Created,
+                                             c.Score
                                       FROM[toodledo].[dbo].[ContentRelation] r
                                       INNER JOIN[toodledo].[dbo].[Content] c
                                       ON r.ParentId = c.Id

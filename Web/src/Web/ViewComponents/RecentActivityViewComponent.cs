@@ -11,8 +11,9 @@ namespace Web.ViewControllers
     {
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var api = new Api();
-            return View(api.GetAll().Take(10));
+            //var api = new Api();
+            //return View(api.GetAll().Take(10));
+            return View();
         }
     }
 }

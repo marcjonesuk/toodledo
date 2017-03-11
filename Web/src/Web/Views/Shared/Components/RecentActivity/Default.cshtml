@@ -8,11 +8,4 @@
 </script>
 
 <h4 style="margin-top:100px">Recent activity</h4>
-@foreach (var q in Model)
-{
-    <p>
-        <a href="/questions/show?id=@q.Id">"@q.Title"</a> -
-        @q.User.DisplayName
-    </p>
-}
 

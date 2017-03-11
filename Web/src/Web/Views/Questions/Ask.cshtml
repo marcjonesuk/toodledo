@@ -1,17 +1,22 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model Data.Question
+@model Data.Content
 
 <link rel="stylesheet" href="~/lib/simplemde/simplemde.min.css" />
 <link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-604a3be/css/bootstrap-markdown.min.css" />
 <script src="~/lib/validator/validator.min.js"></script>
 <script src="~/lib/simplemde/simplemde.min.js"></script>
+<script src="~/lib/marked/marked.min.js"></script>
 
 <script type="text/javascript">
 
     $(document).ready(function() {
         var simplemde = new SimpleMDE({ element: document.getElementById("question-text") });
+
+        simplemde.codemirror.on("change", function () {
+            $("#preview").html(marked(simplemde.value()));
+        });
     });
 
 </script>
@@ -26,6 +31,10 @@
     <div class="form-group">
         <label for="body">Question</label>
         <textarea id="question-text" class="form-control" style="max-width:initial" rows="20" asp-for="@Model.Body" data-minlength="6" required></textarea>
+    </div>
+
+    <div id="preview">
+
     </div>
 
     <button type="submit" class="btn">

@@ -1,7 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model Web.Controllers.QuestionList
+@model Web.Controllers.ContentListModel
 <br />
 
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
@@ -36,7 +36,7 @@
 </form>
 <hr />
 
-@if (Model.Questions == null || Model.Questions.Count == 0)
+@if (Model.Content == null || Model.Content.Count == 0)
 {
     <span>Sorry, no results found</span>
 }
@@ -45,24 +45,24 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
     <span>@Model.ResultsCount results found</span>
 }
 
-@foreach (var q in Model.Questions)
+@foreach (var q in Model.Content)
 {
     <div class="media">
         <div class="media-left text-center">
-            <h2 style="margin-bottom:-6px">@q.Answers.Count</h2><small>
+            <h2 style="margin-bottom:-6px">@q.ChildrenCount</h2><small>
                 <span>answers</span>
             </small>
         </div>
         <div class="media-body" style="padding-left:16px;">
             <a href="/questions/show?id=@q.Id"><h4>"@q.Title"</h4></a>
 
-            <div style="position:relative">
+            @*<div style="position:relative">
                 <div class="question-preview">
                     @Html.Raw(q.HtmlBody)
                 </div>
 
                 <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
-            </div>
+            </div>*@
 
             <div class="text-right">
                 @if (!string.IsNullOrEmpty(q.User.ProfileImageUrl))

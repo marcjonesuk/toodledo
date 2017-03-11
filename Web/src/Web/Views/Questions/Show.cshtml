@@ -1,7 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model Web.Controllers.ShowQuestionPage
+@model Web.Controllers.ShowContentModel
 
 <script src="~/lib/toopay-bootstrap-markdown-604a3be/js/bootstrap-markdown.js"></script>
 <script src="http://www.codingdrama.com/bootstrap-markdown/js/markdown.js"></script>
@@ -15,7 +15,7 @@
 </style>
 
 <script type="text/javascript">
-    var questionId = @Model.Question.Id;
+    var questionId = @Model.Content.Id;
 
     var editQuestion = function(questionId) {
         document.location.href = "/questions/ask?id=" + questionId;
@@ -129,31 +129,31 @@
     </div>
 }
 
-<a href="/questions/show?id=@Model.Question.Id"><h4>@Model.Question.Title</h4></a>
+<a href="/questions/show?id=@Model.Content.Id"><h4>@Model.Content.Title</h4></a>
 <hr />
 
 <div id="content" style="display:none;">
-    <p>@Html.Raw(Model.Question.HtmlBody)</p>
+    <p>@Html.Raw(Model.Content.HtmlBody)</p>
 
     <div class="text-right">
         <div style="margin-bottom:12px;">
-            <button onclick="editQuestion(@Model.Question.Id)" class="btn btn-sm"  data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
+            <button onclick="editQuestion(@Model.Content.Id)" class="btn btn-sm"  data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
             <button class="btn btn-sm"  data-toggle="tooltip" title="Delete this question"><span class="glyphicon glyphicon-remove"></span></button>
         </div>
 
-        @if (!string.IsNullOrEmpty(Model.Question.User.ProfileImageUrl))
+        @if (!string.IsNullOrEmpty(Model.Content.User.ProfileImageUrl))
         { 
-            <img src="@Model.Question.User.ProfileImageUrl" height="20" width="20" />
+            <img src="@Model.Content.User.ProfileImageUrl" height="20" width="20" />
         }
-        <small>@Model.Question.User.DisplayName</small>
+        <small>@Model.Content.User.DisplayName</small>
         <br />
-        <small>Asked @Web.DateTimeFormatter.Format(Model.Question.Created)</small>
+        <small>Asked @Web.DateTimeFormatter.Format(Model.Content.Created)</small>
     </div>
 
-    <h4>@Model.Question.Answers.Count Answers</h4>
+    <h4>@Model.Content.Children.Count Answers</h4>
     <hr />
 
-    @foreach (var a in Model.Question.Answers)
+    @foreach (var a in Model.Content.Children)
     {
         <div class="row">
             <div class="col-sm-1" style="text-align:center">
@@ -161,10 +161,10 @@
                 <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>
                 <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@a.Id, -1)" data-toggle="tooltip" title="Vote down"></span>
                 <br />
-                @if (Model.Question.AcceptedAnswerId == a.Id)
+                @*@if (Model.Content.AcceptedAnswerId == a.Id)
                 {
                     <span style="font-size:28px;" class="glyphicon glyphicon-ok"></span>
-                }
+                }*@
             </div>
             <div class="col-sm-11">
                 <div id="edit-@a.Id" class="edit-answer">
@@ -174,7 +174,7 @@
                         <button class="btn" onclick="endEdit()" data-toggle="tooltip" title="Cancel your changes"><span>Cancel</span></button>
                     </div>
                 </div>
-                <div id="answer-@a.Id" class="answer-text">@Html.Raw(a.HtmlBody)</div>
+                <div id="answer-@a.Id" class="answer-text">@Html.Raw(a.Body)</div>
 
                 <div id="edit-controls-@a.Id" class="edit-controls text-right">
                     <div style="margin-bottom:12px">

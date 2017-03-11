@@ -37,9 +37,6 @@
         .navbar-nav input#search {
             display: inline-block;
             width: 80%;
-            background: transparent;
-            border: 0;
-            color: #fff;
             padding-left: 3px;
         }
 
@@ -65,7 +62,7 @@
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+        <div class="container-full">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -87,13 +84,17 @@
         </div>
     </div>
 
-    <div class="container body-content ">
-        <div class="col-sm-9">
+    <div class="container-full body-content">
+        <div class="col-sm-2 fixed" style="position:fixed; background-color:#2C3E52; color:white; display:flex; height:100%">
+        </div>
+
+        <div class="col-sm-8 col-sm-offset-2" style="padding-left:25px; padding-right:25px;">
             @RenderBody()
         </div>
-        <div class="col-sm-3">
-            @await Component.InvokeAsync("RecentActivity")
-        </div>
+
+        <div class="col-sm-2" style="right:0; position:fixed; background-color:#2C3E52; color:white; height:100%;">
+            @Component.InvokeAsync("RecentActivity").Result
+        </div> 
     </div>
 
     @RenderSection("scripts", required: false)

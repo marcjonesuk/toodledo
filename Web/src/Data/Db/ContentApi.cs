@@ -70,19 +70,23 @@ namespace Data
                         ,[UserId]
                         ,[Type]
                         ,[HtmlBody]
-                        FROM[toodledo].[dbo].[Content] 
-                        WHERE [Type] = '{type}'";
+                        FROM[toodledo].[dbo].[Content]";
+
+            if (type != null)
+                sql += $" WHERE[Type] = '{type}'";
 
             if (search != null)
-            {
                 sql += $" AND [Body] LIKE '%{search}%' ";
-            }
 
-            orderBy = orderBy ?? "created";
+            orderBy = orderBy ?? "created-desc";
 
             switch (orderBy)
             {
-                case "created":
+                case "created-desc":
+                    sql += " ORDER BY Id DESC";
+                    break;
+
+                default:
                     sql += " ORDER BY Id DESC";
                     break;
             }

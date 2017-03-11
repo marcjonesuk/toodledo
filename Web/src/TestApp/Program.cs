@@ -11,7 +11,8 @@ namespace TestApp
     {
         public static void Main(string[] args)
         {
-            RelationAttacher ra = new RelationAttacher();
+            //RelationAttacher ra = new RelationAttacher();
+            DateAdder da = new DateAdder();
             try
             {
             }
@@ -27,6 +28,33 @@ namespace TestApp
     {
         public Data.StackOverflowModel.Posts.row Row { get; set; }
         public int Index { get; set; }
+    }
+
+    public class DateAdder
+    {
+        public DateAdder()
+        {
+            var d = new StackOverflowData();
+            var posts = d.GetPosts().rows;
+            var postsWithIndexes = new List<RowAndIdx>();
+
+            for (int i = 0; i < posts.Count; i++)
+            {
+                var post = posts[i];
+                postsWithIndexes.Add(new RowAndIdx { Row = post, Index = i + 1 });
+            }
+
+            foreach (var answer in postsWithIndexes)
+            {
+                AddCreatedDate(answer.Index, DateTime.ParseExact(answer.Row.CreationDate, "yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture));
+            }
+        }
+
+        private void AddCreatedDate(int contentid, DateTime date)
+        {
+            var dateStr = date.ToString("yyyy-MM-dd h:m:s");
+            ContentApi.AddCreatedDate(contentid, dateStr);
+        }
     }
 
     public class RelationAttacher

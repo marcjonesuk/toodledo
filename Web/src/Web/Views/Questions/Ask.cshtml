@@ -24,6 +24,7 @@
 <br />
 <form method="post" data-toggle="validator">
     @Html.HiddenFor(i => i.Id)
+    @Html.HiddenFor(i => i.UserId)
     <div class="form-group">
         <label for="title">Title</label>
         <input type="text" class="form-control" id="title" placeholder="Enter a title for your question" asp-for="@Model.Title" maxlength="100" required>
@@ -38,7 +39,7 @@
     </div>
 
     <button type="submit" class="btn">
-    @if (Model.Id == -1)
+    @if (Model.Id == 0)
     {
         <span>Post Question</span>
     }

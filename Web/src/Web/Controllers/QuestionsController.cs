@@ -126,7 +126,7 @@ namespace Web.Controllers
         public IActionResult Ask(int? id)
         {
             if (id == null)
-                return View(new Content());
+                return View(new Content() { UserId = 60 });
 
             var c = ContentApi.Select(id.Value);
             ViewData["Title"] = c.Title;

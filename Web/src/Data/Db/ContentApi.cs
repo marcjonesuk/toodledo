@@ -58,25 +58,69 @@ namespace Data
                                       ON r.ChildId = c.Id
                                       WHERE r.ParentId = {parentId}");
 
-            result.ForEach(i => i.User = UserApi.Select(i.UserId));
+            Hydrate(result);
             return result;
         }
 
-        public static List<Content> SelectByType(string type)
+        private static string SearchQuery(int pageSize, int? pageNo, string type, string search, string orderBy)
         {
-            var result = GetContent($@"SELECT TOP (10) [Id]
+            var sql = $@"SELECT [Id]
                         ,[Title]
                         ,[Body]
                         ,[UserId]
                         ,[Type]
                         ,[HtmlBody]
-                        FROM[toodledo].[dbo].[Content] WHERE [Type] = '{type}'");
+                        FROM[toodledo].[dbo].[Content] 
+                        WHERE [Type] = '{type}'";
 
-            result.ForEach(i =>
+            if (search != null)
+            {
+                sql += $" AND [Body] LIKE '%{search}%' ";
+            }
+
+            orderBy = orderBy ?? "created";
+
+            switch (orderBy)
+            {
+                case "created":
+                    sql += " ORDER BY Id DESC";
+                    break;
+            }
+
+            pageNo = pageNo ?? 1;
+            sql += $" OFFSET {(pageNo - 1) * pageSize} ROWS FETCH NEXT {pageSize} ROWS ONLY";
+
+            return sql;
+        }
+
+        public static int GetSearchResultCount(string type, string search)
+        {
+            var sql = $@"SELECT COUNT(*)
+                        FROM[toodledo].[dbo].[Content] 
+                        WHERE [Type] = '{type}'";
+
+            if (search != null)
+            {
+                sql += $" AND [Body] LIKE '%{search}%' ";
+            }
+            return (int)Execute(sql);
+        }
+
+        private static void Hydrate(List<Content> content)
+        {
+            content.ForEach(i =>
             {
                 i.User = UserApi.Select(i.UserId);
                 i.ChildrenCount = GetChildrenCount(i.Id);
+                i.Score = VoteApi.Select(i.Id);
             });
+        }
+
+        public static List<Content> Search(int pageSize, int? pageNo, string type, string search, string orderBy)
+        {
+            var sql = SearchQuery(pageSize, pageNo, type, search, orderBy);
+            var result = GetContent(sql);
+            Hydrate(result);
             return result;
         }
 
@@ -94,7 +138,12 @@ namespace Data
 
         public static void Update(int id, string title, string body, string htmlBody)
         {
-            Execute($@"UPDATE [dbo].[Content] SET Title = '{title}', Body = '{body}', HtmlBody = '{htmlBody}' WHERE id = {id}");
+            Execute($@"UPDATE [dbo].[Content] SET Title = '{title.SqlEncode()}', Body = '{body.SqlEncode()}', HtmlBody = '{htmlBody.SqlEncode()}' WHERE id = {id}");
+        }
+
+        public static void UpdateScore(int id, int score)
+        {
+            Execute($@"UPDATE [dbo].[Content] SET Score = {score} WHERE id = {id}");
         }
 
         public static List<Content> Map(SqlDataReader reader)

@@ -15,7 +15,7 @@ namespace Web.ViewControllers
         {
             if (_cache == null)
             {
-                _cache = ContentApi.Search(25, 1, null, null, null);
+                _cache = ContentApi.Search(25, 1, null, null, null, null);
             }
             return View(_cache);
         }

@@ -11,24 +11,24 @@ namespace Data
         public static int Insert(Content content)
         {
             return (int)(decimal)Execute($@"
-                INSERT INTO [dbo].[Content] ([Title], [Body], [UserId], [Type], [HtmlBody]) 
-                VALUES ( '{content.Title.SqlEncode()}', '{content.Body.SqlEncode()}', {content.UserId}, '{content.Type}', '{content.HtmlBody.SqlEncode()}' ); 
+                INSERT INTO [dbo].[Content] ([Title], [Body], [UserId], [Type], [HtmlBody], [Created]) 
+                VALUES ( '{content.Title.SqlEncode()}', '{content.Body.SqlEncode()}', {content.UserId}, '{content.Type}', '{content.HtmlBody.SqlEncode()}', '{content.Created}'); 
                 SELECT SCOPE_IDENTITY();");
         }
 
         public static Content Select(int id)
         {
-            var item = GetContent($@"SELECT [Id]
+            var items = GetContent($@"SELECT [Id]
                         ,[Title]
                         ,[Body]
                         ,[UserId]
                         ,[Type]
                         ,[HtmlBody]
                         ,[Created]
-                        FROM[toodledo].[dbo].[Content] WHERE [Id] = '{id}'")[0];
+                        FROM[toodledo].[dbo].[Content] WHERE [Id] = '{id}'");
+            Hydrate(items);
 
-            item.User = UserApi.Select(item.UserId);
-
+            var item = items[0];
             var children = SelectByParent(item.Id);
             item.Children = children;
             return item;
@@ -64,7 +64,7 @@ namespace Data
             return result;
         }
 
-        private static string SearchQuery(int pageSize, int? pageNo, string type, string search, string orderBy)
+        private static string SearchQuery(int pageSize, int? pageNo, string type, string search, string orderBy, int? tagId)
         {
             var sql = $@"SELECT [Id]
                         ,[Title]
@@ -73,7 +73,12 @@ namespace Data
                         ,[Type]
                         ,[HtmlBody]
                         ,[Created]
-                        FROM[toodledo].[dbo].[Content]";
+                        FROM[toodledo].[dbo].[Content] c";
+
+            if (tagId != null)
+            {
+                sql += $" INNER JOIN [dbo].[ContentTag] ct ON c.[Id] = ct.[ContentId] AND ct.TagId = {tagId}";
+            }
 
             if (type != null)
                 sql += $" WHERE[Type] = '{type}'";
@@ -100,7 +105,7 @@ namespace Data
             return sql;
         }
 
-        public static int GetSearchResultCount(string type, string search)
+        public static int GetSearchResultCount(string type, string search, int? tagId)
         {
             var sql = $@"SELECT COUNT(*)
                         FROM[toodledo].[dbo].[Content] 
@@ -120,12 +125,13 @@ namespace Data
                 i.User = UserApi.Select(i.UserId);
                 i.ChildrenCount = GetChildrenCount(i.Id);
                 i.Score = VoteApi.Select(i.Id);
+                i.Tags = TagApi.SelectByContent(i.Id);
             });
         }
 
-        public static List<Content> Search(int pageSize, int? pageNo, string type, string search, string orderBy)
+        public static List<Content> Search(int pageSize, int? pageNo, string type, string search, string orderBy, int? tagId)
         {
-            var sql = SearchQuery(pageSize, pageNo, type, search, orderBy);
+            var sql = SearchQuery(pageSize, pageNo, type, search, orderBy, tagId);
             var result = GetContent(sql);
             Hydrate(result);
             return result;

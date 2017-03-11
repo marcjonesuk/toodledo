@@ -40,11 +40,11 @@
             padding-left: 3px;
         }
 
-        .navbar-nav input#search:hover {
-            cursor: pointer;
-        }
+            .navbar-nav input#search:hover {
+                cursor: pointer;
+            }
 
-        .navbar li{
+        .navbar li {
             line-height: 50px;
         }
     </style>
@@ -61,7 +61,7 @@
     </script>
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="box-shadow: 0 0px 20px #444;">
         <div class="container-full">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -85,16 +85,16 @@
     </div>
 
     <div class="container-full body-content">
-        <div class="col-sm-2 fixed" style="position:fixed; background-color:#2C3E52; color:white; display:flex; height:100%">
+        <div class="col-sm-2 fixed" style="position:fixed; background-color:#2C3E52; color:white; display:flex; height:100%; ">
         </div>
 
-        <div class="col-sm-8 col-sm-offset-2" style="padding-left:25px; padding-right:25px;">
+        <div class="col-sm-8 col-sm-offset-2" style="padding-left:35px; padding-right:35px; padding-top: 15px; box-shadow: 0 0 150px #000; z-index:1; min-height:100%">
             @RenderBody()
         </div>
 
-        <div class="col-sm-2" style="right:0; position:fixed; background-color:#2C3E52; color:white; height:100%;">
+        <div class="col-sm-2" style="right:0; position:fixed; background-color:#2C3E52; color:white; height:100%; ">
             @Component.InvokeAsync("RecentActivity").Result
-        </div> 
+        </div>
     </div>
 
     @RenderSection("scripts", required: false)

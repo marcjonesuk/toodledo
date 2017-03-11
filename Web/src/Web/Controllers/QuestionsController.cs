@@ -24,10 +24,12 @@ namespace Web.Controllers
         {
             Content = new List<Content>();
         }
+        public List<Tag> Tags { get; set; }
         public List<Content> Content { get; set; }
         public string SearchText { get; set; }
         public int ResultsCount { get; set; }
         public int Page { get; set; }
+        public int Tag { get; set; }
         public int MaxPages { get; set; }
     }
 
@@ -100,18 +102,22 @@ namespace Web.Controllers
             }
         }
 
-        public IActionResult Search(int p, string order, string q)
+        public IActionResult Search(int p, string order, string q, int t)
         {
             var db = new DbApi();
 
             if (p == 0)
                 p = 1;
 
-            var content = ContentApi.Search(10, p, "question", q, "created");
+            int? tagId = t;
+            if (t == 0)
+                tagId = null;
 
+            var content = ContentApi.Search(10, p, "question", q, "created", tagId);
+            
             var result = new ContentListModel();
             result.Content = content;
-            result.ResultsCount = ContentApi.GetSearchResultCount("question", q);
+            result.ResultsCount = ContentApi.GetSearchResultCount("question", q, t);
 
             result.MaxPages = Math.Min(5, (int)Math.Floor((double)result.ResultsCount / 10));
 
@@ -120,6 +126,9 @@ namespace Web.Controllers
 
             result.Page = p;
             result.SearchText = q;
+            result.Tag = t;
+            result.Tags = TagApi.Select().OrderByDescending(tag => tag.Count).Take(8).ToList();
+
             return View("Results", result);
         }
 

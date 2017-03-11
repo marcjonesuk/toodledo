@@ -4,18 +4,20 @@
 @model IEnumerable<Data.Content>
 
 <script type="text/javascript">
-
+    $(document).ready(function () {
+        $('.item').fadeIn(400);
+    });
 </script>
 
-<h4 style="margin-top:20px">Acivity feed</h4>
+<dv id="activity-panel">
+    <h4 style="margin-top:20px">Activity feed</h4>
 
-@foreach (var c in Model)
-{
-    <p>
-        <a href="/questions/show?id=@c.Id">"@c.Title"</a> -
-        @c.User.DisplayName
-    </p>
-    <br />
-}
-
-
+    @foreach (var c in Model)
+    {
+        <p class="item" style="display:none">
+            <a href="/questions/show?id=@c.Id">"@c.Title"</a> -
+            @c.User.DisplayName
+        </p>
+        <br />
+    }
+</dv>

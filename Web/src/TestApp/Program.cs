@@ -11,16 +11,30 @@ namespace TestApp
     {
         public static void Main(string[] args)
         {
+            var tags = TagApi.Select();
+
+            foreach(var t in tags)
+            {
+                var content = ContentApi.Search(1000000, 1, "question", t.Name, null, null);
+
+                foreach(var c in content)
+                {
+                    TagApi.Tag(c.Id, t.Id);
+                    Console.Write('.');
+                }
+            }
+
+            
             //RelationAttacher ra = new RelationAttacher();
-            DateAdder da = new DateAdder();
-            try
-            {
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            Console.ReadLine();
+            //DateAdder da = new DateAdder();
+            //try
+            //{
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e);
+            //}
+            //Console.ReadLine();
         }
     }
 

@@ -122,7 +122,7 @@ namespace Data
         //    }
         //}
 
-        static string filePathTemplate = @"data\{0}.xml";
+        static string filePathTemplate = @"data2\{0}.xml";
         public T GetObjectFromXml<T>(string fileName)
         {
             var filePath = string.Format(filePathTemplate, fileName);

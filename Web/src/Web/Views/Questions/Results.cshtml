@@ -6,6 +6,30 @@
 
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
+<script type="text/javascript">
+
+    var params = {
+            p: @Model.Page,
+            t: @Model.Tag,
+            q: "@Model.SearchText"
+        };
+
+    function search(next) {
+        $.extend( params, next );
+        var url = '/questions?';
+
+        if (typeof(next.t) !== "undefined")
+            params.p = 1;
+
+        url += 'p=' + params.p;
+        url += '&t=' + params.t;
+        url += '&q=' + params.q;
+
+        window.location.href = url;
+    }
+
+</script>
+
 <style>
     .question-preview {
         max-height: 100px;
@@ -22,18 +46,20 @@
     }
 </style>
 
-<form class="form-horizontal">
+@*<form class="form-horizontal">*@
     <div class="form-group">
         <div class="col-sm-1"></div>
         <div class="col-xs-8 col-sm-6 col-lg-4">
-            <input id="search" class="form-control" placeholder="search for" asp-for="@Model.SearchText">
+            <input id="page-search" class="form-control" placeholder="search for" asp-for="@Model.SearchText">
         </div>
 
         <div class="col-xs-1">
-            <button id="search_btn" type="submit" class="btn btn-primary" onclick="window.location.href = '/questions?q=' + $('form #search').val(); return false"><span class="glyphicon glyphicon-search"></span></button>
+            <button id="search_btn" type="submit" class="btn btn-primary" onclick="search({ q: $('#page-search').val() })"><span class="glyphicon glyphicon-search"></span></button>
         </div>
+
+       
     </div>
-</form>
+@*</form>*@
 <hr />
 
 @if (Model.Content == null || Model.Content.Count == 0)
@@ -43,6 +69,18 @@
 else if (!string.IsNullOrEmpty(Model.SearchText))
 {
     <span>@Model.ResultsCount results found</span>
+}
+
+@foreach (var t in Model.Tags)
+{
+    @*@if (t.Id == Model.Tag)
+        {
+            <button class="btn btn-sm btn-primary active">@t.Name <span class="badge">@t.Count</span></button>
+        }*@
+    //else
+    //{
+    <button class="btn btn-sm" onclick="search({ t: @t.Id });">@t.Name <span class="badge">@t.Count</span></button>
+    //}
 }
 
 @foreach (var q in Model.Content)
@@ -56,13 +94,18 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
         <div class="media-body" style="padding-left:16px;">
             <a href="/questions/show?id=@q.Id"><h4>"@q.Title"</h4></a>
 
-            @*<div style="position:relative">
-                <div class="question-preview">
-                    @Html.Raw(q.HtmlBody)
-                </div>
+            @foreach (var t in q.Tags)
+            {
+                <button type="button" class="btn btn-sm">@t.Name</button>
+            }
 
-                <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
-            </div>*@
+            @*<div style="position:relative">
+                    <div class="question-preview">
+                        @Html.Raw(q.HtmlBody)
+                    </div>
+
+                    <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
+                </div>*@
 
             <div class="text-right">
                 @if (!string.IsNullOrEmpty(q.User.ProfileImageUrl))
@@ -83,13 +126,7 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
         @for (var p = 1; p <= Model.MaxPages; p++)
         {
             var c = Model.Page == p ? "active" : "";
-            var qs = "p=" + p;
-
-            if (!string.IsNullOrEmpty(Model.SearchText))
-            {
-                qs += "&q=" + Model.SearchText;
-            }
-            <li class="@c"><a href="/questions?@qs">@p</a></li>
+            <li class="@c"><button class="btn" onclick="search({ p: @p})">@p</button></li>
         }
     </ul>
 }

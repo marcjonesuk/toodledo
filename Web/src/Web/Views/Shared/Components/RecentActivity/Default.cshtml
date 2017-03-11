@@ -15,11 +15,11 @@
     @foreach (var c in Model)
     {
         <p class="item" style="display:none">
-            @c.User.DisplayName
             @{
                 string action = "";
                 int questionId = c.ParentId ?? c.Id;
             }
+            <a href="/questions/show?id=@questionId">"@c.Title"</a>
             @if (c.Type == "question")
             {
                 action = " asked ";
@@ -28,9 +28,9 @@
             {
                 action = " answered ";
             }
-            @action
-            <a href="/questions/show?id=@questionId">"@c.Title"</a>
+            @action by
+            <b>@c.User.DisplayName</b>
         </p>
         <br />
                 }
-</dv>
+</div>

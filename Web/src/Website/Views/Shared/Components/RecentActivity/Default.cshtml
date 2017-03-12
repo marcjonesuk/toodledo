@@ -10,11 +10,11 @@
 </script>
 
 <div id="activity-panel" style="padding: 30px">
-    <h4 style="margin-top:20px;">Activity feed</h4>
-
+    <h4 style="margin-top:0px; margin-bottom:10px;">Activity feed</h4>
+    <hr style="margin:14px 0" />
     @foreach (var c in Model)
     {
-        <p class="item" style="display:none">
+        <p class="item" style="display:none;">
             @{
                 string action = "";
                 int questionId = c.ParentId ?? c.Id;
@@ -29,7 +29,7 @@
                 action = " answered ";
             }
             @action by
-            <b>@c.User.DisplayName</b> 
+            <b>@c.User.DisplayName</b>
         </p>
                 }
 </div>

@@ -77,7 +77,7 @@ namespace Website
             request.PageSize = request.PageSize ?? 10;
             request.Page = request.Page ?? 1;
 
-            var contents = ContentApi.Search(10, request.Page, request.Type, request.Text, request.OrderBy, null);
+            var contents = ContentApi.Search(request.PageSize.Value, request.Page, request.Type, request.Text, request.OrderBy, null);
             var searchResult = contents.Select(c => c.AsViewModel()
                     .WithTags()
                     .WithChildrenCount()

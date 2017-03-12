@@ -64,7 +64,7 @@ namespace Web.Controllers
         public bool AllowEdit { get; set; }
     }
 
-    [Authorize]
+    [AllowAnonymous]
     public class QuestionsController : Controller
     {
         readonly UserManager<ApplicationUser> userManager;
@@ -78,7 +78,7 @@ namespace Web.Controllers
 
         public IActionResult Show(int id)
         {
-            var contentController = new ContentController();
+            var contentController = new ContentController(userManager);
             var content = contentController.Index(id);
             ViewData["Title"] = content.Title;
             return View(new ContentPageModel() { Content = content } );
@@ -106,18 +106,16 @@ namespace Web.Controllers
         [HttpPost]
         public string Answer([FromBody]AnswerRequest req)
         {
+            var controller = new ContentController(userManager);
             if (req.AnswerId == 0)
             {
-                var md = Markdown.Encode(req.Answer);
-                var htmlBody = Markdown.Encode(req.Answer);
-                ContentApi.InsertAsChild(req.QuestionId, new Content() { Type="answer", Body = req.Answer, UserId = 1, HtmlBody = htmlBody });
-                return md;
+                var c = controller.CreateChild(new CreateContentRequest() { ParentId = req.QuestionId, Body = req.Answer, Type = "answer" });
+                return c.HtmlBody;
             }
             else
             {
-                var md = Markdown.Encode(req.Answer);
-                ContentApi.Update(req.AnswerId, null, req.Answer, md);
-                return md;
+                var c = controller.Update(new CreateContentRequest() { ParentId = req.QuestionId, Body = req.Answer, Type = "answer" });
+                return c.HtmlBody;
             }
         }
 
@@ -139,7 +137,7 @@ namespace Web.Controllers
             searchRequest.OrderBy = o;
             searchRequest.Type = "question";
 
-            var controller = new ContentController();
+            var controller = new ContentController(userManager);
             var results = controller.Search(searchRequest);
             var resultPage = new SearchResultPageModel() { Results = results, Request = searchRequest };
             resultPage.ResultsCount = ContentApi.GetSearchResultCount("question", q, t);
@@ -152,24 +150,6 @@ namespace Web.Controllers
             resultPage.Tags = TagApi.Select().OrderByDescending(tag => tag.Count).Take(8).ToList();
 
             return View("Results", resultPage);
-
-            //var content = ContentApi.Search(10, p, "question", q, o, tagId);
-            
-            //var result = new ContentListModel();
-            //result.Content = content;
-            //result.ResultsCount = ContentApi.GetSearchResultCount("question", q, t);
-
-            //result.MaxPages = Math.Min(5, (int)Math.Floor((double)result.ResultsCount / 10));
-
-            //if (result.ResultsCount % 10 != 0)
-            //    result.MaxPages++;
-
-            //result.Page = p;
-            //result.SearchText = q;
-            //result.OrderBy = o;
-            
-
-            //return View("Results", result);
         }
 
         [Authorize]
@@ -184,20 +164,19 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Ask(Content content)
+        public IActionResult Ask(Content request)
         {
-            int id = content.Id;
-            if (id == 0)
+            var controller = new ContentManager(userManager);
+            if (request.Id == 0)
             {
-                content.HtmlBody = Markdown.Encode(content.Body);
-                id = ContentApi.Insert(content);
+                var id = controller.Create(new CreateContentRequest() { Type = "question", Title = request.Title, Body = request.Body });
+                return RedirectToAction("Show", new { Id = id, Response = "Your question was added" });
             }
             else
             {
-                ContentApi.Update(content.Id, content.Title, content.Body, Markdown.Encode(content.Body));
+                throw new NotImplementedException();
+                //ContentApi.Update(content.Id, content.Title, content.Body, Markdown.Encode(content.Body));
             }
-
-            return RedirectToAction("Show", new { Id = id, Response = "Your question was added" });
         }
 
         //[HttpPost]

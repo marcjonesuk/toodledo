@@ -17,7 +17,7 @@ namespace Web.ViewControllers
         {
             try
             {
-                var controller = new ContentController();
+                var controller = new ContentController(null);
                 var search = controller.Search(new SearchRequest() { PageSize = 25 });
 
                 foreach (var content in search)

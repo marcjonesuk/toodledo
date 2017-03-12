@@ -7,12 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 using Data;
 using Website.Models.ContentViewModels;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Website.Models;
+using Microsoft.AspNetCore.Authorization;
+using Web.Controllers;
 
 namespace Website.Controllers
 {
     public class SearchRequest
     {
-        public int? PageSize { get;  set; }
+        public int? PageSize { get; set; }
         public string Type { get; set; }
         public string Text { get; set; }
         public int? Page { get; set; }
@@ -64,12 +68,62 @@ namespace Website.Controllers
         }
     }
 
-    public class ContentController : Controller
+    public class ContentRequest
     {
-        public ContentViewModel Index(int id)
+        public int? ContentId { get; set; }
+        public string Title { get; set; }
+        public string Body { get; set; }
+        public string Type { get; set; }
+        public int? ParentId { get; set; }
+    }
+
+    public class ContentManager
+    {
+        readonly User user;
+
+        public ContentManager()
         {
-            var item = ContentApi.Select(id);
-            return ContentViewModel.New(item).WithAll();
+        }
+
+        public ContentManager(User user)
+        {
+            this.user = user;
+        }
+
+        public ContentViewModel Update(ContentRequest request)
+        {
+            if (request.ContentId == null)
+                throw new ArgumentNullException(nameof(request.ContentId));
+
+            var htmlBody = Markdown.Encode(request.Body);
+            ContentApi.Update(request.ContentId.Value, request.Title, request.Body, htmlBody);
+
+            return ContentApi.Select(request.ContentId.Value)
+                             .AsViewModel()
+                             .WithChildren()
+                             .WithChildrenCount()
+                             .WithTags();
+        }
+
+        public ContentViewModel Create(ContentRequest request)
+        {
+            var content = new Content();
+            content.Title = request.Title;
+            content.Body = request.Body;
+            content.HtmlBody = Markdown.Encode(content.Body);
+            content.UserId = user.Id;
+            content.Type = request.Type;
+            var id = ContentApi.Insert(content);
+
+            if (request.ParentId != null)
+            {
+                ContentApi.Relate(request.ParentId.Value, id);
+            }
+
+            return ContentApi.Select(id).AsViewModel()
+                .WithChildren()
+                .WithChildrenCount()
+                .WithTags();
         }
 
         public List<ContentViewModel> Search(SearchRequest request)
@@ -85,6 +139,25 @@ namespace Website.Controllers
 
             return searchResult;
         }
+    }
+
+    public class ContentController : Controller
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public ContentController(UserManager<ApplicationUser> userManager)
+        {
+            this._userManager = userManager;
+        }
+
+        // GET: Content/5
+        public ContentViewModel Index(int id)
+        {
+            var item = ContentApi.Select(id);
+            return ContentViewModel.New(item).WithAll();
+        }
+
+
 
         // GET: Content/Details/5
         public ActionResult Details(int id)
@@ -93,9 +166,33 @@ namespace Website.Controllers
         }
 
         // GET: Content/Create
-        public ActionResult Create()
+        [Authorize]
+        public Content Create([FromBody]CreateContentRequest request)
         {
-            return View();
+
+        }
+
+        // GET: Content/Create
+        [Authorize]
+        public Content CreateChild([FromBody]CreateContentRequest request)
+        {
+
+        }
+
+
+
+        // GET: Content/Update
+        [Authorize]
+        public Content Update([FromBody]CreateContentRequest request)
+        {
+            try
+            {
+                return UpdateInternal(request);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // POST: Content/Create

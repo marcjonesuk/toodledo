@@ -26,8 +26,8 @@ namespace Website.Models.ContentViewModels
             Score = content.Score;
         }
 
-        public bool AllowEdit { get; set; }
-        public bool AllowDelete { get; set; }
+        public bool? AllowEdit { get; set; }
+        public bool? AllowDelete { get; set; }
         public List<Tag> Tags { get; set; }
         public User User { get; set; }
         public List<ContentViewModel> Children { get; set; }

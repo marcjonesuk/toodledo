@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Website.Models;
 using Website.Models.AccountViewModels;
 using Website.Services;
+using Web.Controllers;
 
 namespace Website.Controllers
 {
@@ -134,7 +135,7 @@ namespace Website.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToDefault();
         }
 
         //
@@ -459,8 +460,13 @@ namespace Website.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToDefault();
             }
+        }
+
+        private IActionResult RedirectToDefault()
+        {
+            return RedirectToAction(nameof(QuestionsController.Search), "Questions");
         }
 
         #endregion

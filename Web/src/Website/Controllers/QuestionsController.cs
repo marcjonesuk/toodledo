@@ -110,7 +110,7 @@ namespace Web.Controllers
             {
                 var md = Markdown.Encode(req.Answer);
                 var htmlBody = Markdown.Encode(req.Answer);
-                ContentApi.InsertAsChild(req.QuestionId, new Content() { Type="answer", Body = req.Answer, UserId = 1, HtmlBody = htmlBody });
+                ContentApi.InsertAsChild(req.QuestionId, new Content() { Type="answer", Body = req.Answer, UserId = GetCurrentUser().Id, HtmlBody = htmlBody });
                 return md;
             }
             else
@@ -172,11 +172,20 @@ namespace Web.Controllers
             //return View("Results", result);
         }
 
+        public User GetCurrentUser()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var user = claim.Value;
+            var currentUser = UserApi.GetByAspNetId(user);
+            return currentUser;
+        }
+
         [Authorize]
         public IActionResult Ask(int? id)
         {
             if (id == null)
-                return View(new Content() { UserId = 60, Type = "question" });
+                return View(new Content() { UserId = GetCurrentUser().Id, Type = "question" });
 
             var c = ContentApi.Select(id.Value);
             ViewData["Title"] = c.Title;

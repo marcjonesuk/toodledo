@@ -12,13 +12,19 @@
                 <a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
             </li>
             <li>
-                <button type="submit" class="btn btn-link navbar-btn navbar-link">Log off</button>
+                <a href="" onclick="logout()">Log off</a>
             </li>
             <li>
                 <a asp-area="" asp-controller="Account" asp-action="UserProfile" title="User Profile">User Profile</a>
             </li>
         </ul>
     </form>
+
+    <script type="text/javascript">
+        var logout = function () {
+            document.forms["logoutForm"].submit();
+        };
+    </script>
 }
 else
 {

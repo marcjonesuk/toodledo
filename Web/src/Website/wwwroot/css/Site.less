@@ -1,140 +1,153 @@
 ﻿body {
-  padding-top: 50px;
-  /*padding-bottom: 20px;*/
+    padding-top: 50px;
+    /*padding-bottom: 20px;*/
 }
-html,
-body {
-  height: 100%;
+
+html, body {
+    height: 100%;
 }
+
+@side-panel: #2C3E52;
+
 .side-panel {
-  background-color: #2C3E52;
+    background-color: @side-panel; 
 }
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-  padding-left: 0px;
-  padding-right: 0px;
-  height: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+    height: 100%;
 }
+
 /* Set widths on the form inputs since otherwise they're 100% wide */
 /*input,
 select,
 textarea {
     max-width: 280px;
 }*/
+
 /* Carousel */
 .carousel-caption p {
-  font-size: 20px;
-  line-height: 1.4;
+    font-size: 20px;
+    line-height: 1.4;
 }
+
 /* Make .svg files in the carousel display properly in older browsers */
 .carousel-inner .item img[src$=".svg"] {
-  width: 100%;
+    width: 100%;
 }
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
-  /* Hide captions */
-  .carousel-caption {
-    display: none;
-  }
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
 }
+
 .form-control {
-  width: 100%;
+    width: 100%;
 }
+
 pre.prettyprint {
-  padding: 8px 20px !important;
+    padding: 8px 20px !important;
 }
-input,
-pre,
-.btn,
-.alert {
-  border-radius: 0 !important;
+
+input, pre, .btn, .alert {
+    border-radius: 0 !important;
 }
+
 textarea {
-  background-color: white !important;
+    background-color: white !important;
 }
+
 html {
-  overflow-y: scroll;
+    overflow-y: scroll;
 }
+
 /*h4 {
     font-weight: bold !important;
 }*/
+
 /*body {
      background-color:#fcfbfb;
 }*/
+
 /* desert scheme ported from vim to google prettify */
 pre.prettyprint {
-  display: block;
-  background-color: #333;
+    display: block;
+    background-color: #333;
 }
+
 pre .nocode {
-  background-color: none;
-  color: #000;
+    background-color: none;
+    color: #000;
 }
+
 pre .str {
-  color: #ffa0a0;
+    color: #ffa0a0;
 }
 /* string  - pink */
 pre .kwd {
-  color: #f0e68c;
-  font-weight: bold;
+    color: #f0e68c;
+    font-weight: bold;
 }
+
 pre .com {
-  color: #87ceeb;
+    color: #87ceeb;
 }
 /* comment - skyblue */
 pre .typ {
-  color: #98fb98;
+    color: #98fb98;
 }
 /* type    - lightgreen */
 pre .lit {
-  color: #cd5c5c;
+    color: #cd5c5c;
 }
 /* literal - darkred */
 pre .pun {
-  color: #fff;
+    color: #fff;
 }
 /* punctuation */
 pre .pln {
-  color: #fff;
+    color: #fff;
 }
 /* plaintext */
 pre .tag {
-  color: #f0e68c;
-  font-weight: bold;
+    color: #f0e68c;
+    font-weight: bold;
 }
 /* html/xml tag    - lightyellow */
 pre .atn {
-  color: #bdb76b;
-  font-weight: bold;
+    color: #bdb76b;
+    font-weight: bold;
 }
 /* attribute name  - khaki */
 pre .atv {
-  color: #ffa0a0;
+    color: #ffa0a0;
 }
 /* attribute value - pink */
 pre .dec {
-  color: #98fb98;
+    color: #98fb98;
 }
 /* decimal         - lightgreen */
+
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums {
-  margin-top: 0;
-  margin-bottom: 0;
-  color: #AEAEAE;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #AEAEAE;
 }
 /* IE indents via margin-left */
-li.L0,
-li.L1,
-li.L2,
-li.L3,
-li.L5,
-li.L6,
-li.L7,
-li.L8 {
-  list-style-type: none;
+li.L0, li.L1, li.L2, li.L3, li.L5, li.L6, li.L7, li.L8 {
+    list-style-type: none;
 }
 /* Alternate shading for lines */
+li.L1, li.L3, li.L5, li.L7, li.L9 {
+}
+
 * {
-  font-size: 16px;
+    font-size: 16px;
 }

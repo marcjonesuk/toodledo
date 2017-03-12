@@ -75,10 +75,10 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Questions" asp-action="Ask">Ask</a></li>
-                    <li>
+                    @*<li>
                         <span class="glyphicon glyphicon-search"></span>
                         <input id="search" class="form-control" placeholder="Search">
-                    </li>
+                    </li>*@
                     <li>
                         @await Html.PartialAsync("_LoginPartial")
                     </li>
@@ -88,7 +88,7 @@
     </div>
 
     <div class="container-full body-content">
-        <div class="col-sm-2 fixed" style="position:fixed; background-color:#2C3E52; color:white; display:flex; height:100%; ">
+        <div class="col-sm-2 fixed side-panel" style="position:fixed; color:white; display:flex; height:100%; ">
             <ul class="nav nav-pills nav-stacked">
                 <li class="active"><a href="#">Home</a></li>
                 <li><a href="#">Menu 1</a></li>
@@ -101,8 +101,8 @@
             @RenderBody()
         </div>
 
-        <div class="col-sm-3" style="right:0; position:fixed; background-color:#2C3E52; color:white; height:100%; ">
-            @*@await Component.InvokeAsync("RecentActivity")*@
+        <div class="col-sm-3 side-panel" style="right:0; position:fixed; color:white; height:100%; ">
+            @*@Component.InvokeAsync("RecentActivity").Result*@
         </div>
     </div>
 

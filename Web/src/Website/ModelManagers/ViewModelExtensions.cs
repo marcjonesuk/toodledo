@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Website.Models.ContentViewModels;
+using Website.RequestObjects;
 
 namespace Website
 { 
@@ -49,6 +50,19 @@ namespace Website
         {
             c.Parent = ContentApi.GetParent(c.Id).First().AsViewModel();
             return c;
+        }
+
+        public static ContentRequest AsRequest(this Content c)
+        {
+            ContentRequest request = new ContentRequest
+            {
+                ContentId = c.Id,
+                Title = c.Title,
+                Body = c.Body,
+                Type = c.Type
+            };
+
+            return request;
         }
     }
 }

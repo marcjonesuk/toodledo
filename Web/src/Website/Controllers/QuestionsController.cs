@@ -152,11 +152,20 @@ namespace Web.Controllers
             return View("Results", resultPage);
         }
 
+        public User GetCurrentUser()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var user = claim.Value;
+            var currentUser = UserApi.GetByAspNetId(user);
+            return currentUser;
+        }
+
         [Authorize]
         public IActionResult Ask(int? id)
         {
             if (id == null)
-                return View(new Content() { UserId = 60, Type = "question" });
+                return View(new Content() { UserId = GetCurrentUser().Id, Type = "question" });
 
             var c = ContentApi.Select(id.Value);
             ViewData["Title"] = c.Title;

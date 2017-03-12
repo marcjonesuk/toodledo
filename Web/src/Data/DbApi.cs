@@ -20,7 +20,6 @@ namespace Data
     {
         protected static object Execute(string sql)
         {
-            //
             SqlConnection connection = new SqlConnection(@"Data Source=localhost\SQLEXPRESS;Initial Catalog=toodledo;Integrated Security=SSPI;");
             SqlCommand cmd = new SqlCommand();
             //SqlDataReader reader;
@@ -36,7 +35,6 @@ namespace Data
 
         protected static void ExecuteReader(string sql, Action<SqlDataReader> a)
         {
-            //
             SqlConnection connection = new SqlConnection(@"Data Source=localhost\SQLEXPRESS;Initial Catalog=toodledo;Integrated Security=SSPI;");
             SqlCommand cmd = new SqlCommand();
             SqlDataReader reader;
@@ -47,14 +45,6 @@ namespace Data
             reader = cmd.ExecuteReader();
             a(reader);
             connection.Close();
-        }
-
-        public int? Insert(User user)
-        {
-            return (int)(decimal)Execute($@"
-                INSERT INTO [dbo].[User] ([Username], [DisplayName]) 
-                VALUES ( '{user.DisplayName.SqlEncode()}', '{user.DisplayName.SqlEncode()}' ); 
-                SELECT SCOPE_IDENTITY();");
         }
     }
 }

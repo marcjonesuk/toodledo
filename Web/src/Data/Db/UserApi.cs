@@ -22,6 +22,18 @@ namespace Data
             Execute($@"UPDATE [dbo].[User] SET DisplayName = '{displayName}', ProfileImageUrl = '{profileImageUrl}' WHERE id = {id}");
         }
 
+        public static int Insert(User user)
+        {
+            return (int)(decimal)Execute($@"INSERT INTO [dbo].[User]
+                           ([Username]
+                           ,[DisplayName]
+                           ,[AspNetId]
+                           ,[ProfileImageUrl])
+                            SELECT '{user.DisplayName}', '{user.DisplayName}', a.Id, '{user.ProfileImageUrl}'
+                            FROM [dbo].[AspNetUsers] a
+                            WHERE a.Email = '{user.Email}'; SELECT SCOPE_IDENTITY();");
+        }
+
         private static List<User> Get(string sql)
         {
             var results = new List<User>();

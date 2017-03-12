@@ -12,11 +12,12 @@ using Website.Models;
 using Website.Models.AccountViewModels;
 using Website.Services;
 using Web.Controllers;
+using Data;
 
 namespace Website.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -435,6 +436,23 @@ namespace Website.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid code.");
                 return View(model);
             }
+        }
+
+        //
+        // GET: /Account/VerifyCode
+        [HttpGet]
+        public IActionResult UserProfile()
+        {
+            return View(new UserProfileViewModel(GetCurrentUser()));
+        }
+
+        //
+        // GET: /Account/VerifyCode
+        [HttpPost]
+        public IActionResult UserProfile(UserProfileViewModel userProfile)
+        {
+            UserApi.Update(userProfile.Id, userProfile.DisplayName, userProfile.ProfileImageUrl);
+            return View(new UserProfileViewModel(GetCurrentUser()));
         }
 
         #region Helpers

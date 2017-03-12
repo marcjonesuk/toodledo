@@ -65,7 +65,7 @@ namespace Web.Controllers
     }
 
     [Authorize]
-    public class QuestionsController : Controller
+    public class QuestionsController : BaseController
     {
         readonly UserManager<ApplicationUser> userManager;
         readonly SignInManager<ApplicationUser> signInManager;
@@ -170,15 +170,6 @@ namespace Web.Controllers
             
 
             //return View("Results", result);
-        }
-
-        public User GetCurrentUser()
-        {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            var user = claim.Value;
-            var currentUser = UserApi.GetByAspNetId(user);
-            return currentUser;
         }
 
         [Authorize]

@@ -12,8 +12,14 @@ namespace Data
         {
             var item = Get($@"SELECT [Id]
                         ,[DisplayName]
+                        ,[ProfileImageUrl]
                         FROM[toodledo].[dbo].[User] WHERE [Id] = '{id}'")[0];
             return item;
+        }
+
+        public static void Update(int id, string displayName, string profileImageUrl)
+        {
+            Execute($@"UPDATE [dbo].[User] SET DisplayName = '{displayName}', ProfileImageUrl = '{profileImageUrl}' WHERE id = {id}");
         }
 
         private static List<User> Get(string sql)
@@ -33,6 +39,10 @@ namespace Data
                     Id = reader.GetInt32(0),
                     DisplayName = reader.GetString(1)
                 };
+                if (reader.GetValue(2) != DBNull.Value)
+                {
+                    item.ProfileImageUrl = reader.GetString(2);
+                }
                 results.Add(item);
             }
             return results;
@@ -42,6 +52,7 @@ namespace Data
         {
             var item = Get($@"SELECT [Id]
                         ,[DisplayName]
+                        ,[ProfileImageUrl]
                         FROM[toodledo].[dbo].[User] WHERE [AspNetId] = '{aspnetUserId}'")[0];
             return item;
         }

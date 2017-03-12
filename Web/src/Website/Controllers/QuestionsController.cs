@@ -36,8 +36,7 @@ namespace Web.Controllers
         public bool AllowEdit { get; set; }
     }
 
-    [AllowAnonymous]
-    public class QuestionsController : Controller
+    public class QuestionsController : BaseController
     {
         readonly UserManager<ApplicationUser> userManager;
         readonly SignInManager<ApplicationUser> signInManager;
@@ -122,22 +121,6 @@ namespace Web.Controllers
             resultPage.Tags = TagApi.Select().OrderByDescending(tag => tag.Count).Take(8).ToList();
 
             return View("Results", resultPage);
-        }
-
-        public User GetCurrentUser()
-        {
-            try
-            {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-                var user = claim.Value;
-                var currentUser = UserApi.GetByAspNetId(user);
-                return currentUser;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         [Authorize]

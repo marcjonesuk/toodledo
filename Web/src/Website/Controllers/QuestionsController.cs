@@ -52,7 +52,12 @@ namespace Web.Controllers
             var contentController = new ContentManager();
             var content = contentController.Get(id);
             ViewData["Title"] = content.Title;
-            return View(new ContentPageModel() { Content = content } );
+            var answer = content.Children.FirstOrDefault();
+            if (answer != null)
+            {
+                content.Children = new List<ContentViewModel> { answer };
+            }
+            return View(new ContentPageModel() { Content = content });
         }
 
         public IActionResult Edit(int id)
@@ -78,6 +83,7 @@ namespace Web.Controllers
         public string Answer([FromBody]ContentRequest req)
         {
             var contentManager = new ContentManager(GetCurrentUser());
+            req.Type = "answer";
             if (req.ContentId == null)
             {
                 var c = contentManager.Create(req);
@@ -127,11 +133,13 @@ namespace Web.Controllers
         public IActionResult Ask(int? id)
         {
             if (id == null)
-                return View(new ContentRequest() { Type = "question" });
+            {
+                return View(new ContentRequest { Type = "question" });
+            }
 
             var c = ContentApi.Select(id.Value);
             ViewData["Title"] = c.Title;
-            return View(c);
+            return View(c.AsRequest());
         }
 
         [HttpPost]
@@ -142,13 +150,13 @@ namespace Web.Controllers
 
             if (request.ContentId == null)
             {
-                var id = manager.Create(request);
+                var id = manager.Create(request).Id;
                 return RedirectToAction("Show", new { Id = id });
             }
             else
             {
-                throw new NotImplementedException();
-                //ContentApi.Update(content.Id, content.Title, content.Body, Markdown.Encode(content.Body));
+                manager.Update(request);
+                return RedirectToAction("Show", new { Id = request.ContentId });
             }
         }
     }

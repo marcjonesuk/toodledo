@@ -37,7 +37,7 @@
     };
 
     var answer = function () {
-        var data = { questionId: questionId, answer: document.getElementById('add_answer').value };
+        var data = { parentId: questionId, body: document.getElementById('add_answer').value };
 
         $.ajax({
             url: '/questions/answer',
@@ -66,8 +66,8 @@
         });
     }
 
-    var saveAnswerEdit = function(answer) {
-        var data = { answerId: answer, answer: $("#edit-" + answer + " textarea")[0].value };
+    var saveAnswerEdit = function(answer) {  
+        var data = { contentId: answer, body: $("#edit-" + answer + " textarea")[0].value };
 
         $.ajax({
             url: '/questions/answer',
@@ -146,7 +146,7 @@
         <div>
             <div class="media-left ">
                 @foreach (var t in Model.Content.Tags)
-            {
+                {
                     <span class="badge">@t.Name</span>
                 }
             </div>
@@ -171,7 +171,7 @@
     </div>
 
 
-    <h4>@Model.Content.Children.Count Answers</h4>
+    @*<h4>@Model.Content.Children.Count Answers</h4>*@
     <hr />
 
     @foreach (var a in Model.Content.Children)
@@ -220,13 +220,17 @@
         </div>
     }
 
-    <div class="your-answer form-group">
-        <h4>Your answer</h4>
-        <blockquote>
-            <textarea id="add_answer" style="max-width:initial" class="form-control" rows="4"></textarea>
-        </blockquote>
-        <button class="btn" onclick="answer()">Post Your Answer</button>
-    </div>
+    @if (Model.Content.Children.Count == 0)
+    {
+        <div class="your-answer form-group">
+            <h4>Your answer</h4>
+            <blockquote>
+                <textarea id="add_answer" style="max-width:initial" class="form-control" rows="4"></textarea>
+            </blockquote>
+            <button class="btn" onclick="answer()">Post Your Answer</button>
+        </div>
+    }
+
 </div>
 
 @*@await Component.InvokeAsync("AddAnswer", new { questionId = Model.Id })*@

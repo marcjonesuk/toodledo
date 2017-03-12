@@ -85,10 +85,6 @@
                 </ul>
             </div>
         </div>
-
-        
-
-
     </div>
 
     <div class="container-full body-content">
@@ -101,12 +97,12 @@
             </ul>
         </div>
 
-        <div class="col-sm-7 col-sm-offset-2" style="padding-left:35px; padding-right:35px; padding-top: 15px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); z-index:1; min-height:100%">
+        <div class="col-sm-7 col-sm-offset-2" style="background-color:white; padding-left:35px; padding-right:35px; padding-top: 15px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); z-index:1; min-height:100%">
             @RenderBody()
         </div>
 
         <div class="col-sm-3" style="right:0; position:fixed; background-color:#2C3E52; color:white; height:100%; ">
-            @*@Component.InvokeAsync("RecentActivity").Result*@
+            @*@await Component.InvokeAsync("RecentActivity")*@
         </div>
     </div>
 

@@ -10,12 +10,13 @@ using System.Security.Claims;
 using Website;
 using Website.Models.ContentViewModels;
 using Website.RequestObjects;
+using Website.Controllers;
 
 namespace Web.Controllers
 {
-    public class SearchResultPageModel
+    public class SearchResultViewModel
     {
-        public SearchResultPageModel()
+        public SearchResultViewModel()
         {
             Results = new List<ContentViewModel>();
         }
@@ -27,7 +28,6 @@ namespace Web.Controllers
         public int ResultsCount { get; set; }
         public int MaxPages { get; set; }
     }
-
    
     public class ContentPageModel
     {
@@ -110,7 +110,7 @@ namespace Web.Controllers
 
             var manager = new ContentManager();
             var results = manager.Search(searchRequest);
-            var resultPage = new SearchResultPageModel() { Results = results, Request = searchRequest };
+            var resultPage = new SearchResultViewModel() { Results = results, Request = searchRequest };
             resultPage.ResultsCount = ContentApi.GetSearchResultCount("question", q, t);
             resultPage.MaxPages = Math.Min(5, (int)Math.Floor((double)resultPage.ResultsCount / 10));
 

@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-604a3be/css/bootstrap-markdown.min.css" />
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
+<script src="~/lib/simplemde/simplemde.min.js"></script>
+<script src="~/lib/marked/marked.min.js"></script>
+
 <style>
     .edit-answer {
         display: none;
@@ -168,19 +171,21 @@
 
         </div>
 
+        <h4 >Answer</h4>
+        <hr style="margin-top:0" />
     </div>
 
 
     @*<h4>@Model.Content.Children.Count Answers</h4>*@
-    <hr />
 
     @foreach (var a in Model.Content.Children)
     {
         <div>
             <div class="col-sm-1" style="text-align:center">
-                <span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@a.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
+                @*<span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@a.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
                 <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>
-                <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@a.Id, -1)" data-toggle="tooltip" title="Vote down"></span>
+                <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@a.Id, -1)" data-toggle="tooltip" title="Vote down"></span>*@
+                
                 <br />
                 @*@if (Model.Content.AcceptedAnswerId == a.Id)
                     {
@@ -198,12 +203,9 @@
                 <div id="answer-@a.Id" class="answer-text">@Html.Raw(a.Body)</div>
 
                 <div id="edit-controls-@a.Id" class="edit-controls text-right">
-                    <div style="margin-bottom:12px">
-                        <button class="btn btn-sm" onclick="edit(@a.Id)">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </button>
-                        <button class="btn btn-sm" onclick="del(@a.Id)">
-                            <span class="glyphicon glyphicon-remove"></span>
+                    <div style="margin-bottom:12px;">
+                        <button class="btn btn-link" onclick="edit(@a.Id)">
+                            <span>Improve this answer</span>
                         </button>
                     </div>
 

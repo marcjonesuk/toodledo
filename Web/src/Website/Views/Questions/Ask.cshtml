@@ -1,0 +1,52 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Data.Content
+
+<link rel="stylesheet" href="~/lib/simplemde/simplemde.min.css" />
+<link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-604a3be/css/bootstrap-markdown.min.css" />
+<script src="~/lib/validator/validator.min.js"></script>
+<script src="~/lib/simplemde/simplemde.min.js"></script>
+<script src="~/lib/marked/marked.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        var simplemde = new SimpleMDE({ element: document.getElementById("question-text") });
+
+        simplemde.codemirror.on("change", function () {
+            $("#preview").html(marked(simplemde.value()));
+        });
+    });
+
+</script>
+
+<br />
+<form method="post" data-toggle="validator" class="form-group">
+    @Html.HiddenFor(i => i.Id)
+    @Html.HiddenFor(i => i.UserId)
+    @Html.HiddenFor(i => i.Type)
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" placeholder="Enter a title for your question" asp-for="@Model.Title" maxlength="100" required>
+    </div>
+    <div class="form-group">
+        <label for="body">Question</label>
+        <textarea id="question-text" class="form-control" style="max-width:initial" rows="20" asp-for="@Model.Body" data-minlength="6" required></textarea>
+    </div>
+
+    <div id="preview">
+
+    </div>
+
+    <button type="submit" class="btn">
+    @if (Model.Id == 0)
+    {
+        <span>Post Question</span>
+    }
+    else
+    {
+        <span>Save Edit</span>
+    }
+    </button>
+</form>

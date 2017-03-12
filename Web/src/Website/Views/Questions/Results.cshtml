@@ -1,0 +1,140 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Web.Controllers.ContentListModel
+<br />
+
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+<script type="text/javascript">
+
+    var params = {
+        p: @Model.Page,
+        o: "@Model.OrderBy",
+        q: "@Model.SearchText"
+    };
+
+    window.search = function(next) {
+        $.extend( params, next );
+        var url = '/questions?';
+
+        if (typeof(next) == "undefined") {
+            params.p = 1;
+            params.q = $('#page-search').val();
+        }
+        else {
+            if (typeof(next.t) !== "undefined") {
+                params.p = 1;
+            }
+        }
+
+        url += 'p=' + params.p;
+        url += '&o=' + params.o;
+        url += '&q=' + params.q;
+
+        window.location.href = url;
+    }
+
+</script>
+
+@*<form class="form-horizontal">*@
+@*<div class="form-group">
+        <div class="col-sm-1"></div>
+        <div class="col-xs-8 col-sm-6 col-lg-4">
+            <input id="page-search" class="form-control" placeholder="search for" asp-for="@Model.SearchText">
+        </div>
+
+        <div class="col-xs-1">
+            <button id="search_btn" type="submit" class="btn btn-primary" onclick="search({ q: $('#page-search').val() })"><span class="glyphicon glyphicon-search"></span></button>
+        </div>
+    </div>*@
+
+<div class="input-group">
+    <input id="page-search" type="text" class="form-control" placeholder="Search">
+    <div class="input-group-btn">
+        <button class="btn btn-default" type="submit" onclick="search()">
+            <i class="glyphicon glyphicon-search"></i>
+        </button>
+    </div>
+</div>
+@*</form>*@
+
+@if (Model.Content == null || Model.Content.Count == 0)
+{
+    <span>Sorry, no results found</span>
+}
+else if (!string.IsNullOrEmpty(Model.SearchText))
+{
+    <span>@Model.ResultsCount results found</span>
+}
+
+<ul class="nav nav-tabs" style="margin-top: 20px;">
+    <li style="cursor: pointer" class='@(Model.OrderBy == "score-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'score-desc' })">Highest Voted</a></li>
+    <li style="cursor: pointer" class='@(Model.OrderBy == "created-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'created-desc' })">Most Recent</a></li>
+</ul>
+
+@foreach (var q in Model.Content)
+{
+    <div class="media" style="padding-left: 20px">
+        <div class="media-left text-center" style="padding-left:16px;">
+            <h2 style="margin-top:12px; margin-bottom:-6px">@q.Score</h2><small>
+                <span>score</span>
+            </small>
+        </div>
+
+        <div class="media-left text-center" style="padding-left:16px;">
+            <h2 style="margin-top:12px; margin-bottom:-6px">@q.ChildrenCount</h2><small>
+                <span>answers</span>
+            </small>
+        </div>
+
+        <div class="media-body" style="padding-left:16px;">
+            <div class="col-sm-9">
+                <div>
+                    <a href="/questions/show?id=@q.Id"><h4>"@q.Title"</h4></a>
+
+                    @foreach (var t in q.Tags)
+                    {
+                        <span class="badge">@t.Name</span>
+                    }
+
+                    @*<div style="position:relative">
+                            <div class="question-preview">
+                                @Html.Raw(q.HtmlBody)
+                            </div>
+
+                            <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
+                        </div>*@
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                @if (!string.IsNullOrEmpty(q.User.ProfileImageUrl))
+                {
+                    <img src="@q.User.ProfileImageUrl" height="20" width="20" />
+                }
+                <small>@q.User.DisplayName</small>
+                <br />
+                <small> asked @Web.DateTimeFormatter.Format(@q.Created)</small>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.MaxPages > 1)
+{
+    <hr />
+
+    <div class="col-sm-2">
+    </div>
+
+    <div class="col-sm-7 text-center">
+        <ul class="pagination">
+            @for (var p = 1; p <= Model.MaxPages; p++)
+                {
+                    var c = Model.Page == p ? "active" : "";
+                <li class="@c"><a class="btn" onclick="window.search({ p: @p})">@p</a></li>
+            }
+        </ul>
+    </div>
+}

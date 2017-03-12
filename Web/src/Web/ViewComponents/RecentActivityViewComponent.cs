@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Website.Controllers;
 
 namespace Web.ViewControllers
 {
@@ -17,6 +18,7 @@ namespace Web.ViewControllers
             {
                 //if (_cache == null)
                 //{
+                var controller = new ContentController();
                 _cache = ContentApi.Search(25, 1, null, null, null, null);
                 //}
 
@@ -24,7 +26,6 @@ namespace Web.ViewControllers
                 {
                     if (content.Type == "answer")
                     {
-                        var parent = ContentApi.GetParent(content.Id).First();
                         content.Title = parent.Title;
                         content.ParentId = parent.Id;
                     }

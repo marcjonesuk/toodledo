@@ -13,7 +13,6 @@ namespace Data
             var item = Get($@"SELECT [Id]
                         ,[DisplayName]
                         FROM[toodledo].[dbo].[User] WHERE [Id] = '{id}'")[0];
-
             return item;
         }
 
@@ -37,6 +36,14 @@ namespace Data
                 results.Add(item);
             }
             return results;
+        }
+
+        public static User GetByAspNetId(string aspnetUserId)
+        {
+            var item = Get($@"SELECT [Id]
+                        ,[DisplayName]
+                        FROM[toodledo].[dbo].[User] WHERE [AspNetId] = '{aspnetUserId}'")[0];
+            return item;
         }
     }
 }

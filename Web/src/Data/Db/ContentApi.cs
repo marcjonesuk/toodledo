@@ -27,15 +27,14 @@ namespace Data
                         ,[Created]
                         ,[Score]
                         FROM[toodledo].[dbo].[Content] WHERE [Id] = '{id}'");
-            Hydrate(items);
 
             var item = items[0];
-            var children = SelectByParent(item.Id).OrderByDescending(c => c.Score).ToList();
-            item.Children = children;
+            //var children = SelectByParent(item.Id).OrderByDescending(c => c.Score).ToList();
+            //item.Children = children;
             return item;
         }
 
-        private static int GetChildrenCount(int id)
+        public static int GetChildrenCount(int id)
         {
             return (int)Execute($"SELECT COUNT(*) FROM [toodledo].[dbo].[ContentRelation] WHERE ParentId = {id}");
         }
@@ -62,7 +61,6 @@ namespace Data
                                       ON r.ParentId = c.Id
                                       WHERE r.ChildId = {childId}");
 
-            Hydrate(result);
             return result;
         }
 
@@ -81,7 +79,6 @@ namespace Data
                                       ON r.ChildId = c.Id
                                       WHERE r.ParentId = {parentId}");
 
-            Hydrate(result);
             return result;
         }
 
@@ -144,21 +141,12 @@ namespace Data
             return (int)Execute(sql);
         }
 
-        private static void Hydrate(List<Content> content)
-        {
-            content.ForEach(i =>
-            {
-                i.User = UserApi.Select(i.UserId);
-                i.ChildrenCount = GetChildrenCount(i.Id);
-                i.Tags = TagApi.SelectByContent(i.Id);
-            });
-        }
+      
 
         public static List<Content> Search(int pageSize, int? pageNo, string type, string search, string orderBy, int? tagId)
         {
             var sql = SearchQuery(pageSize, pageNo, type, search, orderBy, tagId);
             var result = GetContent(sql);
-            Hydrate(result);
             return result;
         }
 

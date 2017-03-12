@@ -1,7 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model IEnumerable<Data.Content>
+@model IEnumerable<Website.Models.ContentViewModels.ContentViewModel>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -15,11 +15,11 @@
     @foreach (var c in Model)
     {
         <p class="item" style="display:none">
-            @c.User.DisplayName
             @{
                 string action = "";
                 int questionId = c.ParentId ?? c.Id;
             }
+            <a href="/questions/show?id=@questionId">"@c.Title"</a>
             @if (c.Type == "question")
             {
                 action = " asked ";
@@ -28,9 +28,9 @@
             {
                 action = " answered ";
             }
-            @action
-            <a href="/questions/show?id=@questionId">"@c.Title"</a>
+            @action by
+            <b>@c.User.DisplayName</b>
         </p>
         <br />
-    }
+                }
 </div>

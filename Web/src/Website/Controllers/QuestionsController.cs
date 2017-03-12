@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Website.Models;
 using System.Security.Claims;
+using Website.Controllers;
+using Website.Models.ContentViewModels;
 
 namespace Web.Controllers
 {
@@ -22,18 +24,18 @@ namespace Web.Controllers
         }
     }
 
-    public class ContentListModel
+    public class SearchResultPageModel
     {
-        public ContentListModel()
+        public SearchResultPageModel()
         {
-            Content = new List<Content>();
+            Results = new List<ContentViewModel>();
         }
+
         public List<Tag> Tags { get; set; }
-        public List<Content> Content { get; set; }
-        public string SearchText { get; set; }
+        public List<ContentViewModel> Results { get; set; }
+        public SearchRequest Request { get; set; }
+
         public int ResultsCount { get; set; }
-        public int Page { get; set; }
-        public string OrderBy { get; set; }
         public int MaxPages { get; set; }
     }
 
@@ -55,13 +57,14 @@ namespace Web.Controllers
         public string Answer { get; set; }
     }
 
-    public class ShowContentModel
+    public class ContentPageModel
     {
-        public Content Content { get; set; }
+        public ContentViewModel Content { get; set; }
         public string Response { get; set; }
         public bool AllowEdit { get; set; }
     }
 
+    [Authorize]
     public class QuestionsController : Controller
     {
         readonly UserManager<ApplicationUser> userManager;
@@ -73,15 +76,12 @@ namespace Web.Controllers
             this.userManager = userManager;
         }
 
-        [Authorize]
-        public IActionResult Show(int id, string response = null)
+        public IActionResult Show(int id)
         {
-            var content = ContentApi.Select(id);
+            var contentController = new ContentController();
+            var content = contentController.Index(id);
             ViewData["Title"] = content.Title;
-
-            var user = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            return View(new ShowContentModel() { Content = content, Response = response });
+            return View(new ContentPageModel() { Content = content } );
         }
 
         public IActionResult Edit(int id)
@@ -123,8 +123,6 @@ namespace Web.Controllers
 
         public IActionResult Search(int p, string o, string q, int t)
         {
-            var db = new DbApi();
-
             if (p == 0)
                 p = 1;
 
@@ -135,23 +133,43 @@ namespace Web.Controllers
             if (o == null)
                 o = "created-desc";
 
-            var content = ContentApi.Search(10, p, "question", q, o, tagId);
+            var searchRequest = new SearchRequest();
+            searchRequest.Text = q;
+            searchRequest.Page = p;
+            searchRequest.OrderBy = o;
+            searchRequest.Type = "question";
+
+            var controller = new ContentController();
+            var results = controller.Search(searchRequest);
+            var resultPage = new SearchResultPageModel() { Results = results, Request = searchRequest };
+            resultPage.ResultsCount = ContentApi.GetSearchResultCount("question", q, t);
+            resultPage.MaxPages = Math.Min(5, (int)Math.Floor((double)resultPage.ResultsCount / 10));
+
+            if (resultPage.ResultsCount % 10 != 0)
+                resultPage.MaxPages++;
+
+            //move to Tag controller
+            resultPage.Tags = TagApi.Select().OrderByDescending(tag => tag.Count).Take(8).ToList();
+
+            return View("Results", resultPage);
+
+            //var content = ContentApi.Search(10, p, "question", q, o, tagId);
             
-            var result = new ContentListModel();
-            result.Content = content;
-            result.ResultsCount = ContentApi.GetSearchResultCount("question", q, t);
+            //var result = new ContentListModel();
+            //result.Content = content;
+            //result.ResultsCount = ContentApi.GetSearchResultCount("question", q, t);
 
-            result.MaxPages = Math.Min(5, (int)Math.Floor((double)result.ResultsCount / 10));
+            //result.MaxPages = Math.Min(5, (int)Math.Floor((double)result.ResultsCount / 10));
 
-            if (result.ResultsCount % 10 != 0)
-                result.MaxPages++;
+            //if (result.ResultsCount % 10 != 0)
+            //    result.MaxPages++;
 
-            result.Page = p;
-            result.SearchText = q;
-            result.OrderBy = o;
-            result.Tags = TagApi.Select().OrderByDescending(tag => tag.Count).Take(8).ToList();
+            //result.Page = p;
+            //result.SearchText = q;
+            //result.OrderBy = o;
+            
 
-            return View("Results", result);
+            //return View("Results", result);
         }
 
         [Authorize]

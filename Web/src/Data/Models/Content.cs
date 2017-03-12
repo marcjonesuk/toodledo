@@ -21,14 +21,7 @@ namespace Data
         public string Body { get; set; }
         public string HtmlBody { get; set; }
         public string Title { get; set; }
-
         public int Score { get; set; }
-        public int? ParentId { get; set; }
-        public int ChildrenCount { get; set; }
-        public List<Content> Children { get; set; }
-
-        public List<Tag> Tags { get; set; }
-        public User User { get; set; }
 
         public override string ToString()
         {

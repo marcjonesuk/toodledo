@@ -4,23 +4,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Website.Controllers;
+using Website.Models.ContentViewModels;
 
 namespace Web.ViewControllers
 {
     public class RecentActivityViewComponent : ViewComponent
     {
-        private static List<Content> _cache;
+        private static List<ContentViewModel> _cache;
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
             try
             {
-                //if (_cache == null)
-                //{
-                _cache = ContentApi.Search(25, 1, null, null, null, null);
-                //}
+                var controller = new ContentController();
+                var search = controller.Search(new SearchRequest() { PageSize = 25 });
 
-                foreach (var content in _cache)
+                foreach (var content in search)
                 {
                     if (content.Type == "answer")
                     {

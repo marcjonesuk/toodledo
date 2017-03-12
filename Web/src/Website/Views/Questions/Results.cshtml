@@ -1,7 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model Web.Controllers.ContentListModel
+@model Web.Controllers.SearchResultPageModel
 <br />
 
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
@@ -9,9 +9,9 @@
 <script type="text/javascript">
 
     var params = {
-        p: @Model.Page,
-        o: "@Model.OrderBy",
-        q: "@Model.SearchText"
+        p: @Model.Request.Page,
+        o: "@Model.Request.OrderBy",
+        q: "@Model.Request.Text"
     };
 
     window.search = function(next) {
@@ -59,21 +59,21 @@
 </div>
 @*</form>*@
 
-@if (Model.Content == null || Model.Content.Count == 0)
+@if (Model.Results == null || Model.Results.Count == 0)
 {
     <span>Sorry, no results found</span>
 }
-else if (!string.IsNullOrEmpty(Model.SearchText))
+else if (!string.IsNullOrEmpty(Model.Request.Text))
 {
     <span>@Model.ResultsCount results found</span>
 }
 
 <ul class="nav nav-tabs" style="margin-top: 20px;">
-    <li style="cursor: pointer" class='@(Model.OrderBy == "score-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'score-desc' })">Highest Voted</a></li>
-    <li style="cursor: pointer" class='@(Model.OrderBy == "created-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'created-desc' })">Most Recent</a></li>
+    <li style="cursor: pointer" class='@(Model.Request.OrderBy == "score-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'score-desc' })">Highest Voted</a></li>
+    <li style="cursor: pointer" class='@(Model.Request.OrderBy == "created-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'created-desc' })">Most Recent</a></li>
 </ul>
 
-@foreach (var q in Model.Content)
+@foreach (var q in Model.Results)
 {
     <div class="media" style="padding-left: 20px">
         <div class="media-left text-center" style="padding-left:16px;">
@@ -132,7 +132,7 @@ else if (!string.IsNullOrEmpty(Model.SearchText))
         <ul class="pagination">
             @for (var p = 1; p <= Model.MaxPages; p++)
                 {
-                    var c = Model.Page == p ? "active" : "";
+                    var c = Model.Request.Page == p ? "active" : "";
                 <li class="@c"><a class="btn" onclick="window.search({ p: @p})">@p</a></li>
             }
         </ul>

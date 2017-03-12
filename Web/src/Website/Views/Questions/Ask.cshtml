@@ -1,7 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model Data.Content
+@model Website.RequestObjects.ContentRequest
 
 <link rel="stylesheet" href="~/lib/simplemde/simplemde.min.css" />
 <link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-604a3be/css/bootstrap-markdown.min.css" />
@@ -23,8 +23,7 @@
 
 <br />
 <form method="post" data-toggle="validator" class="form-group">
-    @Html.HiddenFor(i => i.Id)
-    @Html.HiddenFor(i => i.UserId)
+    @Html.HiddenFor(i => i.ContentId)
     @Html.HiddenFor(i => i.Type)
     <div class="form-group">
         <label for="title">Title</label>
@@ -40,7 +39,7 @@
     </div>
 
     <button type="submit" class="btn">
-    @if (Model.Id == 0)
+    @if (Model.ContentId == null)
     {
         <span>Post Question</span>
     }

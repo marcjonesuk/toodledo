@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Website.Controllers;
 using Website.Models.ContentViewModels;
+using Website;
+using Website.RequestObjects;
 
 namespace Web.ViewControllers
 {
@@ -17,7 +18,7 @@ namespace Web.ViewControllers
         {
             try
             {
-                var controller = new ContentController(null);
+                var controller = new ContentManager();
                 var search = controller.Search(new SearchRequest() { PageSize = 25 });
 
                 foreach (var content in search)

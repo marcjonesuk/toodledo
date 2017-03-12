@@ -2,28 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Website.Models;
 using System.Security.Claims;
-using Website.Controllers;
+using Website;
 using Website.Models.ContentViewModels;
+using Website.RequestObjects;
 
 namespace Web.Controllers
 {
-    public class Markdown
-    {
-        public static string Encode(string text)
-        {
-            var md = new MarkdownSharp.Markdown();
-            return md.Transform(text);
-            //question.HtmlBody = question.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
-            //question.HtmlBody = question.HtmlBody.Replace("</code>", "</pre>");
-        }
-    }
-
     public class SearchResultPageModel
     {
         public SearchResultPageModel()
@@ -39,24 +28,7 @@ namespace Web.Controllers
         public int MaxPages { get; set; }
     }
 
-    public class DeleteRequest
-    {
-        public int AnswerId { get; set; }
-    }
-
-    public class VoteRequest
-    {
-        public int AnswerId { get; set; }
-        public int Direction { get; set; }
-    }
-
-    public class AnswerRequest
-    {
-        public int AnswerId { get; set; }
-        public int QuestionId { get; set; }
-        public string Answer { get; set; }
-    }
-
+   
     public class ContentPageModel
     {
         public ContentViewModel Content { get; set; }
@@ -78,8 +50,8 @@ namespace Web.Controllers
 
         public IActionResult Show(int id)
         {
-            var contentController = new ContentController(userManager);
-            var content = contentController.Index(id);
+            var contentController = new ContentManager();
+            var content = contentController.Get(id);
             ViewData["Title"] = content.Title;
             return View(new ContentPageModel() { Content = content } );
         }
@@ -100,21 +72,21 @@ namespace Web.Controllers
         [HttpPost]
         public int Vote([FromBody]VoteRequest req)
         {
-            return VoteApi.Vote(req.AnswerId, 1, req.Direction);
+            return VoteApi.Vote(req.ContentId, 1, req.Direction);
         }
 
         [HttpPost]
-        public string Answer([FromBody]AnswerRequest req)
+        public string Answer([FromBody]ContentRequest req)
         {
-            var controller = new ContentController(userManager);
-            if (req.AnswerId == 0)
+            var contentManager = new ContentManager(GetCurrentUser());
+            if (req.ContentId == null)
             {
-                var c = controller.CreateChild(new CreateContentRequest() { ParentId = req.QuestionId, Body = req.Answer, Type = "answer" });
+                var c = contentManager.Create(req);
                 return c.HtmlBody;
             }
             else
             {
-                var c = controller.Update(new CreateContentRequest() { ParentId = req.QuestionId, Body = req.Answer, Type = "answer" });
+                var c = contentManager.Update(req);
                 return c.HtmlBody;
             }
         }
@@ -137,8 +109,8 @@ namespace Web.Controllers
             searchRequest.OrderBy = o;
             searchRequest.Type = "question";
 
-            var controller = new ContentController(userManager);
-            var results = controller.Search(searchRequest);
+            var manager = new ContentManager();
+            var results = manager.Search(searchRequest);
             var resultPage = new SearchResultPageModel() { Results = results, Request = searchRequest };
             resultPage.ResultsCount = ContentApi.GetSearchResultCount("question", q, t);
             resultPage.MaxPages = Math.Min(5, (int)Math.Floor((double)resultPage.ResultsCount / 10));
@@ -154,18 +126,25 @@ namespace Web.Controllers
 
         public User GetCurrentUser()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            var user = claim.Value;
-            var currentUser = UserApi.GetByAspNetId(user);
-            return currentUser;
+            try
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                var user = claim.Value;
+                var currentUser = UserApi.GetByAspNetId(user);
+                return currentUser;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         [Authorize]
         public IActionResult Ask(int? id)
         {
             if (id == null)
-                return View(new Content() { UserId = GetCurrentUser().Id, Type = "question" });
+                return View(new ContentRequest() { Type = "question" });
 
             var c = ContentApi.Select(id.Value);
             ViewData["Title"] = c.Title;
@@ -173,13 +152,15 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Ask(Content request)
+        public IActionResult Ask(ContentRequest request)
         {
-            var controller = new ContentManager(userManager);
-            if (request.Id == 0)
+            var user = GetCurrentUser();
+            var manager = new ContentManager(user);
+
+            if (request.ContentId == null)
             {
-                var id = controller.Create(new CreateContentRequest() { Type = "question", Title = request.Title, Body = request.Body });
-                return RedirectToAction("Show", new { Id = id, Response = "Your question was added" });
+                var id = manager.Create(request);
+                return RedirectToAction("Show", new { Id = id });
             }
             else
             {
@@ -187,11 +168,5 @@ namespace Web.Controllers
                 //ContentApi.Update(content.Id, content.Title, content.Body, Markdown.Encode(content.Body));
             }
         }
-
-        //[HttpPost]
-        //public IActionResult New(Question question)
-        //{
-        //    return RedirectToAction("Get", new { id });
-        //}
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -18,6 +19,20 @@ namespace Data
 
     public class DbApi
     {
+        private static IMemoryCache _cache;
+        public static IMemoryCache Cache
+        {
+            set
+            {
+                if (_cache == null)
+                    _cache = value;
+            }
+            get
+            {
+                return _cache;
+            }
+        }
+
         protected static object Execute(string sql)
         {
             SqlConnection connection = new SqlConnection(@"Data Source=localhost\SQLEXPRESS;Initial Catalog=toodledo;Integrated Security=SSPI;");

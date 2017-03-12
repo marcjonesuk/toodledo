@@ -47,6 +47,7 @@ namespace Website
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddMemoryCache();
             services.AddMvc();
 
             // Add application services.

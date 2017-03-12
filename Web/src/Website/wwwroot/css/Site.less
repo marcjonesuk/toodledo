@@ -156,6 +156,10 @@ span.badge {
     font-weight: normal !important;
 }
 
+a {
+    font-weight: normal;
+}
+
 .CodeMirror {
     font-family: Menlo,Monaco,Consolas,"Courier New",monospace !important;
 }
@@ -170,6 +174,7 @@ span.badge {
     padding:0 !important;
     border-radius: 0 !important;
     height: 41px !important;
+    background-color: #f5f5f5 !important;
  }
 
 .editor-toolbar::before, .editor-toolbar::after {
@@ -183,4 +188,14 @@ span.badge {
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,175,233,0.6);
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,175,233,0.6);
+}
+
+@primary: #008cba;
+
+.glyphicon.primary {
+    color: @primary;
+}
+
+.glyphicon.light {
+    color: lightgray;
 }

@@ -7,22 +7,31 @@ using System.Threading.Tasks;
 using Website.Models.ContentViewModels;
 using Website;
 using Website.RequestObjects;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Web.ViewControllers
 {
     public class RecentActivityViewComponent : ViewComponent
     {
-        private static List<ContentViewModel> _cache;
+        private IMemoryCache _cache;
+
+        public RecentActivityViewComponent(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
             try
             {
-                if (_cache == null) {
+                var key = "recent-activity";
+                List<ContentViewModel> data;
+                if (!_cache.TryGetValue(key, out data))
+                {
                     var controller = new ContentManager();
-                    _cache = controller.Search(new SearchRequest() { PageSize = 25 });
+                    data = controller.Search(new SearchRequest() { PageSize = 25 });
 
-                    foreach (var content in _cache)
+                    foreach (var content in data)
                     {
                         if (content.Type == "answer")
                         {
@@ -31,11 +40,11 @@ namespace Web.ViewControllers
                             content.ParentId = parent.Id;
                         }
                     }
-
+                    _cache.Set(key, data, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
                 }
-                return View(_cache);
+                return View(data);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return View(new List<Content>());
             }

@@ -45,7 +45,8 @@
       "type": "build"
     },
     "Data": "1.0.0-*",
-    "MarkdownSharp": "1.0.0-*"
+    "MarkdownSharp": "1.0.0-*",
+    "Microsoft.Extensions.Caching.Memory": "1.1.1"
   },
 
   "tools": {

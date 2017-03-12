@@ -3,11 +3,8 @@
 *@
 @model Web.Controllers.ContentPageModel
 
-<script src="~/lib/toopay-bootstrap-markdown-604a3be/js/bootstrap-markdown.js"></script>
-<script src="http://www.codingdrama.com/bootstrap-markdown/js/markdown.js"></script>
-<link rel="stylesheet" href="~/lib/toopay-bootstrap-markdown-604a3be/css/bootstrap-markdown.min.css" />
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-
+<link rel="stylesheet" href="~/lib/simplemde/simplemde.min.css" />
 <script src="~/lib/simplemde/simplemde.min.js"></script>
 <script src="~/lib/marked/marked.min.js"></script>
 
@@ -18,6 +15,8 @@
 </style>
 
 <script type="text/javascript">
+    var simplemde = null;
+
     var questionId = @Model.Content.Id;
 
     var editQuestion = function(questionId) {
@@ -40,7 +39,7 @@
     };
 
     var answer = function () {
-        var data = { parentId: questionId, body: document.getElementById('add_answer').value };
+        var data = { parentId: questionId, body: simplemde.value() };
 
         $.ajax({
             url: '/questions/answer',
@@ -69,8 +68,8 @@
         });
     }
 
-    var saveAnswerEdit = function(answer) {  
-        var data = { contentId: answer, body: $("#edit-" + answer + " textarea")[0].value };
+    var saveAnswerEdit = function(answer) {
+        var data = { contentId: answer, body: simplemde.value() };
 
         $.ajax({
             url: '/questions/answer',
@@ -95,35 +94,50 @@
 
     var edit = function(answer) {
         $(".your-answer").fadeOut(200);
-        $("#edit-" + answer + " textarea").markdown({autofocus:false,savable:false})
+
         $("#edit-" + answer).show();
+
+        simplemde = new SimpleMDE({
+            element: $("#edit-" + answer + " textarea")[0],
+            spellChecker: false,
+            placeholder: "Write your answer here",
+            status: false,
+            tabSize: 4
+        });
+
         $("#answer-" + answer).hide();
         $("#edit-controls-" + answer).hide();
     }
 
     var answerExpanded = false;
     $(document).ready(function() {
-        $("code").addClass("prettyprint");
-        PR.prettyPrint();
+        //$("code").addClass("prettyprint");
+        //PR.prettyPrint();
 
         $("#content").show();
-        $("#add_answer").markdown({autofocus:false, savable:false});
+        //$("#add_answer").markdown({autofocus:false, savable:false});
 
-        $("textarea").focus(function(a) {
-            $('html, body').animate({'scrollTop': $(a.target).offset().top}, 1000);
+        simplemde = new SimpleMDE({
+            element: document.getElementById("add_answer"),
+            spellChecker: false,
+            placeholder: "Write your answer here",
+            status: false,
+            tabSize: 4
         });
 
-        $("#add_answer").focus(function(a) {
-            if (!answerExpanded) {
-                $(a.target).animate({'height':"+=300px"}, 0);
-                answerExpanded = true;
-            }
-        });
+        //$("textarea").focus(function(a) {
+        //    $('html, body').animate({'scrollTop': $(a.target).offset().top}, 1000);
+        //});
+
+        //$("#add_answer").focus(function(a) {
+        //    if (!answerExpanded) {
+        //        $(a.target).animate({'height':"+=300px"}, 0);
+        //        answerExpanded = true;
+        //    }
+        //});
     });
 
 </script>
-
-<br />
 
 @if (Model.Response != null)
 {
@@ -136,43 +150,46 @@
 <hr />
 
 <div id="content" style="display:none;">
-    <div class="col-sm-1" style="text-align:center">
-        <span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@Model.Content.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
-        <h4 id="answer-score-@Model.Content.Id" style="margin:0">@Model.Content.Score</h4>
-        <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@Model.Content.Id, -1)" data-toggle="tooltip" title="Vote down"></span>
-        <br />
-    </div>
-
-    <div class="col-sm-11">
-        <p>@Html.Raw(Model.Content.HtmlBody)</p>
-
-        <div>
-            <div class="media-left ">
-                @foreach (var t in Model.Content.Tags)
-                {
-                    <span class="badge">@t.Name</span>
-                }
-            </div>
-
-            <div class="text-right" style="padding-left:100px">
-                <div style="margin-bottom:12px;">
-                    <button onclick="editQuestion(@Model.Content.Id)" class="btn btn-sm" data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
-                    <button class="btn btn-sm" data-toggle="tooltip" title="Delete this question"><span class="glyphicon glyphicon-remove"></span></button>
-                </div>
-
-                @if (!string.IsNullOrEmpty(Model.Content.User.ProfileImageUrl))
-            {
-                    <img src="@Model.Content.User.ProfileImageUrl" height="20" width="20" />
-                }
-                <small>@Model.Content.User.DisplayName</small>
-                <br />
-                <small>Asked @Web.DateTimeFormatter.Format(Model.Content.Created)</small>
-            </div>
-
+    <div class="row">
+        <div class="col-sm-1" style="text-align:center">
+            <span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@Model.Content.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
+            <h4 id="answer-score-@Model.Content.Id" style="margin:0">@Model.Content.Score</h4>
+            <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@Model.Content.Id, -1)" data-toggle="tooltip" title="Vote down"></span>
+            <br />
         </div>
 
-        <h4 >Answer</h4>
-        <hr style="margin-top:0" />
+        <div class="col-sm-11">
+            <p>@Html.Raw(Model.Content.HtmlBody)</p>
+
+            <div>
+                <div class="media-left ">
+                    @foreach (var t in Model.Content.Tags)
+                    {
+                        <span class="badge">@t.Name</span>
+                    }
+                </div>
+
+                <div class="text-right" style="padding-left:100px">
+                    <div style="margin-bottom:12px;">
+                        <button onclick="editQuestion(@Model.Content.Id)" class="btn btn-sm" data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
+                        <button class="btn btn-sm" data-toggle="tooltip" title="Delete this question"><span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Content.User.ProfileImageUrl))
+                    {
+                        <img src="@Model.Content.User.ProfileImageUrl" height="20" width="20" />
+                    }
+                    <small>@Model.Content.User.DisplayName</small>
+                    <br />
+                    <small>Asked @Web.DateTimeFormatter.Format(Model.Content.Created)</small>
+                </div>
+
+            </div>
+
+            <h4>Answer</h4>
+            <hr style="margin-top:0" />
+
+        </div>
     </div>
 
 
@@ -180,12 +197,12 @@
 
     @foreach (var a in Model.Content.Children)
     {
-        <div>
+        <div class="row">
             <div class="col-sm-1" style="text-align:center">
                 @*<span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@a.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
-                <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>
-                <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@a.Id, -1)" data-toggle="tooltip" title="Vote down"></span>*@
-                
+                    <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>
+                    <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@a.Id, -1)" data-toggle="tooltip" title="Vote down"></span>*@
+
                 <br />
                 @*@if (Model.Content.AcceptedAnswerId == a.Id)
                     {
@@ -224,15 +241,15 @@
 
     @if (Model.Content.Children.Count == 0)
     {
-        <div class="your-answer form-group">
-            <h4>Your answer</h4>
-            <blockquote>
+        <div class="row">
+            <div class="col-sm-1" style="text-align:center">
+            </div>
+            <div class="col-sm-11" >
                 <textarea id="add_answer" style="max-width:initial" class="form-control" rows="4"></textarea>
-            </blockquote>
-            <button class="btn" onclick="answer()">Post Your Answer</button>
+                <button class="btn btn-default" onclick="answer()">Post Your Answer</button>
+            </div>
         </div>
     }
-
 </div>
 
 @*@await Component.InvokeAsync("AddAnswer", new { questionId = Model.Id })*@

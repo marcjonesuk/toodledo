@@ -37,18 +37,6 @@
 
 </script>
 
-@*<form class="form-horizontal">*@
-@*<div class="form-group">
-        <div class="col-sm-1"></div>
-        <div class="col-xs-8 col-sm-6 col-lg-4">
-            <input id="page-search" class="form-control" placeholder="search for" asp-for="@Model.SearchText">
-        </div>
-
-        <div class="col-xs-1">
-            <button id="search_btn" type="submit" class="btn btn-primary" onclick="search({ q: $('#page-search').val() })"><span class="glyphicon glyphicon-search"></span></button>
-        </div>
-    </div>*@
-
 <div class="input-group">
     <input id="page-search" type="text" class="form-control" placeholder="Search">
     <div class="input-group-btn">
@@ -75,36 +63,31 @@ else if (!string.IsNullOrEmpty(Model.Request.Text))
 
 @foreach (var q in Model.Results)
 {
-    <div class="media" style="padding-left: 20px">
-        <div class="media-left text-center" style="padding-left:16px;">
-            <h2 style="margin-top:12px; margin-bottom:-6px">@q.Score</h2><small>
-                <span>score</span>
-            </small>
-        </div>
+    <div class="container-fluid">
+        <div class="row" style="margin-top:25px">
+            @*<div class="media-left text-center" style="padding-left:16px;">
+                    <h2 style="margin-top:12px; margin-bottom:-6px">@q.Score</h2><small>
+                        <span>score</span>
+                    </small>
+                </div>*@
 
-        <div class="media-left text-center" style="padding-left:16px;">
-            <h2 style="margin-top:12px; margin-bottom:-6px">@q.ChildrenCount</h2><small>
-                <span>answers</span>
-            </small>
-        </div>
 
-        <div class="media-body" style="padding-left:16px;">
-            <div class="col-sm-9">
+            <div class="col-sm-1 text-right">
+                @{
+                    var c = (q.ChildrenCount > 0) ? "primary" : "light";
+                    var tooltip = (q.ChildrenCount > 0) ? "This question has been answered" : "This question hasn't been answered yet";
+                    <span class="glyphicon glyphicon-thumbs-up @c" title="@tooltip" data-toggle="tooltip" data-placement="right"
+                          style="font-size:30px; padding:0"></span>
+                }
+            </div>
+
+            <div class="col-sm-8">
                 <div>
-                    <a href="/questions/show?id=@q.Id"><h4>"@q.Title"</h4></a>
-
+                    <a href="/questions/show?id=@q.Id"><h4 style="margin-top:0; margin-bottom:6px">"@q.Title"</h4></a>
                     @foreach (var t in q.Tags)
                     {
                         <span class="badge">@t.Name</span>
                     }
-
-                    @*<div style="position:relative">
-                            <div class="question-preview">
-                                @Html.Raw(q.HtmlBody)
-                            </div>
-
-                            <div class="fadeout" style="position:absolute; bottom:0; left:0; right:0"></div>
-                        </div>*@
                 </div>
             </div>
 
@@ -115,11 +98,12 @@ else if (!string.IsNullOrEmpty(Model.Request.Text))
                 }
                 <small>@q.User.DisplayName</small>
                 <br />
-                <small> asked @Web.DateTimeFormatter.Format(@q.Created)</small>
+                <small data-toggle="tooltip" data-placement="right" title="Posted @q.Created">Asked @Web.DateTimeFormatter.Format(@q.Created)</small>
             </div>
+
         </div>
     </div>
-}
+                    }
 
 @if (Model.MaxPages > 1)
 {

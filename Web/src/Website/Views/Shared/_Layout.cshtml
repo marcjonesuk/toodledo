@@ -43,8 +43,6 @@
             .navbar-nav input#search:hover {
                 cursor: pointer;
             }
-
-
     </style>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -74,17 +72,18 @@
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Questions" asp-action="Ask">Ask</a></li>
                     @*<li>
-                        <span class="glyphicon glyphicon-search"></span>
-                        <input id="search" class="form-control" placeholder="Search">
-                    </li>*@
+                            <span class="glyphicon glyphicon-search"></span>
+                            <input id="search" class="form-control" placeholder="Search">
+                        </li>*@
                     <li>
                         @await Html.PartialAsync("_LoginPartial")
                     </li>
                     <li>
-                        <span>Exit full screen mode</span>
+                        <a class="exit-full-screen" style="display:none; margin-left:100px" onclick="">Exit Full Screen</a>
                     </li>
                 </ul>
             </div>
+          
         </div>
     </div>
 

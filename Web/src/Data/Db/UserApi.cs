@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -10,15 +11,24 @@ namespace Data
     {
         public static User Select(int id)
         {
-            var item = Get($@"SELECT [Id]
+            User user;
+            var key = $"user-{id}";
+
+            if (!Cache.TryGetValue(key, out user))
+            {
+                user = Get($@"SELECT [Id]
                         ,[DisplayName]
                         ,[ProfileImageUrl]
                         FROM[toodledo].[dbo].[User] WHERE [Id] = '{id}'")[0];
-            return item;
+                Cache.Set(key, user, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(30)));
+            }
+
+            return user;
         }
 
         public static void Update(int id, string displayName, string profileImageUrl)
         {
+            Cache.Remove($"user-{id}");
             Execute($@"UPDATE [dbo].[User] SET DisplayName = '{displayName}', ProfileImageUrl = '{profileImageUrl}' WHERE id = {id}");
         }
 
@@ -60,13 +70,20 @@ namespace Data
             return results;
         }
 
+        //todo need to invalidate this cache value
         public static User GetByAspNetId(string aspnetUserId)
         {
-            var item = Get($@"SELECT [Id]
+            User user;
+            var key = $"user-asp-{aspnetUserId}";
+            if (!Cache.TryGetValue(key, out user))
+            {
+                user = Get($@"SELECT [Id]
                         ,[DisplayName]
                         ,[ProfileImageUrl]
                         FROM[toodledo].[dbo].[User] WHERE [AspNetId] = '{aspnetUserId}'")[0];
-            return item;
+                Cache.Set(key, user, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(30)));
+            }
+            return user;
         }
     }
 }

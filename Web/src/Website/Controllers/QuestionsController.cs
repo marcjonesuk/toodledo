@@ -11,6 +11,7 @@ using Website;
 using Website.Models.ContentViewModels;
 using Website.RequestObjects;
 using Website.Controllers;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Web.Controllers
 {
@@ -41,10 +42,11 @@ namespace Web.Controllers
         readonly UserManager<ApplicationUser> userManager;
         readonly SignInManager<ApplicationUser> signInManager;
 
-        public QuestionsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public QuestionsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IMemoryCache cache)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
+            DbApi.Cache = cache;
         }
 
         public IActionResult Show(int id)

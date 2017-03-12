@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Data
 {
@@ -18,7 +19,12 @@ namespace Data
 
         public static Content Select(int id)
         {
-            var items = GetContent($@"SELECT [Id]
+            Content content;
+            var key = $"content-{id}";
+
+            if (!Cache.TryGetValue(key, out content))
+            {
+                var items = GetContent($@"SELECT [Id]
                         ,[Title]
                         ,[Body]
                         ,[UserId]
@@ -28,10 +34,11 @@ namespace Data
                         ,[Score]
                         FROM[toodledo].[dbo].[Content] WHERE [Id] = '{id}'");
 
-            var item = items[0];
-            //var children = SelectByParent(item.Id).OrderByDescending(c => c.Score).ToList();
-            //item.Children = children;
-            return item;
+                content = items[0];
+                Cache.Set(key, content, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(30)));
+            }
+
+            return content;
         }
 
         public static int GetChildrenCount(int id)
@@ -145,8 +152,16 @@ namespace Data
 
         public static List<Content> Search(int pageSize, int? pageNo, string type, string search, string orderBy, int? tagId)
         {
-            var sql = SearchQuery(pageSize, pageNo, type, search, orderBy, tagId);
-            var result = GetContent(sql);
+            var key = $"p={pageSize},pn={pageNo},t={type},s={search},o={orderBy},tg={tagId}";
+            List<Content> result;
+
+            if (!Cache.TryGetValue(key, out result))
+            {
+                var sql = SearchQuery(pageSize, pageNo, type, search, orderBy, tagId);
+                result = GetContent(sql);
+                Cache.Set(key, result, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
+            }
+
             return result;
         }
 
@@ -164,6 +179,7 @@ namespace Data
 
         public static void Update(int id, string title, string body, string htmlBody)
         {
+            Cache.Remove($"content-{id}");
             Execute($@"UPDATE [dbo].[Content] SET Title = '{title.SqlEncode()}', Body = '{body.SqlEncode()}', HtmlBody = '{htmlBody.SqlEncode()}' WHERE id = {id}");
         }
 

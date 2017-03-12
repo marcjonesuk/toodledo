@@ -28,7 +28,7 @@ namespace Web.Controllers
         public int ResultsCount { get; set; }
         public int MaxPages { get; set; }
     }
-   
+
     public class ContentPageModel
     {
         public ContentViewModel Content { get; set; }
@@ -82,7 +82,13 @@ namespace Web.Controllers
         [HttpPost]
         public string Answer([FromBody]ContentRequest req)
         {
-            var contentManager = new ContentManager(GetCurrentUser());
+            var user = GetCurrentUser();
+            if (user == null)
+            {
+                return null;
+            }
+            var contentManager = new ContentManager(user);
+
             req.Type = "answer";
             if (req.ContentId == null)
             {

@@ -12,11 +12,18 @@ namespace Website.Controllers
     {
         public User GetCurrentUser()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            var user = claim.Value;
-            var currentUser = UserApi.GetByAspNetId(user);
-            return currentUser;
+            try
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                var user = claim.Value;
+                var currentUser = UserApi.GetByAspNetId(user);
+                return currentUser;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

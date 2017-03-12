@@ -48,7 +48,11 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             success: function (data) {
-                location.reload();
+                if (data){
+                    location.reload();
+                } else {
+                    window.location.href = "/Account/Login";
+                }
             }
         });
     };
@@ -78,7 +82,11 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             success: function (data) {
-                $("#answer-" + answer).html(data);
+                if (data){
+                    $("#answer-" + answer).html(data);
+                } else {
+                    window.location.href = "/Account/Login";
+                }
             }
         });
 

@@ -85,28 +85,18 @@
                 </ul>
             </div>
         </div>
-
-        
-
-
     </div>
 
     <div class="container-full body-content">
         <div class="col-sm-2 fixed side-panel" style="position:fixed; color:white; display:flex; height:100%; ">
-            <ul class="nav nav-pills nav-stacked">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#">Menu 1</a></li>
-                <li><a href="#">Menu 2</a></li>
-                <li><a href="#">Menu 3</a></li>
-            </ul>
         </div>
 
-        <div class="col-sm-7 col-sm-offset-2" style="padding-left:35px; padding-right:35px; padding-top: 15px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); z-index:1; min-height:100%">
+        <div class="col-sm-7 col-sm-offset-2" style="background-color:white; padding-left:35px; padding-right:35px; padding-top: 15px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); z-index:1; min-height:100%">
             @RenderBody()
         </div>
 
-        <div class="col-sm-3 side-panel" style="right:0; position:fixed; color:white; height:100%; ">
-            @*@Component.InvokeAsync("RecentActivity").Result*@
+        <div class="col-sm-3 side-panel" style="right:0; position:fixed; height:100%; ">
+            @await Component.InvokeAsync("RecentActivity")
         </div>
     </div>
 

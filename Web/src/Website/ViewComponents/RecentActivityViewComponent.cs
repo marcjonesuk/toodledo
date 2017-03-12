@@ -18,17 +18,20 @@ namespace Web.ViewControllers
         {
             try
             {
-                var controller = new ContentManager();
-                var search = controller.Search(new SearchRequest() { PageSize = 25 });
+                if (_cache == null) {
+                    var controller = new ContentManager();
+                    _cache = controller.Search(new SearchRequest() { PageSize = 25 });
 
-                foreach (var content in search)
-                {
-                    if (content.Type == "answer")
+                    foreach (var content in _cache)
                     {
-                        var parent = ContentApi.GetParent(content.Id).First();
-                        content.Title = parent.Title;
-                        content.ParentId = parent.Id;
+                        if (content.Type == "answer")
+                        {
+                            var parent = ContentApi.GetParent(content.Id).First();
+                            content.Title = parent.Title;
+                            content.ParentId = parent.Id;
+                        }
                     }
+
                 }
                 return View(_cache);
             }

@@ -13,7 +13,7 @@ namespace Data
         {
             return (int)(decimal)Execute($@"
                 INSERT INTO [dbo].[Content] ([Title], [Body], [UserId], [Type], [HtmlBody], [Created]) 
-                VALUES ( '{content.Title.SqlEncode()}', '{content.Body.SqlEncode()}', {content.UserId}, '{content.Type}', '{content.HtmlBody.SqlEncode()}', '{content.Created}'); 
+                VALUES ( '{content.Title.SqlEncode()}', '{content.Body.SqlEncode()}', {content.UserId}, '{content.Type}', '{content.HtmlBody.SqlEncode()}', '{FormatDate(content.Created)}'); 
                 SELECT SCOPE_IDENTITY();");
         }
 
@@ -148,7 +148,7 @@ namespace Data
             return (int)Execute(sql);
         }
 
-      
+
 
         public static List<Content> Search(int pageSize, int? pageNo, string type, string search, string orderBy, int? tagId)
         {

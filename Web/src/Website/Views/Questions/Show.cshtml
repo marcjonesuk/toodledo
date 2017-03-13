@@ -133,6 +133,7 @@
             tabSize: 4
         });
 
+
         //$("textarea").focus(function(a) {
         //    $('html, body').animate({'scrollTop': $(a.target).offset().top}, 1000);
         //});
@@ -167,7 +168,9 @@
         </div>
 
         <div class="col-sm-11">
-            <p>@Html.Raw(Model.Content.HtmlBody)</p>
+            <div class="content-body">
+                <p>@Html.Raw(Model.Content.HtmlBody)</p>
+            </div>
 
             <div>
                 <div class="media-left ">
@@ -225,7 +228,8 @@
                         <button class="btn" onclick="endEdit()" data-toggle="tooltip" title="Cancel your changes"><span>Cancel</span></button>
                     </div>
                 </div>
-                <div id="answer-@a.Id" class="answer-text">@Html.Raw(a.Body)</div>
+
+                <div id="answer-@a.Id" class="content-body answer-text">@Html.Raw(a.Body)</div>
 
                 <div id="edit-controls-@a.Id" class="edit-controls text-right">
                     <div style="margin-bottom:12px;">
@@ -252,7 +256,7 @@
         <div class="row">
             <div class="col-sm-1" style="text-align:center">
             </div>
-            <div class="col-sm-11" >
+            <div class="col-sm-11">
                 <textarea id="add_answer" style="max-width:initial" class="form-control" rows="4"></textarea>
                 <button class="btn btn-default" onclick="answer()">Post Your Answer</button>
             </div>

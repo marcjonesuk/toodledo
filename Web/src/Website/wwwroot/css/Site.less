@@ -10,7 +10,7 @@ html, body {
 @side-panel: #f6f6f6;
 
 .side-panel {
-    background-color: @side-panel; 
+    background-color: @side-panel;
 }
 
 /* Wrapping element */
@@ -165,22 +165,22 @@ a {
 }
 
 .fa {
-    padding: 4px 0 0 0 !important;
-    width:40px !important;
-    height:40px !important;
+    padding: 6px 0 0 0 !important;
+    width: 45px !important;
+    height: 45px !important;
 }
- 
+
 .editor-toolbar {
-    padding:0 !important;
+    padding: 0 !important;
     border-radius: 0 !important;
     height: 41px !important;
     background-color: #f5f5f5 !important;
- }
+}
 
 .editor-toolbar::before, .editor-toolbar::after {
-    height:0 !important;
-    margin:0 !important;
-    padding:0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .CodeMirror.focus {
@@ -230,7 +230,7 @@ a {
         font-family: 'Times New Roman', Times, serif;
     }
 
-    
+
     h4 {
         font-weight: 300;
         font-size: 20px !important;
@@ -241,3 +241,25 @@ a {
         font-size: 16px !important;
     }
 }
+
+.editor-toolbar {
+    background-color: transparent !important;
+    left: 300px;
+}
+
+.navbar {
+    .editor-toolbar {
+        border:0 !important;
+        a {
+            color: white !important;
+        }
+
+        a.active, a:hover{
+            border:0 !important;
+            background-color: #006687 !important;
+        }
+    }
+}
+
+
+

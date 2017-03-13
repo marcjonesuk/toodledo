@@ -10,6 +10,7 @@ namespace Website
         public static string Encode(string text)
         {
             var md = new MarkdownSharp.Markdown();
+            text = System.Net.WebUtility.HtmlEncode(text);
             return md.Transform(text);
             //question.HtmlBody = question.HtmlBody.Replace("<code>", "<pre class='prettyprint'>");
             //question.HtmlBody = question.HtmlBody.Replace("</code>", "</pre>");

@@ -61,5 +61,10 @@ namespace Data
             a(reader);
             connection.Close();
         }
+
+        protected static string FormatDate(DateTime dateTime)
+        {
+            return dateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        }
     }
 }

@@ -96,6 +96,31 @@
                 return false;
             }
         });
+
+
+        var validate = function () {
+             
+            return $('#title').val().length > 0 && !$('.CodeMirror-placeholder').is(':visible');
+        }
+
+        var isSubmitted = false;
+
+        $('.btn').click(function (e) {
+            if (!validate()) {
+                e.preventDefault();
+                e.stopPropagation();
+                return
+            }
+
+            //to prevent duplicate form submissions
+            if (!isSubmitted) {
+                isSubmitted = true;
+            }
+            else {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
     });
 
 </script>

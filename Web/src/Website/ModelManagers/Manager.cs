@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Website.ModelManagers;
 using Website.Models.ContentViewModels;
 using Website.RequestObjects;
 
@@ -41,8 +42,16 @@ namespace Website
             if (request.ContentId == null)
                 throw new ArgumentNullException(nameof(request.ContentId));
 
+            var userId = user?.Id;
+            if (userId == null)
+            {
+                throw new ArgumentNullException(nameof(request), "User must be set to update an answer");
+            }
+
+            TagManager.SetTagsForContent((int)request.ContentId, request.Tags);
+
             var htmlBody = Markdown.Encode(request.Body);
-            ContentApi.Update(request.ContentId.Value, request.Title, request.Body, htmlBody);
+            ContentApi.Update(request.ContentId.Value, request.Title, request.Body, htmlBody, (int)userId);
 
             return ContentApi.Select(request.ContentId.Value)
                 .AsViewModel()
@@ -60,6 +69,8 @@ namespace Website
             content.UserId = user.Id;
             content.Type = request.Type;
             var id = ContentApi.Insert(content);
+
+            TagManager.SetTagsForContent(id, request.Tags);
 
             if (request.ParentId != null)
             {
@@ -81,7 +92,8 @@ namespace Website
             var searchResult = contents.Select(c => c.AsViewModel()
                     .WithTags()
                     .WithChildrenCount()
-                    .WithUser()).ToList();
+                    .WithUser()
+                    .WithEditedBy()).ToList();
 
             return searchResult;
         }

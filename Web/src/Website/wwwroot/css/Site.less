@@ -10,7 +10,16 @@ html, body {
 @side-panel: #f6f6f6;
 
 .side-panel {
-    background-color: @side-panel; 
+    background-color: @side-panel;
+}
+
+
+input[tagid] + label {
+    background-color: tint(@primary, 50%);
+}
+
+input[tagid]:checked + label {
+    background-color: @primary;
 }
 
 /* Wrapping element */
@@ -166,21 +175,21 @@ a {
 
 .fa {
     padding: 4px 0 0 0 !important;
-    width:40px !important;
-    height:40px !important;
+    width: 40px !important;
+    height: 40px !important;
 }
- 
+
 .editor-toolbar {
-    padding:0 !important;
+    padding: 0 !important;
     border-radius: 0 !important;
     height: 41px !important;
     background-color: #f5f5f5 !important;
- }
+}
 
 .editor-toolbar::before, .editor-toolbar::after {
-    height:0 !important;
-    margin:0 !important;
-    padding:0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .CodeMirror.focus {
@@ -230,7 +239,7 @@ a {
         font-family: 'Times New Roman', Times, serif;
     }
 
-    
+
     h4 {
         font-weight: 300;
         font-size: 20px !important;

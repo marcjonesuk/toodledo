@@ -1,4 +1,5 @@
 ﻿using Data;
+using Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,5 +35,7 @@ namespace Website.Models.ContentViewModels
         public ContentViewModel Parent { get; set; }
         public int? ChildrenCount { get; set; }
         public int? ParentId { get; set; }
+        public List<User> EditedBy { get; set; }
+        public List<ContentHistory> History { get; set; }
     }
 }

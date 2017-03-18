@@ -32,18 +32,22 @@
                 }
             });
 
-            $(".editor-toolbar").css("width", $(".editor-toolbar").outerWidth());
+            //$(".editor-toolbar").css("width", $(".editor-toolbar").outerWidth());
 
             $(".editor-toolbar").css("opacity", "1");
-            $(".editor-toolbar").attr("data-spy", "affix");
-            $('.editor-toolbar').affix({
-                offset: { top: $('.editor-toolbar').offset().top }
-            });
+            //$(".editor-toolbar").attr("data-spy", "affix");
+            //$('.editor-toolbar').affix({
+            //    offset: { top: $('.editor-toolbar').offset().top }
+            //});
 
-            $('.editor-toolbar').wrap("<div>")
+            $(".editor-toolbar").css("position", "fixed");
+            $(".editor-toolbar").detach().appendTo('.navbar-header')
 
-            $(".editor-toolbar").css("z-index", "1000000");
-            //$(".editor-toolbar").css("top", "-30");
+
+            //$('.editor-toolbar').wrap("<div>")
+
+            //$(".editor-toolbar").css("z-index", "1000000");
+            ////$(".editor-toolbar").css("top", "-30");
 
             simplemde.codemirror.on("focus", function () {
                 $(".CodeMirror").addClass("focus")

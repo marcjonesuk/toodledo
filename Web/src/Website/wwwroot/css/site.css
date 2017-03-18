@@ -154,9 +154,9 @@ a {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace !important;
 }
 .fa {
-  padding: 4px 0 0 0 !important;
-  width: 40px !important;
-  height: 40px !important;
+  padding: 6px 0 0 0 !important;
+  width: 45px !important;
+  height: 45px !important;
 }
 .editor-toolbar {
   padding: 0 !important;
@@ -211,4 +211,19 @@ a {
 }
 .content-body h2 {
   font-size: 16px !important;
+}
+.editor-toolbar {
+  background-color: transparent !important;
+  left: 300px;
+}
+.navbar .editor-toolbar {
+  border: 0 !important;
+}
+.navbar .editor-toolbar a {
+  color: white !important;
+}
+.navbar .editor-toolbar a.active,
+.navbar .editor-toolbar a:hover {
+  border: 0 !important;
+  background-color: #006687 !important;
 }

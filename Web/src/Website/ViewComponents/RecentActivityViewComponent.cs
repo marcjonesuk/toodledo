@@ -46,7 +46,7 @@ namespace Web.ViewControllers
             }
             catch (Exception e)
             {
-                return View(new List<Content>());
+                return View(new List<ContentViewModel>());
             }
         }
     }

@@ -15,6 +15,9 @@ namespace Website.ModelManagers
         /// <param name="tagsList">tagsList is a list |1|2|3 where tags with tag id 1, 2 and 3 will be added to the given content.</param>
         public static void SetTagsForContent(int contentId, string tagsList)
         {
+            if (string.IsNullOrEmpty(tagsList))
+                return;
+
             var current = TagApi.SelectByContent(contentId).Select(t => t.Id);
             var newList = tagsList.Replace(">", "").Split('|');
             foreach (var tag in current)

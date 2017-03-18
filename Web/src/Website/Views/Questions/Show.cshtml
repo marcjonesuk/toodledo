@@ -57,8 +57,8 @@
         });
     };
 
-    var vote = function(answer, direction) {
-        var data = { answerId: answer, direction: direction };
+    var vote = function(contentId, direction) {
+        var data = { contentId: contentId, direction: direction };
 
         $.ajax({
             url: '/questions/vote',
@@ -67,7 +67,7 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'html',
             success: function (data) {
-                $("#answer-score-" + answer).html(data);
+                $("#content-score-" + contentId).html(data);
             }
         });
     }
@@ -162,7 +162,7 @@
     <div class="row">
         <div class="col-sm-1" style="text-align:center">
             <span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@Model.Content.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
-            <h4 id="answer-score-@Model.Content.Id" style="margin:0">@Model.Content.Score</h4>
+            <h4 id="content-score-@Model.Content.Id" style="margin:0">@Model.Content.Score</h4>
             <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@Model.Content.Id, -1)" data-toggle="tooltip" title="Vote down"></span>
             <br />
         </div>

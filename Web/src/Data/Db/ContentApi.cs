@@ -195,6 +195,7 @@ namespace Data
 
         public static void UpdateScore(int id, int score)
         {
+            Cache.Remove($"content-{id}");
             Execute($@"UPDATE [dbo].[Content] SET Score = {score} WHERE id = {id}");
         }
 

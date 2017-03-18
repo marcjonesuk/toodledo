@@ -46,7 +46,7 @@ namespace Website
 
         public static ContentViewModel WithAll(this ContentViewModel i)
         {
-            return i.WithChildren().WithUser().WithTags();
+            return i.WithChildren().WithUser().WithTags().WithEditedBy();
         }
 
         public static ContentViewModel WithParent(this ContentViewModel c)

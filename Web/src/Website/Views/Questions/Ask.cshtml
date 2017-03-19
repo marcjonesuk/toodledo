@@ -43,6 +43,10 @@
             $(".editor-toolbar").css("position", "fixed");
             $(".editor-toolbar").detach().appendTo('.navbar-header')
 
+            $(".editor-toolbar a").attr("data-toggle='tooltip'");
+            $(".editor-toolbar a").attr("data-placement='down'");
+
+            $(".editor-toolbar a").tooltip();
 
             //$('.editor-toolbar').wrap("<div>")
 

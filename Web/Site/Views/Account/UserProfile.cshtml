@@ -1,0 +1,30 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Website.Models.AccountViewModels.UserProfileViewModel
+@{
+
+}
+<form asp-controller="Account" asp-action="UserProfile" method="post" class="form-horizontal">
+    @Html.HiddenFor(u => u.Id)
+    <h4>User Details.</h4>
+    <hr />
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="DisplayName" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="DisplayName" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProfileImageUrl" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="ProfileImageUrl" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-default">Save</button>
+        </div>
+    </div>
+</form>

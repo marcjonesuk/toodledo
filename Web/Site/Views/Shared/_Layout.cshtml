@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - toodledoo</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/Content/Site.css" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+
+    <environment names="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    <style>
+        .navbar-nav input#search {
+            display: inline-block;
+            width: 80%;
+            padding-left: 3px;
+        }
+
+            .navbar-nav input#search:hover {
+                cursor: pointer;
+            }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.navbar-nav input#search').keypress(function (e) {
+                if (e.which === 13) {
+                    var val = $('.navbar-nav input#search').val();
+                    window.location.href = '/questions/search?q=' + val;
+                }
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" style="box-shadow: 0 0px 15px rgba(0, 0, 0, 0.5);">
+        <div class="container-full">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-area="" asp-controller="questions" asp-action="" class="navbar-brand">toodledoo</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Ask", "Ask", "Questions")</li>
+                    <li>@Html.ActionLink("SearchHome", "SearchHome", "Questions")</li>
+                    @*<li><a asp-area="" asp-controller="Questions" asp-action="Ask">Ask</a></li>*@
+                    @*<li>
+                            <span class="glyphicon glyphicon-search"></span>
+                            <input id="search" class="form-control" placeholder="Search">
+                        </li>*@
+
+                    @*<li>
+                            <a class="exit-full-screen" style="display:none; margin-left:100px" onclick="">Exit Full Screen</a>
+                        </li>*@
+                </ul>
+
+                <div style="float:right">
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-full body-content">
+        <div class="col-sm-2 fixed side-panel" style="position:fixed; color:white; display:flex; height:100%; ">
+        </div>
+
+        <div class="col-sm-7 col-sm-offset-2" style="background-color:white; padding-left:35px; padding-right:35px; padding-top: 15px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); z-index:1; min-height:100%">
+            @RenderBody()
+        </div>
+
+        <div class="col-sm-3 side-panel" style="right:0; position:fixed; height:100%; ">
+            @*@Component.InvokeAsync("RecentActivity")*@
+        </div>
+    </div>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

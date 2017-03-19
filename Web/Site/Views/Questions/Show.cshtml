@@ -188,7 +188,8 @@
                 <div class="media-left ">
                     @foreach (var t in Model.Content.Tags)
                     {
-                        <a class="badge" asp-controller="questions" asp-action="SearchForTag" asp-route-tagId="@t.Id">@t.Name</a>
+                        @Html.ActionLink(@t.Name, "SearchForTag", "Questions", new { tagId = @t.Id }, new { @class="badge" })
+                        @*<a class="badge" asp-controller="questions" asp-action="SearchForTag" asp-route-tagId="@t.Id">@t.Name</a>*@
                     }
                 </div>
 
@@ -210,11 +211,11 @@
             </div>
 
             @*@foreach (var a in Model.SimilarQuestions)
-            {
-                <a href="/questions/show?id=@a.Id"><h5>@a.Title</h5></a>
-            }*@
+                {
+                    <a href="/questions/show?id=@a.Id"><h5>@a.Title</h5></a>
+                }*@
 
-          
+
 
             <content-history history="@Model.Content.History"></content-history>
             <h4>Answer</h4>

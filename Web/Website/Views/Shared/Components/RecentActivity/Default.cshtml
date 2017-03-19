@@ -1,0 +1,35 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<Website.Models.ContentViewModels.ContentViewModel>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.item').fadeIn(400);
+    });
+</script>
+
+<div id="activity-panel" style="padding: 30px; height: calc(100% - 45px);" onmouseover="this.style.overflowY='scroll'" onmouseout="this.style.overflowY='hidden'">
+    <h4 style="margin-top:0px; margin-bottom:10px;">Activity feed</h4>
+    <hr style="margin:14px 0" />
+    @foreach (var c in Model)
+    {
+        <p class="item" style="display:none;">
+            @{
+                string action = "";
+                int questionId = c.ParentId ?? c.Id;
+            }
+            <a href="/questions/show?id=@questionId">"@c.Title"</a>
+            @if (c.Type == "question")
+            {
+                action = " asked ";
+            }
+            else
+            {
+                action = " answered ";
+            }
+            @action by
+            <b>@c.User.DisplayName</b>
+        </p>
+                }
+</div>

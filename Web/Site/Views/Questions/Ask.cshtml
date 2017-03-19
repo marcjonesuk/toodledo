@@ -151,14 +151,14 @@
         <div class="selected">
             @foreach (var item in Model.AvailableTags.Where(t => t.Accepted))
             {
-                <input asp-for="@item.Accepted" tagid="@item.Id" id="tag_@item.Id" style="display:none;" />
+                <input asp-for="@item.Accepted" tagid="@item.Id" id="tag_@item.Id" style="display:none;" type="checkbox"  />
                 <label for="tag_@item.Id" class='badge'>@item.Name</label>
             }
         </div>
         <div class="unselected">
             @foreach (var item in Model.AvailableTags.Where(t => !t.Accepted))
             {
-                <input asp-for="@item.Accepted" tagid="@item.Id" id="tag_@item.Id" style="display:none;" />
+                <input asp-for="@item.Accepted" tagid="@item.Id" id="tag_@item.Id" style="display:none;" type="checkbox" />
                 <label for="tag_@item.Id" class='badge'>@item.Name</label>
             }
         </div>

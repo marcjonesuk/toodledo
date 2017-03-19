@@ -1,11 +1,9 @@
 ﻿using Lucene.Net.Store;
+using LuceneSearch;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SearchTestApp
 {
@@ -13,29 +11,15 @@ namespace SearchTestApp
     {
         static void Main(string[] args)
         {
-            var dir = FSDirectory.Open(new System.IO.DirectoryInfo(@"index"));
-            Lucene.Net.Analysis.Standard.StandardAnalyzer analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-            //Lucene.Net.Index.IndexWriter writer = new Lucene.Net.Index.IndexWriter(dir, analyzer, Lucene.Net.Index.IndexWriter.MaxFieldLength.UNLIMITED);
-
-            //writer.DeleteAll();
-            //writer.AddDocument(create_doc(7, "test1", "test2"));
-            //writer.AddDocument(create_doc(8, "test1", "test2"));
-            //writer.Optimize();
-            //writer.Commit();
-
-            BuildIndexes();
-
-            Lucene.Net.QueryParsers.QueryParser parser = new Lucene.Net.QueryParsers.QueryParser(Lucene.Net.Util.Version.LUCENE_30, "body", analyzer);
-            Lucene.Net.Search.Query query = null;
-
-            query = parser.Parse("NITROGEN guinness");
-            var searcher = new Lucene.Net.Search.IndexSearcher(dir);
-            var hits = searcher.Search(query, 10);
-            var doc = searcher.Doc(hits.ScoreDocs[0].Doc);
-
-            Console.WriteLine(doc.GetField("title").StringValue);
-            Console.WriteLine(doc.GetField("body").StringValue);
+            var search = new Searcher(@"c:\lucene");
+            var result = search.Search("beer", 100, 0);
+            Console.WriteLine(result.Count());
             Console.ReadLine();
+        }
+
+        public void Update(int id, string title)
+        {
+
         }
 
         public static void BuildIndexes()
@@ -92,6 +76,5 @@ namespace SearchTestApp
 
             return doc;
         }
-
     }
 }

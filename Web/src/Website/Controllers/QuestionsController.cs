@@ -172,7 +172,11 @@ namespace Web.Controllers
             IEnumerable<int> ids;
             using (var reader = new StreamReader(response.GetResponseStream()))
             {
-                ids = reader.ReadToEnd().Replace("[", "").Replace("]", "").Split(',').Select(id => int.Parse(id));
+                ids = reader.ReadToEnd()
+                    .Replace("[", "").Replace("]", "")
+                    .Split(',')
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .Select(id => int.Parse(id));
             }
             var results = ids.Select(i => ContentApi.Select(i).AsViewModel().WithTags().WithUser()).ToList();
 

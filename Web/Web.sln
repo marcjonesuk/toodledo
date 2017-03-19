@@ -1,26 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5390F6C0-0271-4209-B3DF-483C7C24335F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4F4D36B-B08F-4448-BB88-F0F7B88BDE49}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Data", "src\Data\Data.xproj", "{8004F631-C654-4859-AA4E-55A093021ABB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "src\Data\Data.csproj", "{8004F631-C654-4859-AA4E-55A093021ABB}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "MarkdownSharp", "src\MarkdownSharp\MarkdownSharp.xproj", "{3A6F1A01-083F-49F3-A6D6-E646E588F863}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkdownSharp", "src\MarkdownSharp\MarkdownSharp.csproj", "{3A6F1A01-083F-49F3-A6D6-E646E588F863}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "TestApp", "src\TestApp\TestApp.xproj", "{53F9F19A-0FFC-40CD-9F1A-3A7FE39A932C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "src\TestApp\TestApp.csproj", "{53F9F19A-0FFC-40CD-9F1A-3A7FE39A932C}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Website", "src\Website\Website.xproj", "{ADAB5EF1-E749-433A-BFD8-673C23B0E409}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Website", "src\Website\Website.csproj", "{ADAB5EF1-E749-433A-BFD8-673C23B0E409}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Search", "src\Search\Search.csproj", "{A1099C6C-4448-47D6-832B-21EEAFF3F39D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchTestApp", "SearchTestApp\SearchTestApp.csproj", "{F74B88B2-E168-493E-BE4E-16C1E1668292}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuceneSearch", "LuceneSearch\LuceneSearch.csproj", "{88DA8EF5-EFF1-4232-8E17-1DC7C18D38C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{98558AF6-E42A-4459-8498-627A5D12F022}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +53,14 @@ Global
 		{F74B88B2-E168-493E-BE4E-16C1E1668292}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F74B88B2-E168-493E-BE4E-16C1E1668292}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F74B88B2-E168-493E-BE4E-16C1E1668292}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88DA8EF5-EFF1-4232-8E17-1DC7C18D38C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88DA8EF5-EFF1-4232-8E17-1DC7C18D38C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88DA8EF5-EFF1-4232-8E17-1DC7C18D38C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88DA8EF5-EFF1-4232-8E17-1DC7C18D38C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98558AF6-E42A-4459-8498-627A5D12F022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98558AF6-E42A-4459-8498-627A5D12F022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98558AF6-E42A-4459-8498-627A5D12F022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98558AF6-E42A-4459-8498-627A5D12F022}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,5 +72,7 @@ Global
 		{ADAB5EF1-E749-433A-BFD8-673C23B0E409} = {5390F6C0-0271-4209-B3DF-483C7C24335F}
 		{A1099C6C-4448-47D6-832B-21EEAFF3F39D} = {5390F6C0-0271-4209-B3DF-483C7C24335F}
 		{F74B88B2-E168-493E-BE4E-16C1E1668292} = {5390F6C0-0271-4209-B3DF-483C7C24335F}
+		{88DA8EF5-EFF1-4232-8E17-1DC7C18D38C4} = {5390F6C0-0271-4209-B3DF-483C7C24335F}
+		{98558AF6-E42A-4459-8498-627A5D12F022} = {5390F6C0-0271-4209-B3DF-483C7C24335F}
 	EndGlobalSection
 EndGlobal

@@ -2,9 +2,7 @@
 using LuceneSearch;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
-using System.Web;
 using Website;
 
 namespace Site

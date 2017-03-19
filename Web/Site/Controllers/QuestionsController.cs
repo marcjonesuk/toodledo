@@ -52,16 +52,8 @@ namespace Web.Controllers
         public ActionResult Similar(int id)
         {
             var content = ContentApi.Select(id);
-            WebRequest request = WebRequest.Create($"http://localhost:63683/api/Values?search={content.Title}&max=50&minScore=0");
-            request.Method = "GET";
-            var response = request.GetResponseAsync().Result;
-            IEnumerable<int> ids;
-            using (var reader = new StreamReader(response.GetResponseStream()))
-            {
-                var s = reader.ReadToEnd().Replace("[", "").Replace("]", "").Split(',');
-                ids = s.Where(str => !string.IsNullOrEmpty(str)).Select(i => int.Parse(i)).ToList();
-            }
-            var results = ids.Where(i => i != id).Select(i => ContentApi.Select(i)).Where(c => c.Type == "question").Select(c => c.AsViewModel().WithTags().WithUser()).Take(3).ToList();
+            var ids = Searcher.Instance.Search(content.Title, 100, 0);
+            var results = ids.Where(i => i.Id != id).Select(i => ContentApi.Select(i.Id)).Where(c => c.Type == "question").Select(c => c.AsViewModel().WithTags().WithUser()).Take(3).ToList();
             return View(results);
         }
 
@@ -172,12 +164,6 @@ namespace Web.Controllers
         public ActionResult SearchForTag(int tagId)
         {
             return Search(1, null, null, tagId);
-        }
-
-        [HttpGet]
-        public ActionResult SearchHome()
-        {
-            return Search(1, null, null, null);
         }
 
         [Authorize]

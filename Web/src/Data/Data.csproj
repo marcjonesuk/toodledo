@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Models\Models.csproj" />
     <ProjectReference Include="..\MarkdownSharp\MarkdownSharp.csproj" />
   </ItemGroup>
 

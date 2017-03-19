@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using LuceneSearch;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(Site.Startup))]
@@ -9,6 +10,7 @@ namespace Site
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            Searcher.Instance.Open(@"c:\lucene2");
         }
     }
 }

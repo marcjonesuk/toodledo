@@ -14,33 +14,10 @@ using System.Net;
 using System.IO;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using LuceneSearch;
 
 namespace Web.Controllers
 {
-    public class SearchResultViewModel
-    {
-        public SearchResultViewModel()
-        {
-            Results = new List<ContentViewModel>();
-        }
-
-        public List<Tag> Tags { get; set; }
-        public List<ContentViewModel> Results { get; set; }
-        public SearchRequest Request { get; set; }
-
-        public int ResultsCount { get; set; }
-        public int MaxPages { get; set; }
-    }
-
-    public class ContentPageModel
-    {
-        public ContentViewModel Content { get; set; }
-        public string Response { get; set; }
-        public bool AllowEdit { get; set; }
-
-        public List<ContentViewModel> SimilarQuestions { get; set; } 
-    }
-
     public class QuestionsController : BaseController
     {
         readonly UserManager<ApplicationUser> userManager;
@@ -168,15 +145,10 @@ namespace Web.Controllers
             if (q == null)
                 return SearchOld(p, o, q, t);
 
-            WebRequest request = WebRequest.Create($"http://localhost:63683/api/Values?search={q}&max=100");
-            request.Method = "GET";
-            var response = request.GetResponseAsync().Result;
-            IEnumerable<int> ids;
-            using (var reader = new StreamReader(response.GetResponseStream()))
-            {
-                ids = reader.ReadToEnd().Replace("[", "").Replace("]", "").Split(',').Select(id => int.Parse(id));
-            }
-            var results = ids.Select(i => ContentApi.Select(i).AsViewModel().WithTags().WithUser()).ToList();
+            var results = Searcher.Instance.Search(q, 100, 0)
+                .Select(r => r.Id)
+                .Select(i => ContentApi.Select(i).AsViewModel().WithTags().WithUser())
+                .ToList();
 
             var searchRequest = new SearchRequest();
             searchRequest.Text = q;

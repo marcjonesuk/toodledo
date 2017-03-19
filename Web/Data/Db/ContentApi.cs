@@ -167,6 +167,11 @@ namespace Data
                        VALUES ( '{parentId}', '{childId}' )");
         }
 
+        public static void MarkAsIndexed(int id)
+        {
+            Execute($@"UPDATE [dbo].[Content] SET Indexed = '{DateTime.UtcNow}' WHERE Id = {id}");
+        }
+
         public static void Update(int id, string title, string body, string htmlBody, int userId)
         {
             var currentVal = Select(id);

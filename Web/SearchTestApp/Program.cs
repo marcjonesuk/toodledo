@@ -11,7 +11,8 @@ namespace SearchTestApp
     {
         static void Main(string[] args)
         {
-            var search = new Searcher(@"c:\lucene");
+            var search = new Searcher();
+            search.Open(@"c:\lucene");
             var result = search.Search("beer", 100, 0);
             Console.WriteLine(result.Count());
             Console.ReadLine();

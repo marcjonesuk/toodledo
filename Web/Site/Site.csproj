@@ -193,9 +193,11 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ContentPageModel.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\QuestionsController.cs" />
+    <Compile Include="Controllers\SearchResultViewModel.cs" />
     <Compile Include="DateTimeFormatter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -335,6 +337,10 @@
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{0dd8be91-db31-4ac5-be03-398508b53c98}</Project>
       <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LuceneSearch\LuceneSearch.csproj">
+      <Project>{88DA8EF5-EFF1-4232-8E17-1DC7C18D38C4}</Project>
+      <Name>LuceneSearch</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

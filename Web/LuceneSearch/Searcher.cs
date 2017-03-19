@@ -9,13 +9,19 @@ using Lucene.Net.Index;
 
 namespace LuceneSearch
 {
+
     public class Searcher
     {
+        private static Lazy<Searcher> _lazy = new Lazy<Searcher>();
+        public static Searcher Instance {
+            get { return _lazy.Value; }
+        }
+
         private QueryParser _parser;
         private FSDirectory _dir;
         private IndexWriter _writer;
 
-        public Searcher(string indexPath)
+        public void Open(string indexPath)
         {
             _dir = FSDirectory.Open(new System.IO.DirectoryInfo(indexPath));
             StandardAnalyzer analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
@@ -26,20 +32,22 @@ namespace LuceneSearch
         private Document CreateDocument(Searchable item)
         {
             Document doc = new Document();
-            doc.Add(new Field("title", item.Title, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field("body", item.Body, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field("id", Convert.ToString(item.Id), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.Add(new Field("Title", item.Title, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field("Body", item.Body, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field("Username", item.Username, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field("Type", item.Type, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field("Id", Convert.ToString(item.Id), Field.Store.YES, Field.Index.NOT_ANALYZED));
             return doc;
         }
 
-        public void Add(Searchable item)
+        public void Index(Searchable item)
         {
             _writer.AddDocument(CreateDocument(item));
             _writer.Optimize();
             _writer.Commit();
         }
 
-        public void Add(List<Searchable> items)
+        public void Index(List<Searchable> items)
         {
             foreach (var i in items)
             {
@@ -52,7 +60,7 @@ namespace LuceneSearch
         public void Rebuild(List<Searchable> items)
         {
             _writer.DeleteAll();
-            Add(items);
+            Index(items);
         }
 
         public void Delete(Searchable item)

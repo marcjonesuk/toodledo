@@ -1,4 +1,5 @@
 ﻿using Data;
+using LuceneSearch;
 using Site;
 using System;
 using System.Collections.Generic;
@@ -54,9 +55,20 @@ namespace Website
             var htmlBody = Markdown.Encode(request.Body);
             ContentApi.Update(request.ContentId.Value, request.Title, request.Body, htmlBody, (int)userId);
 
-            return ContentApi.Select(request.ContentId.Value)
+            var item = ContentApi.Select(request.ContentId.Value)
                 .AsViewModel()
                 .WithAll();
+
+            try
+            {
+                Searcher.Instance.Index(new Searchable() { Id = item.Id, Type = item.Type, Title = item.Title, Body = item.Body, Username = item.User.DisplayName });
+                ContentApi.MarkAsIndexed(item.Id);
+            }
+            catch
+            {
+            }
+
+            return item;
         }
 
         public ContentViewModel Create(ContentRequest request)
@@ -78,10 +90,21 @@ namespace Website
                 ContentApi.Relate(request.ParentId.Value, id);
             }
 
-            return ContentApi.Select(id).AsViewModel()
+            var item = ContentApi.Select(id).AsViewModel()
                 .WithChildren()
                 .WithChildrenCount()
                 .WithTags();
+
+            try
+            {
+                Searcher.Instance.Index(new Searchable() { Id = id, Type = item.Type, Title = item.Title, Body = item.Body, Username = item.User.DisplayName });
+                ContentApi.MarkAsIndexed(id);
+            }
+            catch
+            {
+            }
+
+            return item;
         }
 
         public List<ContentViewModel> Search(SearchRequest request)

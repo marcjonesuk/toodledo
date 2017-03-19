@@ -71,6 +71,22 @@ namespace Data
         }
 
         //todo need to invalidate this cache value
+        public static User GetById(int id)
+        {
+            User user;
+            var key = $"user-asp-{id}";
+            if (!Cache.TryGetValue(key, out user))
+            {
+                user = Get($@"SELECT [Id]
+                        ,[DisplayName]
+                        ,[ProfileImageUrl]
+                        FROM[toodledo].[dbo].[User] WHERE [Id] = '{id}'")[0];
+                Cache.Set(key, user, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(30)));
+            }
+            return user;
+        }
+
+        //todo need to invalidate this cache value
         public static User GetByAspNetId(string aspnetUserId)
         {
             User user;

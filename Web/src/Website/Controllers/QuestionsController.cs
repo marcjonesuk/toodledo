@@ -12,6 +12,8 @@ using Website.Models.ContentViewModels;
 using Website.RequestObjects;
 using Website.Controllers;
 using Microsoft.Extensions.Caching.Memory;
+using Data.Db;
+using Newtonsoft.Json;
 using System.Net;
 using System.IO;
 
@@ -63,9 +65,8 @@ namespace Web.Controllers
             {
                 content.Children = new List<ContentViewModel> { answer };
             }
-
-            var r = new ContentPageModel() { Content = content };
-            return View(r);
+            content.History = ContentHistoryApi.SelectByContentId(id);
+            return View(new ContentPageModel() { Content = content });
         }
 
         public IActionResult Similar(int id)
@@ -192,7 +193,7 @@ namespace Web.Controllers
         {
             if (id == null)
             {
-                return View(new ContentRequest { Type = "question" });
+                return View(new ContentRequest { Type = "question", AvailableTags = TagApi.SelectSuggestions() });
             }
 
             var c = ContentApi.Select(id.Value);

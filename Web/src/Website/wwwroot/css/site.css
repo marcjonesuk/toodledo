@@ -9,6 +9,16 @@ body {
 .side-panel {
   background-color: #f6f6f6;
 }
+input[tagid] + label {
+  background-color: #80c6dd;
+  cursor: pointer;
+}
+input[tagid] + label:hover {
+  background-color: #33a3c8;
+}
+input[tagid]:checked + label {
+  background-color: #008cba;
+}
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Data
 {
@@ -9,6 +10,20 @@ namespace Data
         public int Id { get; set; }
         public string Name { get; set; }
         public int Count { get; set; }
+    }
+
+    public class TagSuggestion
+    {
+        public TagSuggestion(Tag tag)
+        {
+            Id = tag.Id;
+            Name = tag.Name;
+            Accepted = false;
+        }
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool Accepted { get; set; }
     }
 
     public class TagApi : DbApi
@@ -32,6 +47,25 @@ namespace Data
             return true;
         }
 
+        public static bool UnTag(int contentId, int tagId)
+        {
+            if (contentId == 0)
+                throw new ArgumentException(nameof(contentId));
+
+            if (tagId == 0)
+                throw new ArgumentException(nameof(tagId));
+
+            try
+            {
+                Execute($"DELETE FROM [dbo].[ContentTag] WHERE ContentId = {contentId} AND TagId = {tagId}");
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static List<Tag> SelectByContent(int contentId)
         {
             var results = new List<Tag>();
@@ -46,6 +80,12 @@ namespace Data
             ExecuteReader($"SELECT [Id], [Name], c.c FROM [dbo].[Tag] t INNER JOIN (SELECT TagId, COUNT(*) c FROM ContentTag GROUP BY TagId) c ON t.Id = c.TagId",
             (r) => { results = Map(r); });
             return results;
+        }
+        
+        public static List<TagSuggestion> SelectSuggestions()
+        {
+            var results = Select();
+            return results.Select(t => new TagSuggestion(t)).ToList();
         }
 
         public static List<Tag> Map(SqlDataReader reader)

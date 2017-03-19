@@ -9,7 +9,7 @@
     });
 </script>
 
-<div id="activity-panel" style="padding: 30px">
+<div id="activity-panel" style="padding: 30px; height: calc(100% - 45px);" onmouseover="this.style.overflowY='scroll'" onmouseout="this.style.overflowY='hidden'">
     <h4 style="margin-top:0px; margin-bottom:10px;">Activity feed</h4>
     <hr style="margin:14px 0" />
     @foreach (var c in Model)

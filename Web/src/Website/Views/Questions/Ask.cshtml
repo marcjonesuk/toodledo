@@ -9,8 +9,7 @@
     .editor-toolbar.affix {
         position: fixed;
         top: 45px;
-            border: 1px solid #ddd;
-
+        border: 1px solid #ddd;
     }
 </style>
 
@@ -73,13 +72,57 @@
 
             $(".fa").addClass("btn");
             $(".fa").addClass("btn-lg");
-        }, 0);
+
+            var tags = $('input#Tags');
+            $('.tags input[tagid]').click(function () {
+                var id = this.getAttribute('tagid');
+                var value = tags.val();
+                var newVal = "";
+
+                var sel = "tag_" + id;
+                var lab = $("input[id='" + sel + "'], label[for='" + sel + "']");
+
+                if (this.checked) {
+                    newVal = value + "|" + id + ">"
+                    lab.detach().appendTo(".tags .selected")
+                } else {
+                    newVal = value.replace("|" + id + ">", "");
+                    lab.detach().prependTo(".tags .unselected")
+                }
+                tags.val(newVal);
+            });
+        }, 100);
 
         $(document).on('keydown', function (e) {
             if (e.ctrlKey && e.which === 83) {
                 document.forms["question-form"].submit();
                 e.preventDefault();
                 return false;
+            }
+        });
+
+
+        var validate = function () {
+             
+            return $('#title').val().length > 0 && !$('.CodeMirror-placeholder').is(':visible');
+        }
+
+        var isSubmitted = false;
+
+        $('.btn').click(function (e) {
+            if (!validate()) {
+                e.preventDefault();
+                e.stopPropagation();
+                return
+            }
+
+            //to prevent duplicate form submissions
+            if (!isSubmitted) {
+                isSubmitted = true;
+            }
+            else {
+                e.preventDefault();
+                e.stopPropagation();
             }
         });
     });
@@ -90,6 +133,7 @@
 <form id="question-form" method="post" data-toggle="validator" class="form-group">
     @Html.HiddenFor(i => i.ContentId)
     @Html.HiddenFor(i => i.Type)
+    @*@Html.HiddenFor(i => i.OldContentJson)*@
     <div class="form-group">
         <label for="title">Title</label>
         <input type="text" autocomplete="off" class="form-control" id="title" placeholder="Enter a title for your question" asp-for="@Model.Title">
@@ -98,6 +142,24 @@
         <label for="question-text">Question</label>
         <div id="editor">
             <textarea id="question-text" class="form-control" style="max-width:initial; display:none" asp-for="@Model.Body"></textarea>
+        </div>
+    </div>
+
+    @Html.HiddenFor(t => t.Tags)
+    <div class="tags">
+        <div class="selected">
+            @foreach (var item in Model.AvailableTags.Where(t => t.Accepted))
+            {
+                <input asp-for="@item.Accepted" tagid="@item.Id" id="tag_@item.Id" style="display:none;" />
+                <label for="tag_@item.Id" class='badge'>@item.Name</label>
+            }
+        </div>
+        <div class="unselected">
+            @foreach (var item in Model.AvailableTags.Where(t => !t.Accepted))
+            {
+                <input asp-for="@item.Accepted" tagid="@item.Id" id="tag_@item.Id" style="display:none;" />
+                <label for="tag_@item.Id" class='badge'>@item.Name</label>
+            }
         </div>
     </div>
 

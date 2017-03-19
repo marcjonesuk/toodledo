@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Data.Db;
 
 namespace Data
 {
@@ -177,14 +178,24 @@ namespace Data
                        VALUES ( '{parentId}', '{childId}' )");
         }
 
-        public static void Update(int id, string title, string body, string htmlBody)
+        public static void Update(int id, string title, string body, string htmlBody, int userId)
         {
+            var currentVal = Select(id);
+            if (currentVal.Body != body)
+            {
+                ContentHistoryApi.Insert("Body", currentVal, userId);
+            }
+            if (currentVal.Title != title)
+            {
+                ContentHistoryApi.Insert("Title", currentVal, userId);
+            }
             Cache.Remove($"content-{id}");
             Execute($@"UPDATE [dbo].[Content] SET Title = '{title.SqlEncode()}', Body = '{body.SqlEncode()}', HtmlBody = '{htmlBody.SqlEncode()}' WHERE id = {id}");
         }
 
         public static void UpdateScore(int id, int score)
         {
+            Cache.Remove($"content-{id}");
             Execute($@"UPDATE [dbo].[Content] SET Score = {score} WHERE id = {id}");
         }
 

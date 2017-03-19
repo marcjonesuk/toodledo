@@ -1,0 +1,127 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Web.Controllers.SearchResultViewModel
+<br />
+
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+<script type="text/javascript">
+
+    var params = {
+        p: @Model.Request.Page,
+        o: "@Model.Request.OrderBy",
+        q: "@Model.Request.Text"
+    };
+
+    window.search = function(next) {
+        $.extend( params, next );
+        var url = '/questions?';
+
+        if (typeof(next) == "undefined") {
+            params.p = 1;
+            params.q = $('#page-search').val();
+        }
+        else {
+            if (typeof(next.t) !== "undefined") {
+                params.p = 1;
+            }
+        }
+
+        url += 'p=' + params.p;
+        url += '&o=' + params.o;
+        url += '&q=' + params.q;
+
+        window.location.href = url;
+    }
+
+</script>
+
+<div class="input-group">
+    <input id="page-search" type="text" class="form-control" placeholder="Search">
+    <div class="input-group-btn">
+        <button class="btn btn-default" type="submit" onclick="search()">
+            <i class="glyphicon glyphicon-search"></i>
+        </button>
+    </div>
+</div>
+@*</form>*@
+
+@if (Model.Results == null || Model.Results.Count == 0)
+{
+    <span>Sorry, no results found</span>
+}
+else if (!string.IsNullOrEmpty(Model.Request.Text))
+{
+    <span>@Model.ResultsCount results found</span>
+}
+
+<ul class="nav nav-tabs" style="margin-top: 20px;">
+    <li style="cursor: pointer" class='@(Model.Request.OrderBy == "score-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'score-desc' })">Highest Voted</a></li>
+    <li style="cursor: pointer" class='@(Model.Request.OrderBy == "created-desc" ? "active" : "")'><a data-toggle="tab" onclick="window.search({ p: 1, o: 'created-desc' })">Most Recent</a></li>
+</ul>
+
+@foreach (var q in Model.Results)
+{
+    <div class="container-fluid">
+        <div class="row" style="margin-top:25px">
+            @*<div class="media-left text-center" style="padding-left:16px;">
+                    <h2 style="margin-top:12px; margin-bottom:-6px">@q.Score</h2><small>
+                        <span>score</span>
+                    </small>
+                </div>*@
+
+
+            <div class="col-sm-1 text-right">
+                @{
+                    var c = (q.ChildrenCount > 0) ? "primary" : "light";
+                    var tooltip = (q.ChildrenCount > 0) ? "This question has been answered" : "This question hasn't been answered yet";
+                    <span class="glyphicon glyphicon-thumbs-up @c" title="@tooltip" data-toggle="tooltip" data-placement="right"
+                          style="font-size:30px; padding:0"></span>
+                }
+            </div>
+
+            <div class="col-sm-8">
+                <div>
+                    <a href="/questions/show?id=@q.Id"><h4 style="margin-top:0; margin-bottom:6px">"@q.Title"</h4></a>
+                    @foreach (var t in q.Tags)
+                    {
+                        @Html.ActionLink(@t.Name, "SearchForTag", "Questions", new { tagId = @t.Id }, new { @class = "badge" })
+                        @*<a class="badge" asp-controller="questions" asp-action="SearchForTag" asp-route-tagId="@t.Id">@t.Name</a>*@
+                    }
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                @foreach (var user in q.EditedBy)
+                {
+                    <img src="@user.ProfileImageUrl" title="@user.DisplayName" data-toggle="tooltip" height="20" width="20" />
+                }
+
+                <br />
+                @*<small>Post creator: @q.User.DisplayName</small>
+                <br />*@
+                <small data-toggle="tooltip" data-placement="right" title="Posted @q.Created">Asked @Web.DateTimeFormatter.Format(@q.Created)</small>
+            </div>
+
+        </div>
+    </div>
+                    }
+
+@if (Model.MaxPages > 1)
+{
+    <hr />
+
+    <div class="col-sm-2">
+    </div>
+
+    <div class="col-sm-7 text-center">
+        <ul class="pagination">
+            @for (var p = 1; p <= Model.MaxPages; p++)
+                {
+                    var c = Model.Request.Page == p ? "active" : "";
+                <li class="@c"><a class="btn" onclick="window.search({ p: @p})">@p</a></li>
+            }
+        </ul>
+    </div>
+}

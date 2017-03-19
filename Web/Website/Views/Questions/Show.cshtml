@@ -1,0 +1,291 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Web.Controllers.ContentPageModel
+
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="~/lib/simplemde/simplemde.min.css" />
+<script src="~/lib/simplemde/simplemde.min.js"></script>
+<script src="~/lib/marked/marked.min.js"></script>
+
+<style>
+    .edit-answer {
+        display: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var simplemde = null;
+
+    var questionId = @Model.Content.Id;
+
+    var editQuestion = function(questionId) {
+        document.location.href = "/questions/ask?id=" + questionId;
+    }
+
+    var del = function (answerId) {
+        var data = { answerId: answerId };
+
+        $.ajax({
+            url: '/questions/deleteanswer',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                location.reload();
+            }
+        });
+    };
+
+    var answer = function () {
+        var data = { parentId: questionId, body: simplemde.value() };
+
+        $.ajax({
+            url: '/questions/answer',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                if (data){
+                    location.reload();
+                } else {
+                    window.location.href = "/Account/Login";
+                }
+            }
+        });
+    };
+
+    var vote = function(contentId, direction) {
+        var data = { contentId: contentId, direction: direction };
+
+        $.ajax({
+            url: '/questions/vote',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                $("#content-score-" + contentId).html(data);
+            }
+        });
+    }
+
+    var saveAnswerEdit = function(answer) {
+        var data = { contentId: answer, body: simplemde.value() };
+
+        $.ajax({
+            url: '/questions/answer',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                if (data){
+                    $("#answer-" + answer).html(data);
+                } else {
+                    window.location.href = "/Account/Login";
+                }
+            }
+        });
+
+        endEdit();
+    }
+
+    var endEdit = function() {
+        $(".your-answer").fadeIn(200);
+        $(".edit-answer").hide();
+        $(".answer-text").show();
+        $(".edit-controls").show();
+    }
+
+    var edit = function(answer) {
+        $(".your-answer").fadeOut(200);
+
+        $("#edit-" + answer).show();
+
+        simplemde = new SimpleMDE({
+            element: $("#edit-" + answer + " textarea")[0],
+            spellChecker: false,
+            placeholder: "Write your answer here",
+            status: false,
+            tabSize: 4
+        });
+
+        $("#answer-" + answer).hide();
+        $("#edit-controls-" + answer).hide();
+    }
+
+    var answerExpanded = false;
+    $(document).ready(function() {
+
+        @*$.ajax({
+            url: '/questions/similar?id=@Model.Content.Id',
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                $("#similar").html(data);
+            }
+        });*@
+
+        //$("code").addClass("prettyprint");
+        //PR.prettyPrint();
+
+        $("#content").show();
+        //$("#add_answer").markdown({autofocus:false, savable:false});
+
+        simplemde = new SimpleMDE({
+            element: document.getElementById("add_answer"),
+            spellChecker: false,
+            placeholder: "Write your answer here",
+            status: false,
+            tabSize: 4
+        });
+
+
+        //$("textarea").focus(function(a) {
+        //    $('html, body').animate({'scrollTop': $(a.target).offset().top}, 1000);
+        //});
+
+        //$("#add_answer").focus(function(a) {
+        //    if (!answerExpanded) {
+        //        $(a.target).animate({'height':"+=300px"}, 0);
+        //        answerExpanded = true;
+        //    }
+        //});
+    });
+
+</script>
+
+@if (Model.Response != null)
+{
+    <div class="alert alert-info">
+        <strong>Success! </strong>@Model.Response
+    </div>
+}
+
+<a href="/questions/show?id=@Model.Content.Id"><h4>@Model.Content.Title</h4></a>
+
+<hr />
+
+<div id="content" style="display:none;">
+    <div class="row">
+        <div class="col-sm-1" style="text-align:center">
+            <span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@Model.Content.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
+            <h4 id="content-score-@Model.Content.Id" style="margin:0">@Model.Content.Score</h4>
+            <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@Model.Content.Id, -1)" data-toggle="tooltip" title="Vote down"></span>
+            <br />
+        </div>
+
+        <div class="col-sm-11">
+            <div class="content-body">
+                <p>@Html.Raw(Model.Content.HtmlBody)</p>
+            </div>
+
+            <div>
+                <div class="media-left ">
+                    @foreach (var t in Model.Content.Tags)
+                    {
+                        @Html.ActionLink(@t.Name, "SearchForTag", "Questions", new { tagId = @t.Id }, new { @class="badge" })
+                        @*<a class="badge" asp-controller="questions" asp-action="SearchForTag" asp-route-tagId="@t.Id">@t.Name</a>*@
+                    }
+                </div>
+
+                <div class="text-right" style="padding-left:100px">
+                    <div style="margin-bottom:12px;">
+                        <button onclick="editQuestion(@Model.Content.Id)" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
+                        <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Delete this question"><span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Content.User.ProfileImageUrl))
+                    {
+                        <img src="@Model.Content.User.ProfileImageUrl" height="20" width="20" />
+                    }
+                    <small>@Model.Content.User.DisplayName</small>
+                    <br />
+                    <small>Asked @Web.DateTimeFormatter.Format(Model.Content.Created)</small>
+                </div>
+
+            </div>
+
+            @*@foreach (var a in Model.SimilarQuestions)
+                {
+                    <a href="/questions/show?id=@a.Id"><h5>@a.Title</h5></a>
+                }*@
+
+
+
+            <content-history history="@Model.Content.History"></content-history>
+            <h4>Answer</h4>
+            <hr style="margin-top:0" />
+
+        </div>
+    </div>
+
+
+    @*<h4>@Model.Content.Children.Count Answers</h4>*@
+
+    @foreach (var a in Model.Content.Children)
+    {
+        <div class="row">
+            <div class="col-sm-1" style="text-align:center">
+                @*<span class="glyphicon glyphicon-triangle-top" style="font-size: 25px" onclick="vote(@a.Id, 1)" data-toggle="tooltip" title="Vote up"></span>
+                    <h4 id="answer-score-@a.Id" style="margin:0">@a.Score</h4>
+                    <span class="glyphicon glyphicon-triangle-bottom" style="font-size: 25px;" onclick="vote(@a.Id, -1)" data-toggle="tooltip" title="Vote down"></span>*@
+
+                <br />
+                @*@if (Model.Content.AcceptedAnswerId == a.Id)
+                    {
+                        <span style="font-size:28px;" class="glyphicon glyphicon-ok"></span>
+                    }*@
+            </div>
+            <div class="col-sm-11">
+                <div id="edit-@a.Id" class="edit-answer">
+                    <textarea rows="16">@a.Body</textarea>
+                    <div style="margin-top:12px;">
+                        <button class="btn" onclick="saveAnswerEdit(@a.Id)" data-toggle="tooltip" title="Save your changes"><span>Save Changes</span></button>
+                        <button class="btn" onclick="endEdit()" data-toggle="tooltip" title="Cancel your changes"><span>Cancel</span></button>
+                    </div>
+                </div>
+
+                <div id="answer-@a.Id" class="content-body answer-text">@Html.Raw(a.Body)</div>
+
+                <div id="edit-controls-@a.Id" class="edit-controls text-right">
+                    <div style="margin-bottom:12px;">
+                        <button class="btn btn-link" onclick="edit(@a.Id)">
+                            <span>Improve this answer</span>
+                        </button>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(a.User.ProfileImageUrl))
+                    {
+                        <img src="@a.User.ProfileImageUrl" height="20" width="20" />
+                    }
+                    <small>@a.User.DisplayName</small>
+                    <br />
+                    <small>Posted @Web.DateTimeFormatter.Format(@a.Created)</small>
+                </div>
+                <hr />
+            </div>
+        </div>
+    }
+
+    @if (Model.Content.Children.Count == 0)
+    {
+        <div class="row">
+            <div class="col-sm-1" style="text-align:center">
+            </div>
+            <div class="col-sm-11">
+                <textarea id="add_answer" style="max-width:initial" class="form-control" rows="4"></textarea>
+                <button class="btn btn-default" onclick="answer()">Post Your Answer</button>
+            </div>
+        </div>
+    }
+
+    <div id="similar"></div>
+</div>
+
+
+@*@await Component.InvokeAsync("AddAnswer", new { questionId = Model.Id })*@

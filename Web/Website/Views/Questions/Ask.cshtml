@@ -1,0 +1,183 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Website.RequestObjects.ContentRequest
+
+<link rel="stylesheet" href="~/Scripts/simplemde/simplemde.min.css" />
+
+<style>
+    .editor-toolbar.affix {
+        position: fixed;
+        top: 45px;
+        border: 1px solid #ddd;
+    }
+</style>
+
+<script src="~/Scripts/simplemde/simplemde.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        setTimeout(function () {
+            var simplemde = new SimpleMDE({
+                element: document.getElementById("question-text"),
+                spellChecker: false,
+                placeholder: "Write your question here",
+                status: false,
+                tabSize: 4
+            });
+
+            $(".exit-full-screen").click(function () {
+                if (simplemde.isFullscreenActive()) {
+                    simplemde.toggleFullScreen();
+                }
+            });
+
+            //$(".editor-toolbar").css("width", $(".editor-toolbar").outerWidth());
+
+            $(".editor-toolbar").css("opacity", "1");
+            //$(".editor-toolbar").attr("data-spy", "affix");
+            //$('.editor-toolbar').affix({
+            //    offset: { top: $('.editor-toolbar').offset().top }
+            //});
+
+            $(".editor-toolbar").css("position", "fixed");
+            $(".editor-toolbar").detach().appendTo('.navbar-header')
+
+            $(".editor-toolbar a").attr("data-toggle='tooltip'");
+            $(".editor-toolbar a").attr("data-placement='down'");
+
+            $(".editor-toolbar a").tooltip();
+
+            //$('.editor-toolbar').wrap("<div>")
+
+            //$(".editor-toolbar").css("z-index", "1000000");
+            ////$(".editor-toolbar").css("top", "-30");
+
+            simplemde.codemirror.on("focus", function () {
+                $(".CodeMirror").addClass("focus")
+            });
+
+            simplemde.codemirror.on("blur", function () {
+                $(".CodeMirror").removeClass("focus")
+            });
+
+            simplemde.codemirror.on("refresh", function () {
+                if (simplemde.isFullscreenActive()) {
+                    $(".exit-full-screen").fadeIn(200);
+                }
+                else {
+                    $(".exit-full-screen").fadeOut(200);
+                }
+            });
+
+            $(".fa").addClass("btn");
+            $(".fa").addClass("btn-lg");
+
+            var tags = $('input#Tags');
+            $('.tags input[tagid]').click(function () {
+                var id = this.getAttribute('tagid');
+                var value = tags.val();
+                var newVal = "";
+
+                var sel = "tag_" + id;
+                var lab = $("input[id='" + sel + "'], label[for='" + sel + "']");
+
+                if (this.checked) {
+                    newVal = value + "|" + id + ">"
+                    lab.detach().appendTo(".tags .selected")
+                } else {
+                    newVal = value.replace("|" + id + ">", "");
+                    lab.detach().prependTo(".tags .unselected")
+                }
+                tags.val(newVal);
+            });
+        }, 100);
+
+        $(document).on('keydown', function (e) {
+            if (e.ctrlKey && e.which === 83) {
+                document.forms["question-form"].submit();
+                e.preventDefault();
+                return false;
+            }
+        });
+
+
+        var validate = function () {
+            return $('#title').val().length > 0 && !$('.CodeMirror-placeholder').is(':visible');
+        }
+
+        var isSubmitted = false;
+
+        $('.btn').click(function (e) {
+            if (!validate()) {
+                e.preventDefault();
+                e.stopPropagation();
+                return
+            }
+
+            $("#question-text").value(simplemde.value());
+
+            //to prevent duplicate form submissions
+            if (!isSubmitted) {
+                isSubmitted = true;
+            }
+            else {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    });
+
+</script>
+
+<br />
+<form id="question-form" method="post" data-toggle="validator" class="form-group">
+    @Html.HiddenFor(i => i.ContentId)
+    @Html.HiddenFor(i => i.Type)
+
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" autocomplete="off" name="title" class="form-control" id="title" 
+               placeholder="Enter a title for your question" asp-for="@Model.Title">
+    </div>
+    <div class="form-group">
+        <label for="question-text">Question</label>
+        <div id="editor">
+            <textarea id="question-text" name="body" class="form-control" style="max-width:initial; display:none" asp-for="@Model.Body"></textarea>
+        </div>
+    </div>
+
+    @Html.HiddenFor(t => t.Tags)
+    
+    <div class="tags">5
+        <div class="selected">
+            @foreach (var item in Model.AvailableTags.Where(t => t.Accepted))
+            {
+                <input asp-for="@item.Accepted" tagid="@item.Id" id="tag_@item.Id" style="display:none;" type="checkbox"  />
+                <label for="tag_@item.Id" class='badge'>@item.Name</label>
+            }
+        </div>
+        <div class="unselected">
+            @foreach (var item in Model.AvailableTags.Where(t => !t.Accepted))
+            {
+                <input asp-for="@item.Accepted" tagid="@item.Id" id="tag_@item.Id" style="display:none;" type="checkbox" />
+                <label for="tag_@item.Id" class='badge'>@item.Name</label>
+            }
+        </div>
+    </div>
+
+    <div id="preview">
+
+    </div>
+
+    <button type="submit" class="btn">
+        @if (Model.ContentId == null)
+        {
+            <span>Post Question</span>
+        }
+        else
+        {
+            <span>Save Edit</span>
+        }
+    </button>
+</form>

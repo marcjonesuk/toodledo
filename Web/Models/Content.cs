@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Data
+namespace Models
 {
     public class Content
     {

@@ -1,11 +1,11 @@
-﻿using Data.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
+using Models;
 
 namespace Data.Db
 {

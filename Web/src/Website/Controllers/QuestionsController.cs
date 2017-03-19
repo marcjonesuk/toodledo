@@ -12,6 +12,8 @@ using Website.Models.ContentViewModels;
 using Website.RequestObjects;
 using Website.Controllers;
 using Microsoft.Extensions.Caching.Memory;
+using System.Net;
+using System.IO;
 
 namespace Web.Controllers
 {
@@ -35,6 +37,8 @@ namespace Web.Controllers
         public ContentViewModel Content { get; set; }
         public string Response { get; set; }
         public bool AllowEdit { get; set; }
+
+        public List<ContentViewModel> SimilarQuestions { get; set; } 
     }
 
     public class QuestionsController : BaseController
@@ -59,7 +63,25 @@ namespace Web.Controllers
             {
                 content.Children = new List<ContentViewModel> { answer };
             }
-            return View(new ContentPageModel() { Content = content });
+
+            var r = new ContentPageModel() { Content = content };
+            return View(r);
+        }
+
+        public IActionResult Similar(int id)
+        {
+            var content = ContentApi.Select(id);
+            WebRequest request = WebRequest.Create($"http://localhost:63683/api/Values?search={content.Title}&max=50&minScore=0");
+            request.Method = "GET";
+            var response = request.GetResponseAsync().Result;
+            IEnumerable<int> ids;
+            using (var reader = new StreamReader(response.GetResponseStream()))
+            {
+                var s = reader.ReadToEnd().Replace("[", "").Replace("]", "").Split(',');
+                ids = s.Where(str => !string.IsNullOrEmpty(str)).Select(i => int.Parse(i)).ToList();
+            }
+            var results = ids.Where(i => i != id).Select(i => ContentApi.Select(i)).Where(c => c.Type == "question").Select(c => c.AsViewModel().WithTags().WithUser()).Take(3).ToList();
+            return View(results);
         }
 
         public IActionResult Edit(int id)
@@ -104,7 +126,7 @@ namespace Web.Controllers
             }
         }
 
-        public IActionResult Search(int p, string o, string q, int t)
+        public IActionResult SearchOld(int p, string o, string q, int t)
         {
             if (p == 0)
                 p = 1;
@@ -135,6 +157,34 @@ namespace Web.Controllers
             resultPage.Tags = TagApi.Select().OrderByDescending(tag => tag.Count).Take(8).ToList();
 
             return View("Results", resultPage);
+        }
+
+        public IActionResult Search(int p, string o, string q, int t)
+        {
+            if (q == null)
+                return SearchOld(p, o, q, t);
+
+            WebRequest request = WebRequest.Create($"http://localhost:63683/api/Values?search={q}&max=100");
+            request.Method = "GET";
+            var response = request.GetResponseAsync().Result;
+            IEnumerable<int> ids;
+            using (var reader = new StreamReader(response.GetResponseStream()))
+            {
+                ids = reader.ReadToEnd().Replace("[", "").Replace("]", "").Split(',').Select(id => int.Parse(id));
+            }
+            var results = ids.Select(i => ContentApi.Select(i).AsViewModel().WithTags().WithUser()).ToList();
+
+            var searchRequest = new SearchRequest();
+            searchRequest.Text = q;
+            searchRequest.Page = p;
+            searchRequest.OrderBy = o;
+            searchRequest.Type = "question";
+
+            var resultPage = new SearchResultViewModel() { Results = results, Request = searchRequest };
+            resultPage.ResultsCount = results.Count;
+            resultPage.MaxPages = Math.Min(5, (int)Math.Floor((double)resultPage.ResultsCount / 10));
+            resultPage.Results = results.Skip((p - 1) * 10).Take(10).ToList();
+            return View("Search", resultPage);
         }
 
         [Authorize]

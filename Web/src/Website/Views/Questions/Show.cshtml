@@ -119,6 +119,17 @@
 
     var answerExpanded = false;
     $(document).ready(function() {
+
+        $.ajax({
+            url: '/questions/similar?id=@Model.Content.Id',
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            success: function (data) {
+                $("#similar").html(data);
+            }
+        });
+
         //$("code").addClass("prettyprint");
         //PR.prettyPrint();
 
@@ -156,6 +167,7 @@
 }
 
 <a href="/questions/show?id=@Model.Content.Id"><h4>@Model.Content.Title</h4></a>
+
 <hr />
 
 <div id="content" style="display:none;">
@@ -182,8 +194,8 @@
 
                 <div class="text-right" style="padding-left:100px">
                     <div style="margin-bottom:12px;">
-                        <button onclick="editQuestion(@Model.Content.Id)" class="btn btn-sm" data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
-                        <button class="btn btn-sm" data-toggle="tooltip" title="Delete this question"><span class="glyphicon glyphicon-remove"></span></button>
+                        <button onclick="editQuestion(@Model.Content.Id)" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Edit this question"><span class="glyphicon glyphicon-pencil"></span></button>
+                        <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Delete this question"><span class="glyphicon glyphicon-remove"></span></button>
                     </div>
 
                     @if (!string.IsNullOrEmpty(Model.Content.User.ProfileImageUrl))
@@ -196,6 +208,13 @@
                 </div>
 
             </div>
+
+            @*@foreach (var a in Model.SimilarQuestions)
+            {
+                <a href="/questions/show?id=@a.Id"><h5>@a.Title</h5></a>
+            }*@
+
+          
 
             <h4>Answer</h4>
             <hr style="margin-top:0" />
@@ -262,6 +281,9 @@
             </div>
         </div>
     }
+
+    <div id="similar"></div>
 </div>
+
 
 @*@await Component.InvokeAsync("AddAnswer", new { questionId = Model.Id })*@

@@ -44,6 +44,10 @@
             $(".editor-toolbar").css("position", "fixed");
             $(".editor-toolbar").detach().appendTo('.navbar-header')
 
+            $(".editor-toolbar a").attr("data-toggle='tooltip'");
+            $(".editor-toolbar a").attr("data-placement='down'");
+
+            $(".editor-toolbar a").tooltip();
 
             //$('.editor-toolbar').wrap("<div>")
 
@@ -69,7 +73,7 @@
 
             $(".fa").addClass("btn");
             $(".fa").addClass("btn-lg");
-        }, 100);
+        }, 0);
 
         $(document).on('keydown', function (e) {
             if (e.ctrlKey && e.which === 83) {

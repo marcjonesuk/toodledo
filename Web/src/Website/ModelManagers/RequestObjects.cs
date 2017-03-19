@@ -13,6 +13,7 @@ namespace Website.RequestObjects
         public string Text { get; set; }
         public int? Page { get; set; }
         public string OrderBy { get; set; }
+        public int? TagId { get; set; }
     }
 
     public class ContentRequest

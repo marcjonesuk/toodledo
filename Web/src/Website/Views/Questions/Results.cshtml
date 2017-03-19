@@ -86,7 +86,7 @@ else if (!string.IsNullOrEmpty(Model.Request.Text))
                     <a href="/questions/show?id=@q.Id"><h4 style="margin-top:0; margin-bottom:6px">"@q.Title"</h4></a>
                     @foreach (var t in q.Tags)
                     {
-                        <span class="badge">@t.Name</span>
+                        <a class="badge" asp-controller="questions" asp-action="SearchForTag" asp-route-tagId="@t.Id">@t.Name</a>
                     }
                 </div>
             </div>

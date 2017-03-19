@@ -124,6 +124,7 @@ namespace Web.Controllers
             searchRequest.Page = p;
             searchRequest.OrderBy = o;
             searchRequest.Type = "question";
+            searchRequest.TagId = tagId;
 
             var manager = new ContentManager();
             var results = manager.Search(searchRequest);
@@ -138,6 +139,12 @@ namespace Web.Controllers
             resultPage.Tags = TagApi.Select().OrderByDescending(tag => tag.Count).Take(8).ToList();
 
             return View("Results", resultPage);
+        }
+
+        [HttpGet]
+        public IActionResult SearchForTag(int tagId)
+        {
+            return Search(1, null, null, tagId);
         }
 
         [Authorize]

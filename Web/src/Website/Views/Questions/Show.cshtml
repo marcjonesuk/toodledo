@@ -176,7 +176,7 @@
                 <div class="media-left ">
                     @foreach (var t in Model.Content.Tags)
                     {
-                        <span class="badge">@t.Name</span>
+                        <a class="badge" asp-controller="questions" asp-action="SearchForTag" asp-route-tagId="@t.Id">@t.Name</a>
                     }
                 </div>
 

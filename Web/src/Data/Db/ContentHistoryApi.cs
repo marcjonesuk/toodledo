@@ -19,7 +19,7 @@ namespace Data.Db
                 {
                     return Insert(new ContentHistory
                     {
-                        ContentId = (int)oldContent.Id,
+                        ContentId = oldContent.Id,
                         ChangedField = property.Name,
                         OldValue = (string)property.GetValue(oldContent),
                         Changed = DateTime.UtcNow,

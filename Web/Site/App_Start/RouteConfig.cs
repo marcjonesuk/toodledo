@@ -16,7 +16,7 @@ namespace Site
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Questions", action = "SearchHome", id = UrlParameter.Optional }
+                defaults: new { controller = "Questions", action = "search", id = UrlParameter.Optional }
             );
         }
     }

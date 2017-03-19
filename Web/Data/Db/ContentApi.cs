@@ -13,7 +13,7 @@ namespace Data
         {
             return (int)(decimal)Execute($@"
                 INSERT INTO [dbo].[Content] ([Title], [Body], [UserId], [Type], [HtmlBody], [Created]) 
-                VALUES ( '{content.Title.SqlEncode()}', '{content.Body.SqlEncode()}', {content.UserId}, '{content.Type}', '{content.HtmlBody.SqlEncode()}', '{FormatDate(content.Created)}'); 
+                VALUES ( '{content.Title.SqlEncode()}', '{content.Body.SqlEncode()}', {content.UserId}, '{content.Type}', '{content.HtmlBody.SqlEncode()}', '{content.Created.ToSql()}'); 
                 SELECT SCOPE_IDENTITY();");
         }
 
@@ -143,7 +143,26 @@ namespace Data
             }
             return (int)Execute(sql);
         }
-        
+
+        public static List<Content> NeedIndexing()
+        {
+            List<Content> result;
+            //todo need to add modified to thsi
+            var sql = $@"SELECT [Id]
+                        ,[Title]
+                        ,[Body]
+                        ,[UserId]
+                        ,[Type]
+                        ,[HtmlBody]
+                        ,[Created]
+                        ,[Score]
+                        FROM [toodledo].[dbo].[Content] c
+                        WHERE c.Indexed IS NULL";
+
+            result = GetContent(sql);
+            return result;
+        }
+
         public static List<Content> Search(int pageSize, int? pageNo, string type, string search, string orderBy, int? tagId)
         {
             var key = $"p={pageSize},pn={pageNo},t={type},s={search},o={orderBy},tg={tagId}";
@@ -169,7 +188,7 @@ namespace Data
 
         public static void MarkAsIndexed(int id)
         {
-            Execute($@"UPDATE [dbo].[Content] SET Indexed = '{DateTime.UtcNow}' WHERE Id = {id}");
+            Execute($@"UPDATE [dbo].[Content] SET Indexed = '{DateTime.UtcNow.ToSql()}' WHERE Id = {id}");
         }
 
         public static void Update(int id, string title, string body, string htmlBody, int userId)

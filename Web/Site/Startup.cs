@@ -1,6 +1,7 @@
 ﻿using LuceneSearch;
 using Microsoft.Owin;
 using Owin;
+using System;
 
 [assembly: OwinStartupAttribute(typeof(Site.Startup))]
 namespace Site
@@ -11,6 +12,7 @@ namespace Site
         {
             ConfigureAuth(app);
             Searcher.Instance.Open(@"c:\lucene2");
+            Indexer.Instance.Start(TimeSpan.FromMinutes(1));
         }
     }
 }

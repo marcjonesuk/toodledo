@@ -59,15 +59,8 @@ namespace Website
                 .AsViewModel()
                 .WithAll();
 
-            try
-            {
-                Searcher.Instance.Index(new Searchable() { Id = item.Id, Type = item.Type, Title = item.Title, Body = item.Body, Username = item.User.DisplayName });
-                ContentApi.MarkAsIndexed(item.Id);
-            }
-            catch
-            {
-            }
-
+            Searcher.Instance.Index(new Searchable() { Id = item.Id, Type = item.Type, Title = item.Title, Body = item.Body, Username = item.User.DisplayName });
+            ContentApi.MarkAsIndexed(item.Id);
             return item;
         }
 
@@ -93,17 +86,11 @@ namespace Website
             var item = ContentApi.Select(id).AsViewModel()
                 .WithChildren()
                 .WithChildrenCount()
+                .WithUser()
                 .WithTags();
 
-            try
-            {
-                Searcher.Instance.Index(new Searchable() { Id = id, Type = item.Type, Title = item.Title, Body = item.Body, Username = item.User.DisplayName });
-                ContentApi.MarkAsIndexed(id);
-            }
-            catch
-            {
-            }
-
+            Searcher.Instance.Index(new Searchable() { Id = id, Type = item.Type, Title = item.Title, Body = item.Body, Username = item.User.DisplayName });
+            ContentApi.MarkAsIndexed(id);
             return item;
         }
 

@@ -14,6 +14,12 @@ namespace Data
 
             return s.Replace("'", "''");
         }
+
+        public static string ToSql(this DateTime d)
+        {
+            var format = "yyyy-MM-dd HH:mm:ss:fff";
+            return d.ToString(format);
+        }
     }
 
     public class DbApi
@@ -45,11 +51,6 @@ namespace Data
             reader = cmd.ExecuteReader();
             a(reader);
             connection.Close();
-        }
-
-        protected static string FormatDate(DateTime dateTime)
-        {
-            return dateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
         }
     }
 }

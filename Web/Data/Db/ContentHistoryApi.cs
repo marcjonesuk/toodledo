@@ -33,7 +33,7 @@ namespace Data.Db
         {
             return (int)(decimal)Execute($@"
                 INSERT INTO [dbo].[ContentHistory] (ContentId, Field, OldValue, Changed, ChangedBy) 
-                VALUES ( '{contentHistory.ContentId}', '{contentHistory.ChangedField}', '{contentHistory.OldValue.SqlEncode()}', '{FormatDate(contentHistory.Changed)}', '{contentHistory.ChangedByUserId}'); 
+                VALUES ( '{contentHistory.ContentId}', '{contentHistory.ChangedField}', '{contentHistory.OldValue.SqlEncode()}', '{contentHistory.Changed.ToSql()}', '{contentHistory.ChangedByUserId}'); 
                 SELECT SCOPE_IDENTITY();");
         }
 

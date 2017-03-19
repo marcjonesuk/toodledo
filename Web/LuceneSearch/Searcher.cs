@@ -9,7 +9,6 @@ using Lucene.Net.Index;
 
 namespace LuceneSearch
 {
-
     public class Searcher
     {
         private static Lazy<Searcher> _lazy = new Lazy<Searcher>();
@@ -25,7 +24,7 @@ namespace LuceneSearch
         {
             _dir = FSDirectory.Open(new System.IO.DirectoryInfo(indexPath));
             StandardAnalyzer analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-            _parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "body", analyzer);
+            _parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "Body", analyzer);
             _writer = new IndexWriter(_dir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED);
         }
 
@@ -47,7 +46,7 @@ namespace LuceneSearch
             _writer.Commit();
         }
 
-        public void Index(List<Searchable> items)
+        public void Index(IEnumerable<Searchable> items)
         {
             foreach (var i in items)
             {
@@ -76,10 +75,14 @@ namespace LuceneSearch
             var query = _parser.Parse(text);
             var searcher = new Lucene.Net.Search.IndexSearcher(_dir);
             var hits = searcher.Search(query, maxResults);
+
+            if (hits.ScoreDocs.Length == 0)
+                return new List<SearchResult>();
+
             var doc = searcher.Doc(hits.ScoreDocs[0].Doc);
             var result = hits.ScoreDocs
                 .Where(s => s.Score > minScore)
-                .Select(h => new SearchResult() { Id = int.Parse(searcher.Doc(h.Doc).GetField("id").StringValue), Score = h.Score });
+                .Select(h => new SearchResult() { Id = int.Parse(searcher.Doc(h.Doc).GetField("Id").StringValue), Score = h.Score });
             return result;
         }
     }

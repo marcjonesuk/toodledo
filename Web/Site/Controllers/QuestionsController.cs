@@ -15,6 +15,7 @@ using System.IO;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using LuceneSearch;
+using System.Web.Http;
 
 namespace Web.Controllers
 {
@@ -78,13 +79,13 @@ namespace Web.Controllers
         //}
 
         [HttpPost]
-        public int Vote(/*[FromBody]*/VoteRequest req)
+        public int Vote(VoteRequest req)
         {
             return VoteApi.Vote(req.ContentId, 1, req.Direction);
         }
 
         [HttpPost]
-        public string Answer(/*[FromBody]*/ContentRequest req)
+        public string Answer(ContentRequest req)
         {
             var user = GetCurrentUser();
             if (user == null)
@@ -140,10 +141,14 @@ namespace Web.Controllers
             return View("Results", resultPage);
         }
 
-        public ActionResult Search(int p, string o, string q, int? t)
+        [HttpGet]
+        public ActionResult Search(int? p, string o, string q, int? t)
         {
+            if (p == null)
+                p = 1;
+
             if (q == null)
-                return SearchOld(p, o, q, t);
+                return SearchOld(p.Value, o, q, t);
 
             var results = Searcher.Instance.Search(q, 100, 0)
                 .Select(r => r.Id)
@@ -159,7 +164,7 @@ namespace Web.Controllers
             var resultPage = new SearchResultViewModel() { Results = results, Request = searchRequest };
             resultPage.ResultsCount = results.Count;
             resultPage.MaxPages = Math.Min(5, (int)Math.Floor((double)resultPage.ResultsCount / 10));
-            resultPage.Results = results.Skip((p - 1) * 10).Take(10).ToList();
+            resultPage.Results = results.Skip((p.Value - 1) * 10).Take(10).ToList();
             return View("Search", resultPage);
         }
 

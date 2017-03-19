@@ -118,7 +118,7 @@ namespace Website.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    //UserApi.Insert(new data.User { DisplayName = user.})
+                    data.UserApi.Insert(new data.User() { DisplayName = model.DisplayName, Email = model.Email });
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link

@@ -86,8 +86,8 @@ else if (!string.IsNullOrEmpty(Model.Request.Text))
                     <a href="/questions/show?id=@q.Id"><h4 style="margin-top:0; margin-bottom:6px">"@q.Title"</h4></a>
                     @foreach (var t in q.Tags)
                     {
-                        @Html.ActionLink(@t.Name, "SearchForTag", "Questions", new { tagId = @t.Id }, new { @class = "badge" })
-                        @*<a class="badge" asp-controller="questions" asp-action="SearchForTag" asp-route-tagId="@t.Id">@t.Name</a>*@
+                        @*@Html.ActionLink(@t.Name, "Search", "Questions", new { tagId = @t.Id }, new { @class = "badge" })*@
+                        <a class="badge" asp-controller="questions" asp-action="Search" asp-route-t="@t.Id">@t.Name</a>
                     }
                 </div>
             </div>

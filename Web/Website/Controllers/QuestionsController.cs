@@ -155,11 +155,24 @@ namespace Web.Controllers
             resultPage.Results = results.Skip((p.Value - 1) * 10).Take(10).ToList();
             return View("Search", resultPage);
         }
-
-        [HttpGet]
-        public ActionResult SearchForTag(int tagId)
+        
+        public IActionResult Compare(int id)
         {
-            return Search(1, null, null, tagId);
+            var content = ContentApi.Select(id);
+            var oldContent = ContentApi.Select(id);
+            var changeSets = ContentHistoryApi.SelectByContentId(id, DateTime.Now.AddDays(-1), DateTime.Now).OrderBy(c => c.Changed);
+            foreach(var property in oldContent.GetType().GetProperties())
+            {
+                if (changeSets.Any(c => c.ChangedField == property.Name))
+                {
+                    var oldVal = changeSets.First(c => c.ChangedField == property.Name).OldValue;
+                    property.SetValue(oldContent, oldVal);
+                }
+            }
+
+            oldContent.HtmlBody  = Site.Markdown.Encode(oldContent.Body);
+
+            return View(new Comparison { Old = oldContent, New = content });
         }
 
         [Authorize]

@@ -58,6 +58,28 @@ namespace Data.Db
             return contentHistory;
         }
 
+        public static List<ContentHistory> SelectByContentId(int id, DateTime fromDate, DateTime toDate)
+        {
+            List<ContentHistory> contentHistory;
+            //var key = $"contenthistory-{id}";
+
+            //if (!Cache.TryGetValue(key, out contentHistory))
+            //{
+            contentHistory = GetContentHistory($@"SELECT [Id]
+                          ,[ContentId]
+                          ,[Field]
+                          ,[OldValue]
+                          ,[Changed]
+                          ,[ChangedBy]
+                        FROM[toodledo].[dbo].[ContentHistory] 
+                                    WHERE [ContentId] = '{id}' 
+                                    AND [Changed] BETWEEN '{fromDate.ToSql()}' AND '{toDate.ToSql()}'");
+
+            //    Cache.Set(key, contentHistory, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(30)));
+            //}
+
+            return contentHistory;
+        }
         private static List<ContentHistory> GetContentHistory(string sql)
         {
             var results = new List<ContentHistory>();

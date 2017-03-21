@@ -1,0 +1,63 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Website.Models.Comparison
+
+<script src="~/js/difflib/difflib.js"></script>
+<script src="~/js/difflib/diffview.js"></script>
+<link rel="stylesheet" href="~/js/difflib/diffview.css" />
+
+<script type="text/javascript">
+    var byId = function (id) { return $('#' + id); };
+
+    function diffUsingJS(viewType, oldDivId, newDivId, targetId) {
+        "use strict";
+        var base = difflib.stringAsLines(byId(oldDivId).text());
+        var newtxt = difflib.stringAsLines(byId(newDivId).text());
+        var sm = new difflib.SequenceMatcher(base, newtxt);
+        var opcodes = sm.get_opcodes();
+        var diffoutputdiv = document.getElementById(targetId);
+        var contextSize = byId("contextSize").text();
+
+       diffoutputdiv.innerHTML = "";
+       contextSize = contextSize || null;
+
+        diffoutputdiv.appendChild(diffview.buildView({
+            baseTextLines: base,
+            newTextLines: newtxt,
+            opcodes: opcodes,
+            baseTextName: "Old Text",
+            newTextName: "New Text",
+            contextSize: contextSize,
+            viewType: viewType
+        }));
+    }
+
+    $(document).ready(function () {
+        diffUsingJS(0, "baseText", "newText", "diffoutput");
+        diffUsingJS(0, "baseTitleText", "newTitleText", "difftitleoutput");
+    });
+
+    var backToQuestion = function (id) {
+        document.location.href = "/questions/show?id=" + id;
+    };
+
+</script>
+
+<div style="display:none;">
+    <div id="baseTitleText">@Html.Raw(Model.Old.Title)</div>
+    <div id="baseText">@Html.Raw(Model.Old.HtmlBody)</div>
+</div>
+
+<div style="display:none;">
+    <div id="newTitleText">@Html.Raw(Model.New.Title)</div>
+    <div id="newText">@Html.Raw(Model.New.HtmlBody)</div>
+</div>
+<h2>Title</h2>
+<div id="difftitleoutput"></div>
+<h2>Body</h2>
+<div id="diffoutput"></div>
+
+<button class="btn" onclick="backToQuestion(@Model.New.Id)" style="margin-top: 15px; float: right;">
+    Done
+</button>

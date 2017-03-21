@@ -20,6 +20,9 @@
       <DependentUpon>Site.css</DependentUpon>
     </Content>
     <Content Include="wwwroot\favicon.ico" />
+    <Content Include="wwwroot\js\difflib\difflib.js" />
+    <Content Include="wwwroot\js\difflib\diffview.css" />
+    <Content Include="wwwroot\js\difflib\diffview.js" />
     <Content Include="wwwroot\js\favicon.ico" />
     <Content Include="wwwroot\js\marked\marked.min.js" />
     <Content Include="wwwroot\js\simplemde\simplemde.min.css" />

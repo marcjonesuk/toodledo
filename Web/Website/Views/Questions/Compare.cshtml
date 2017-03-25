@@ -19,8 +19,8 @@
         var diffoutputdiv = document.getElementById(targetId);
         var contextSize = byId("contextSize").text();
 
-       diffoutputdiv.innerHTML = "";
-       contextSize = contextSize || null;
+        diffoutputdiv.innerHTML = "";
+        contextSize = contextSize || null;
 
         diffoutputdiv.appendChild(diffview.buildView({
             baseTextLines: base,
@@ -42,6 +42,19 @@
         document.location.href = "/questions/show?id=" + id;
     };
 
+    var selectChangeset = function (element) {
+        var oldVal = $(element).find('.oldVal');
+        var changedField = oldVal.attr("changed-field");
+        if (changedField === "Body") {
+            byId('baseText').text(oldVal.text());
+            diffUsingJS(0, "baseText", "newText", "diffoutput");
+        }
+        else {
+            //byId('baseTitleText').text(oldVal.text());
+            diffUsingJS(0, "baseTitleText", "newTitleText", "difftitleoutput");
+        }
+    };
+
 </script>
 
 <div style="display:none;">
@@ -57,6 +70,14 @@
 <div id="difftitleoutput"></div>
 <h2>Body</h2>
 <div id="diffoutput"></div>
+
+@foreach (var cs in Model.ChangeSets)
+{
+    <div class="changeset" onclick="selectChangeset(this)" style="display: inline-block;">
+        Changed on<br /> @cs.Changed.ToString() <br />by @cs.ChangedBy.DisplayName
+        <div class="oldVal" changed-field="@cs.ChangedField" style="display:none;">@cs.OldValue</div>
+    </div>
+}
 
 <button class="btn" onclick="backToQuestion(@Model.New.Id)" style="margin-top: 15px; float: right;">
     Done

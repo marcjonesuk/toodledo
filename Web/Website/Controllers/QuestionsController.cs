@@ -27,7 +27,7 @@ namespace Web.Controllers
 
         public QuestionsController(UserManager<ApplicationUser> userManager)
         {
-           // this.signInManager = signInManager;
+            // this.signInManager = signInManager;
             this.userManager = userManager;
         }
 
@@ -155,13 +155,13 @@ namespace Web.Controllers
             resultPage.Results = results.Skip((p.Value - 1) * 10).Take(10).ToList();
             return View("Search", resultPage);
         }
-        
+
         public IActionResult Compare(int id)
         {
             var content = ContentApi.Select(id);
             var oldContent = ContentApi.Select(id);
             var changeSets = ContentHistoryApi.SelectByContentId(id, DateTime.Now.AddDays(-1), DateTime.Now).OrderBy(c => c.Changed);
-            foreach(var property in oldContent.GetType().GetProperties())
+            foreach (var property in oldContent.GetType().GetProperties())
             {
                 if (changeSets.Any(c => c.ChangedField == property.Name))
                 {
@@ -170,9 +170,9 @@ namespace Web.Controllers
                 }
             }
 
-            oldContent.HtmlBody  = Site.Markdown.Encode(oldContent.Body);
+            oldContent.HtmlBody = Site.Markdown.Encode(oldContent.Body);
 
-            return View(new Comparison { Old = oldContent, New = content });
+            return View(new Comparison { Old = oldContent, New = content, ChangeSets = changeSets.Select(cs => new ContentHistoryViewModel(cs)).ToList() });
         }
 
         [Authorize]
